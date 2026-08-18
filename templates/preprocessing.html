@@ -1,0 +1,1170 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>
+        FruitSense | Preprocessing
+    </title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='style.css') }}">
+
+</head>
+
+
+<body>
+
+
+<div class="app-shell">
+
+
+    <!-- =====================================================
+         SIDEBAR
+         ===================================================== -->
+
+    <aside class="sidebar">
+
+
+        <div class="brand">
+
+            <div class="brand-icon">
+                🍃
+            </div>
+
+            <div>
+
+                <h2>
+                    FruitSense
+                </h2>
+
+                <span>
+                    Quality Analytics
+                </span>
+
+            </div>
+
+        </div>
+
+
+        <div class="nav-label">
+            ANALYTICS
+        </div>
+
+
+        <nav>
+
+
+            <a href="{{ url_for('index') }}"
+               class="nav-item">
+
+                <span class="nav-icon">
+                    ⌂
+                </span>
+
+                Dashboard
+
+            </a>
+
+
+            <a href="{{ url_for('data_loading') }}"
+               class="nav-item">
+
+                <span class="nav-icon">
+                    ▣
+                </span>
+
+                Data Loading
+
+            </a>
+
+
+            <a href="{{ url_for('eda') }}"
+               class="nav-item">
+
+                <span class="nav-icon">
+                    ◒
+                </span>
+
+                Exploratory Analysis
+
+            </a>
+
+
+        </nav>
+
+
+        <div class="nav-label future-label">
+            NEXT MODULES
+        </div>
+
+
+        <!-- PREPROCESSING ACTIVE -->
+
+        <a href="{{ url_for('preprocessing') }}"
+           class="nav-item active">
+
+            <span class="nav-icon">
+                ⚙
+            </span>
+
+            Preprocessing
+
+        </a>
+
+
+        <div class="nav-item disabled">
+
+            <span class="nav-icon">
+                ◆
+            </span>
+
+            Model Training
+
+            <span class="soon">
+                Soon
+            </span>
+
+        </div>
+
+
+        <div class="nav-item disabled">
+
+            <span class="nav-icon">
+                ↗
+            </span>
+
+            Prediction
+
+            <span class="soon">
+                Soon
+            </span>
+
+        </div>
+
+
+        <div class="sidebar-bottom">
+
+            <div class="status-dot"></div>
+
+            <div>
+
+                <strong>
+                    Project Status
+                </strong>
+
+                <span>
+                    Preprocessing completed
+                </span>
+
+            </div>
+
+        </div>
+
+
+    </aside>
+
+
+    <!-- =====================================================
+         MAIN CONTENT
+         ===================================================== -->
+
+    <main class="main-content">
+
+
+        <header class="topbar">
+
+            <div>
+
+                <span class="eyebrow">
+                    MODULE 03 • PREPROCESSING
+                </span>
+
+                <h1>
+                    Prepare the Dataset
+                </h1>
+
+                <p>
+                    Clean, transform and prepare environmental
+                    features for machine learning.
+                </p>
+
+            </div>
+
+
+            <div class="top-badge">
+
+                <span class="pulse"></span>
+
+                Preprocessing Active
+
+            </div>
+
+        </header>
+
+
+        {% if error %}
+
+        <div class="error-box">
+            {{ error }}
+        </div>
+
+        {% else %}
+
+
+        <!-- =================================================
+             SUMMARY
+             ================================================= -->
+
+        <section class="stats-grid">
+
+
+            <div class="stat-card">
+
+                <span>
+                    ORIGINAL ROWS
+                </span>
+
+                <strong>
+                    {{ preprocessing.original_rows }}
+                </strong>
+
+                <small>
+                    Before cleaning
+                </small>
+
+            </div>
+
+
+            <div class="stat-card">
+
+                <span>
+                    DUPLICATES
+                </span>
+
+                <strong>
+                    {{ preprocessing.duplicate_count }}
+                </strong>
+
+                <small>
+                    Removed records
+                </small>
+
+            </div>
+
+
+            <div class="stat-card">
+
+                <span>
+                    TRAINING ROWS
+                </span>
+
+                <strong>
+                    {{ preprocessing.train_rows }}
+                </strong>
+
+                <small>
+                    70% training data
+                </small>
+
+            </div>
+
+
+            <div class="stat-card">
+
+                <span>
+                    TESTING ROWS
+                </span>
+
+                <strong>
+                    {{ preprocessing.test_rows }}
+                </strong>
+
+                <small>
+                    30% testing data
+                </small>
+
+            </div>
+
+
+        </section>
+
+
+        <!-- =================================================
+             PREPROCESSING STEPS
+             ================================================= -->
+
+        <section class="panel">
+
+
+            <div class="panel-heading">
+
+                <div>
+
+                    <span class="eyebrow">
+                        PREPROCESSING PIPELINE
+                    </span>
+
+                    <h3>
+                        Techniques Applied
+                    </h3>
+
+                </div>
+
+                <span class="section-number">
+                    01
+                </span>
+
+            </div>
+
+
+            <div class="workflow">
+
+
+                <div class="workflow-step done">
+
+                    <div class="step-number">
+                        01
+                    </div>
+
+                    <div>
+
+                        <strong>
+                            Duplicate Removal
+                        </strong>
+
+                        <span>
+                            Repeated records removed
+                        </span>
+
+                    </div>
+
+                    <b>
+                        ✓
+                    </b>
+
+                </div>
+
+
+                <div class="workflow-line"></div>
+
+
+                <div class="workflow-step done">
+
+                    <div class="step-number">
+                        02
+                    </div>
+
+                    <div>
+
+                        <strong>
+                            Missing Value Handling
+                        </strong>
+
+                        <span>
+                            Median and mode based filling
+                        </span>
+
+                    </div>
+
+                    <b>
+                        ✓
+                    </b>
+
+                </div>
+
+
+                <div class="workflow-line"></div>
+
+
+                <div class="workflow-step done">
+
+                    <div class="step-number">
+                        03
+                    </div>
+
+                    <div>
+
+                        <strong>
+                            IQR Outlier Handling
+                        </strong>
+
+                        <span>
+                            Extreme numerical values clipped
+                        </span>
+
+                    </div>
+
+                    <b>
+                        ✓
+                    </b>
+
+                </div>
+
+
+                <div class="workflow-line"></div>
+
+
+                <div class="workflow-step done">
+
+                    <div class="step-number">
+                        04
+                    </div>
+
+                    <div>
+
+                        <strong>
+                            Feature Scaling
+                        </strong>
+
+                        <span>
+                            StandardScaler and MinMaxScaler
+                        </span>
+
+                    </div>
+
+                    <b>
+                        ✓
+                    </b>
+
+                </div>
+
+
+                <div class="workflow-line"></div>
+
+
+                <div class="workflow-step done">
+
+                    <div class="step-number">
+                        05
+                    </div>
+
+                    <div>
+
+                        <strong>
+                            One-Hot Encoding
+                        </strong>
+
+                        <span>
+                            Fruit categories converted to features
+                        </span>
+
+                    </div>
+
+                    <b>
+                        ✓
+                    </b>
+
+                </div>
+
+
+            </div>
+
+        </section>
+
+
+        <!-- =================================================
+             NUMERICAL FEATURES
+             ================================================= -->
+
+        <section class="panel">
+
+
+            <div class="panel-heading">
+
+                <div>
+
+                    <span class="eyebrow">
+                        NUMERICAL FEATURES
+                    </span>
+
+                    <h3>
+                        Features Used for Scaling
+                    </h3>
+
+                </div>
+
+                <span class="section-number">
+                    02
+                </span>
+
+            </div>
+
+
+            <div class="table-scroll">
+
+
+                <table>
+
+                    <thead>
+
+                        <tr>
+
+                            <th>
+                                Feature
+                            </th>
+
+                            <th>
+                                Type
+                            </th>
+
+                            <th>
+                                Processing
+                            </th>
+
+                        </tr>
+
+                    </thead>
+
+
+                    <tbody>
+
+                    {% for column in preprocessing.numeric_columns %}
+
+                        <tr>
+
+                            <td>
+                                <strong>
+                                    {{ column }}
+                                </strong>
+                            </td>
+
+                            <td>
+                                Numerical
+                            </td>
+
+                            <td>
+                                IQR + Scaling
+                            </td>
+
+                        </tr>
+
+                    {% endfor %}
+
+                    </tbody>
+
+                </table>
+
+
+            </div>
+
+        </section>
+
+
+        <!-- =================================================
+             OUTLIERS
+             ================================================= -->
+
+        <section class="panel">
+
+
+            <div class="panel-heading">
+
+                <div>
+
+                    <span class="eyebrow">
+                        OUTLIER HANDLING
+                    </span>
+
+                    <h3>
+                        IQR Analysis
+                    </h3>
+
+                </div>
+
+                <span class="section-number">
+                    03
+                </span>
+
+            </div>
+
+
+            <div class="table-scroll">
+
+
+                <table>
+
+                    <thead>
+
+                        <tr>
+
+                            <th>
+                                Feature
+                            </th>
+
+                            <th>
+                                Q1
+                            </th>
+
+                            <th>
+                                Q3
+                            </th>
+
+                            <th>
+                                IQR
+                            </th>
+
+                            <th>
+                                Lower Fence
+                            </th>
+
+                            <th>
+                                Upper Fence
+                            </th>
+
+                            <th>
+                                Train Outliers
+                            </th>
+
+                            <th>
+                                Test Outliers
+                            </th>
+
+                        </tr>
+
+                    </thead>
+
+
+                    <tbody>
+
+                    {% for row in preprocessing.outlier_summary %}
+
+                        <tr>
+
+                            <td>
+                                <strong>
+                                    {{ row["Feature"] }}
+                                </strong>
+                            </td>
+
+                            <td>
+                                {{ row["Q1"] }}
+                            </td>
+
+                            <td>
+                                {{ row["Q3"] }}
+                            </td>
+
+                            <td>
+                                {{ row["IQR"] }}
+                            </td>
+
+                            <td>
+                                {{ row["Lower Fence"] }}
+                            </td>
+
+                            <td>
+                                {{ row["Upper Fence"] }}
+                            </td>
+
+                            <td>
+                                {{ row["Training Outliers"] }}
+                            </td>
+
+                            <td>
+                                {{ row["Testing Outliers"] }}
+                            </td>
+
+                        </tr>
+
+                    {% endfor %}
+
+                    </tbody>
+
+                </table>
+
+
+            </div>
+
+        </section>
+
+
+        <!-- =================================================
+             MIN MAX SCALING
+             ================================================= -->
+
+        <section class="panel">
+
+
+            <div class="panel-heading">
+
+                <div>
+
+                    <span class="eyebrow">
+                        MIN-MAX SCALING
+                    </span>
+
+                    <h3>
+                        Values After Min-Max Transformation
+                    </h3>
+
+                </div>
+
+                <span class="section-number">
+                    04
+                </span>
+
+            </div>
+
+
+            <div class="table-scroll">
+
+
+                <table>
+
+                    <thead>
+
+                        <tr>
+
+                        {% for key in preprocessing.minmax_preview[0].keys() %}
+
+                            <th>
+                                {{ key }}
+                            </th>
+
+                        {% endfor %}
+
+                        </tr>
+
+                    </thead>
+
+
+                    <tbody>
+
+                    {% for row in preprocessing.minmax_preview %}
+
+                        <tr>
+
+                        {% for value in row.values() %}
+
+                            <td>
+                                {{ value }}
+                            </td>
+
+                        {% endfor %}
+
+                        </tr>
+
+                    {% endfor %}
+
+                    </tbody>
+
+                </table>
+
+
+            </div>
+
+        </section>
+
+
+        <!-- =================================================
+             STANDARD SCALING
+             ================================================= -->
+
+        <section class="panel">
+
+
+            <div class="panel-heading">
+
+                <div>
+
+                    <span class="eyebrow">
+                        STANDARD SCALING
+                    </span>
+
+                    <h3>
+                        Standardized Numerical Features
+                    </h3>
+
+                </div>
+
+                <span class="section-number">
+                    05
+                </span>
+
+            </div>
+
+
+            <div class="table-scroll">
+
+
+                <table>
+
+                    <thead>
+
+                        <tr>
+
+                        {% for key in preprocessing.standard_preview[0].keys() %}
+
+                            <th>
+                                {{ key }}
+                            </th>
+
+                        {% endfor %}
+
+                        </tr>
+
+                    </thead>
+
+
+                    <tbody>
+
+                    {% for row in preprocessing.standard_preview %}
+
+                        <tr>
+
+                        {% for value in row.values() %}
+
+                            <td>
+                                {{ value }}
+                            </td>
+
+                        {% endfor %}
+
+                        </tr>
+
+                    {% endfor %}
+
+                    </tbody>
+
+                </table>
+
+
+            </div>
+
+
+            <div class="insight">
+
+                <span>
+                    💡
+                </span>
+
+                <p>
+                    StandardScaler is used for the final
+                    numerical feature matrix.
+                </p>
+
+            </div>
+
+
+        </section>
+
+
+        <!-- =================================================
+             ONE HOT ENCODING
+             ================================================= -->
+
+        <section class="panel">
+
+
+            <div class="panel-heading">
+
+                <div>
+
+                    <span class="eyebrow">
+                        CATEGORICAL ENCODING
+                    </span>
+
+                    <h3>
+                        One-Hot Encoding
+                    </h3>
+
+                </div>
+
+                <span class="section-number">
+                    06
+                </span>
+
+            </div>
+
+
+            <p>
+                The Fruit column is a nominal categorical
+                feature, so One-Hot Encoding is applied.
+            </p>
+
+
+            <div class="table-scroll">
+
+
+                <table>
+
+                    <thead>
+
+                        <tr>
+
+                            <th>
+                                Generated Feature
+                            </th>
+
+                        </tr>
+
+                    </thead>
+
+
+                    <tbody>
+
+                    {% for column in preprocessing.onehot_columns %}
+
+                        <tr>
+
+                            <td>
+                                <strong>
+                                    {{ column }}
+                                </strong>
+                            </td>
+
+                        </tr>
+
+                    {% endfor %}
+
+                    </tbody>
+
+                </table>
+
+
+            </div>
+
+        </section>
+
+
+        <!-- =================================================
+             TARGET ENCODING
+             ================================================= -->
+
+        <section class="panel">
+
+
+            <div class="panel-heading">
+
+                <div>
+
+                    <span class="eyebrow">
+                        TARGET ENCODING
+                    </span>
+
+                    <h3>
+                        Fruit Quality Class
+                    </h3>
+
+                </div>
+
+                <span class="section-number">
+                    07
+                </span>
+
+            </div>
+
+
+            <div class="table-scroll">
+
+
+                <table>
+
+                    <thead>
+
+                        <tr>
+
+                            <th>
+                                Original
+                            </th>
+
+                            <th>
+                                Encoded
+                            </th>
+
+                        </tr>
+
+                    </thead>
+
+
+                    <tbody>
+
+                        <tr>
+
+                            <td>
+                                Bad
+                            </td>
+
+                            <td>
+                                0
+                            </td>
+
+                        </tr>
+
+                        <tr>
+
+                            <td>
+                                Good
+                            </td>
+
+                            <td>
+                                1
+                            </td>
+
+                        </tr>
+
+                    </tbody>
+
+                </table>
+
+
+            </div>
+
+
+        </section>
+
+
+        <!-- =================================================
+             FINAL DATA
+             ================================================= -->
+
+        <section class="panel">
+
+
+            <div class="panel-heading">
+
+                <div>
+
+                    <span class="eyebrow">
+                        FINAL DATASET
+                    </span>
+
+                    <h3>
+                        Model-Ready Feature Matrix
+                    </h3>
+
+                </div>
+
+                <span class="section-number">
+                    08
+                </span>
+
+            </div>
+
+
+            <div class="stats-grid">
+
+
+                <div class="stat-card">
+
+                    <span>
+                        TRAINING FEATURES
+                    </span>
+
+                    <strong>
+                        {{ preprocessing.X_train_shape[1] }}
+                    </strong>
+
+                    <small>
+                        Processed columns
+                    </small>
+
+                </div>
+
+
+                <div class="stat-card">
+
+                    <span>
+                        TRAINING ROWS
+                    </span>
+
+                    <strong>
+                        {{ preprocessing.X_train_shape[0] }}
+                    </strong>
+
+                    <small>
+                        Final X_train
+                    </small>
+
+                </div>
+
+
+                <div class="stat-card">
+
+                    <span>
+                        TESTING ROWS
+                    </span>
+
+                    <strong>
+                        {{ preprocessing.X_test_shape[0] }}
+                    </strong>
+
+                    <small>
+                        Final X_test
+                    </small>
+
+                </div>
+
+
+            </div>
+
+
+            <div class="table-scroll">
+
+
+                <table>
+
+                    <thead>
+
+                        <tr>
+
+                        {% for key in preprocessing.final_train_preview[0].keys() %}
+
+                            <th>
+                                {{ key }}
+                            </th>
+
+                        {% endfor %}
+
+                        </tr>
+
+                    </thead>
+
+
+                    <tbody>
+
+                    {% for row in preprocessing.final_train_preview %}
+
+                        <tr>
+
+                        {% for value in row.values() %}
+
+                            <td>
+                                {{ value }}
+                            </td>
+
+                        {% endfor %}
+
+                        </tr>
+
+                    {% endfor %}
+
+                    </tbody>
+
+                </table>
+
+
+            </div>
+
+
+        </section>
+
+
+        {% endif %}
+
+
+    </main>
+
+
+</div>
+
+
+</body>
+
+</html>
