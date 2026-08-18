@@ -1,0 +1,919 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>
+        FruitSense | Fruit Quality Analytics
+    </title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='style.css') }}">
+
+</head>
+
+
+<body>
+
+
+<div class="app-shell">
+
+
+    <!-- ================= SIDEBAR ================= -->
+
+    <aside class="sidebar">
+
+
+        <div class="brand">
+
+            <div class="brand-icon">
+                🍃
+            </div>
+
+            <div>
+
+                <h2>
+                    FruitSense
+                </h2>
+
+                <span>
+                    Quality Analytics
+                </span>
+
+            </div>
+
+        </div>
+
+
+        <div class="nav-label">
+            ANALYTICS
+        </div>
+
+
+        <nav>
+
+
+            <!-- DASHBOARD -->
+
+            <a href="{{ url_for('index') }}"
+               class="nav-item {% if active == 'none' %}active{% endif %}">
+
+                <span class="nav-icon">
+                    ⌂
+                </span>
+
+                Dashboard
+
+            </a>
+
+
+            <!-- DATA LOADING -->
+
+            <a href="{{ url_for('data_loading') }}"
+               class="nav-item {% if active == 'data-loading' %}active{% endif %}">
+
+                <span class="nav-icon">
+                    ▣
+                </span>
+
+                Data Loading
+
+            </a>
+
+
+            <!-- EDA -->
+
+            <a href="{{ url_for('eda') }}"
+               class="nav-item {% if active == 'eda' %}active{% endif %}">
+
+                <span class="nav-icon">
+                    ◒
+                </span>
+
+                Exploratory Analysis
+
+            </a>
+
+
+        </nav>
+
+
+        <div class="nav-label future-label">
+            PROJECT MODULES
+        </div>
+
+
+        <!-- ================= PREPROCESSING ================= -->
+
+        <a href="{{ url_for('preprocessing') }}"
+           class="nav-item {% if active == 'preprocessing' %}active{% endif %}">
+
+            <span class="nav-icon">
+                ⚙
+            </span>
+
+            Preprocessing
+
+        </a>
+
+
+        <!-- ================= MODEL TRAINING ================= -->
+
+        <div class="nav-item disabled">
+
+            <span class="nav-icon">
+                ◆
+            </span>
+
+            Model Training
+
+            <span class="soon">
+                Soon
+            </span>
+
+        </div>
+
+
+        <!-- ================= PREDICTION ================= -->
+
+        <div class="nav-item disabled">
+
+            <span class="nav-icon">
+                ↗
+            </span>
+
+            Prediction
+
+            <span class="soon">
+                Soon
+            </span>
+
+        </div>
+
+
+        <!-- ================= PROJECT STATUS ================= -->
+
+        <div class="sidebar-bottom">
+
+            <div class="status-dot"></div>
+
+            <div>
+
+                <strong>
+                    Project Status
+                </strong>
+
+                <span>
+                    Preprocessing completed
+                </span>
+
+            </div>
+
+        </div>
+
+
+    </aside>
+
+
+    <!-- ================= MAIN CONTENT ================= -->
+
+    <main class="main-content">
+
+
+        <!-- ================= HEADER ================= -->
+
+        <header class="topbar">
+
+
+            <div>
+
+                <span class="eyebrow">
+                    SMART AGRICULTURE • IOT DATA
+                </span>
+
+
+                <h1>
+                    Fruit Quality Analytics
+                </h1>
+
+
+                <p>
+                    Explore environmental conditions and understand
+                    fruit quality patterns.
+                </p>
+
+            </div>
+
+
+            <div class="top-badge">
+
+                <span class="pulse"></span>
+
+                Dataset Connected
+
+            </div>
+
+
+        </header>
+
+
+        <!-- =====================================================
+             DASHBOARD
+             ===================================================== -->
+
+        {% if active == 'none' %}
+
+
+        <!-- ================= HERO ================= -->
+
+        <section class="hero">
+
+
+            <div class="hero-text">
+
+
+                <span class="hero-tag">
+                    FRUIT QUALITY MONITORING
+                </span>
+
+
+                <h2>
+
+                    Turn environmental data into
+
+                    <span>
+                        quality insights.
+                    </span>
+
+                </h2>
+
+
+                <p>
+
+                    Analyze temperature, humidity,
+                    light intensity and CO₂ measurements
+                    to discover patterns related to fruit quality.
+
+                </p>
+
+
+                <div class="hero-actions">
+
+
+                    <!-- DATASET -->
+
+                    <a href="{{ url_for('data_loading') }}"
+                       class="primary-btn">
+
+                        Explore Dataset →
+
+                    </a>
+
+
+                    <!-- EDA -->
+
+                    <a href="{{ url_for('eda') }}"
+                       class="secondary-btn">
+
+                        View EDA
+
+                    </a>
+
+
+                    <!-- PREPROCESSING -->
+
+                    <a href="{{ url_for('preprocessing') }}"
+                       class="secondary-btn">
+
+                        View Preprocessing
+
+                    </a>
+
+
+                </div>
+
+
+            </div>
+
+
+            <!-- ================= HERO VISUAL ================= -->
+
+            <div class="hero-visual">
+
+
+                <div class="leaf-orbit orbit-one"></div>
+
+                <div class="leaf-orbit orbit-two"></div>
+
+
+                <div class="fruit-circle">
+                    🍎
+                </div>
+
+
+                <div class="mini-fruit fruit-one">
+                    🍊
+                </div>
+
+
+                <div class="mini-fruit fruit-two">
+                    🍋
+                </div>
+
+
+                <div class="mini-fruit fruit-three">
+                    🍏
+                </div>
+
+
+            </div>
+
+
+        </section>
+
+
+        <!-- ================= OVERVIEW CARDS ================= -->
+
+        <section class="overview-grid">
+
+
+            <div class="info-card">
+
+
+                <div class="card-icon green">
+                    ◫
+                </div>
+
+
+                <div>
+
+                    <span>
+                        Dataset
+                    </span>
+
+
+                    <strong>
+                        Fruit Quality
+                    </strong>
+
+
+                    <small>
+                        Environmental monitoring data
+                    </small>
+
+                </div>
+
+
+            </div>
+
+
+            <div class="info-card">
+
+
+                <div class="card-icon orange">
+                    ◎
+                </div>
+
+
+                <div>
+
+                    <span>
+                        Target
+                    </span>
+
+
+                    <strong>
+                        Class
+                    </strong>
+
+
+                    <small>
+                        Good / Bad quality labels
+                    </small>
+
+                </div>
+
+
+            </div>
+
+
+            <div class="info-card">
+
+
+                <div class="card-icon blue">
+                    ⌁
+                </div>
+
+
+                <div>
+
+                    <span>
+                        Analysis
+                    </span>
+
+
+                    <strong>
+                        EDA + Preprocessing
+                    </strong>
+
+
+                    <small>
+                        Data preparation completed
+                    </small>
+
+                </div>
+
+
+            </div>
+
+
+        </section>
+
+
+        <!-- ================= WORKFLOW ================= -->
+
+        <section class="quick-section">
+
+
+            <div class="section-heading">
+
+
+                <div>
+
+                    <span class="eyebrow">
+                        PROJECT WORKFLOW
+                    </span>
+
+
+                    <h3>
+                        Current progress
+                    </h3>
+
+                </div>
+
+
+                <span class="progress-pill">
+                    3 / 5 modules
+                </span>
+
+
+            </div>
+
+
+            <div class="workflow">
+
+
+                <!-- ================= STEP 01 ================= -->
+
+                <div class="workflow-step done">
+
+
+                    <div class="step-number">
+                        01
+                    </div>
+
+
+                    <div>
+
+                        <strong>
+                            Data Loading
+                        </strong>
+
+
+                        <span>
+                            Dataset imported and inspected
+                        </span>
+
+                    </div>
+
+
+                    <b>
+                        ✓
+                    </b>
+
+
+                </div>
+
+
+                <div class="workflow-line"></div>
+
+
+                <!-- ================= STEP 02 ================= -->
+
+                <div class="workflow-step done">
+
+
+                    <div class="step-number">
+                        02
+                    </div>
+
+
+                    <div>
+
+                        <strong>
+                            Exploratory Analysis
+                        </strong>
+
+
+                        <span>
+                            Distributions and relationships analyzed
+                        </span>
+
+                    </div>
+
+
+                    <b>
+                        ✓
+                    </b>
+
+
+                </div>
+
+
+                <div class="workflow-line"></div>
+
+
+                <!-- ================= STEP 03 ================= -->
+
+                <div class="workflow-step done">
+
+
+                    <div class="step-number">
+                        03
+                    </div>
+
+
+                    <div>
+
+                        <strong>
+                            Preprocessing
+                        </strong>
+
+
+                        <span>
+                            Cleaning and feature preparation completed
+                        </span>
+
+                    </div>
+
+
+                    <b>
+                        ✓
+                    </b>
+
+
+                </div>
+
+
+            </div>
+
+
+        </section>
+
+
+        <!-- =====================================================
+             DATA LOADING MODULE
+             ===================================================== -->
+
+        {% elif active == 'data-loading' %}
+
+
+        <section class="page-title">
+
+
+            <span class="eyebrow">
+                MODULE 01
+            </span>
+
+
+            <h2>
+                Data Loading
+            </h2>
+
+
+            <p>
+                Inspect the structure and quality
+                of the uploaded fruit dataset.
+            </p>
+
+
+        </section>
+
+
+        {% if error %}
+
+
+        <div class="error-box">
+            {{ error }}
+        </div>
+
+
+        {% endif %}
+
+
+        {% if summary %}
+
+
+        <!-- ================= STATISTICS ================= -->
+
+        <section class="stats-grid">
+
+
+            <div class="stat-card">
+
+
+                <span>
+                    ROWS
+                </span>
+
+
+                <strong>
+                    {{ summary.n_rows }}
+                </strong>
+
+
+                <small>
+                    Dataset observations
+                </small>
+
+
+            </div>
+
+
+            <div class="stat-card">
+
+
+                <span>
+                    COLUMNS
+                </span>
+
+
+                <strong>
+                    {{ summary.n_cols }}
+                </strong>
+
+
+                <small>
+                    Features and target
+                </small>
+
+
+            </div>
+
+
+            <div class="stat-card">
+
+
+                <span>
+                    FEATURES
+                </span>
+
+
+                <strong>
+                    {{ summary.n_cols - 1 }}
+                </strong>
+
+
+                <small>
+                    Input variables
+                </small>
+
+
+            </div>
+
+
+        </section>
+
+
+        <!-- ================= SCHEMA ================= -->
+
+        <section class="panel">
+
+
+            <div class="panel-heading">
+
+
+                <div>
+
+                    <span class="eyebrow">
+                        SCHEMA
+                    </span>
+
+
+                    <h3>
+                        Column Information
+                    </h3>
+
+                </div>
+
+
+            </div>
+
+
+            <div class="table-scroll">
+
+
+                <table>
+
+
+                    <thead>
+
+                        <tr>
+
+                            <th>
+                                Column
+                            </th>
+
+                            <th>
+                                Data Type
+                            </th>
+
+                            <th>
+                                Missing Values
+                            </th>
+
+                        </tr>
+
+                    </thead>
+
+
+                    <tbody>
+
+
+                    {% for col in summary.columns %}
+
+
+                        <tr>
+
+
+                            <td>
+
+                                <strong>
+                                    {{ col }}
+                                </strong>
+
+                            </td>
+
+
+                            <td>
+
+                                <span class="type-chip">
+
+                                    {{ summary.dtypes[col] }}
+
+                                </span>
+
+                            </td>
+
+
+                            <td>
+
+
+                                {% if summary.missing_counts[col] == 0 %}
+
+
+                                <span class="good-chip">
+                                    No Missing Data
+                                </span>
+
+
+                                {% else %}
+
+
+                                {{ summary.missing_counts[col] }}
+
+
+                                {% endif %}
+
+
+                            </td>
+
+
+                        </tr>
+
+
+                    {% endfor %}
+
+
+                    </tbody>
+
+
+                </table>
+
+
+            </div>
+
+
+        </section>
+
+
+        <!-- ================= RAW DATA ================= -->
+
+        <section class="panel">
+
+
+            <div class="panel-heading">
+
+
+                <div>
+
+                    <span class="eyebrow">
+                        RAW DATA
+                    </span>
+
+
+                    <h3>
+                        First 10 Records
+                    </h3>
+
+                </div>
+
+
+            </div>
+
+
+            <div class="table-scroll">
+
+
+                <table>
+
+
+                    <thead>
+
+                        <tr>
+
+
+                        {% for col in summary.columns %}
+
+
+                            <th>
+                                {{ col }}
+                            </th>
+
+
+                        {% endfor %}
+
+
+                        </tr>
+
+                    </thead>
+
+
+                    <tbody>
+
+
+                    {% for row in summary.preview %}
+
+
+                        <tr>
+
+
+                        {% for col in summary.columns %}
+
+
+                            <td>
+                                {{ row[col] }}
+                            </td>
+
+
+                        {% endfor %}
+
+
+                        </tr>
+
+
+                    {% endfor %}
+
+
+                    </tbody>
+
+
+                </table>
+
+
+            </div>
+
+
+        </section>
+
+
+        {% endif %}
+
+
+        {% endif %}
+
+
+    </main>
+
+
+</div>
+
+
+</body>
+
+</html>
