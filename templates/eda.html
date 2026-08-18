@@ -1,0 +1,1062 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>
+        FruitSense | EDA
+    </title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='style.css') }}">
+
+</head>
+
+
+<body>
+
+
+<div class="app-shell">
+
+
+    <!-- ================= SIDEBAR ================= -->
+
+    <aside class="sidebar">
+
+
+        <div class="brand">
+
+
+            <div class="brand-icon">
+                🍃
+            </div>
+
+
+            <div>
+
+                <h2>
+                    FruitSense
+                </h2>
+
+
+                <span>
+                    Quality Analytics
+                </span>
+
+            </div>
+
+
+        </div>
+
+
+        <div class="nav-label">
+            ANALYTICS
+        </div>
+
+
+        <nav>
+
+
+            <!-- DASHBOARD -->
+
+            <a href="{{ url_for('index') }}"
+               class="nav-item">
+
+                <span class="nav-icon">
+                    ⌂
+                </span>
+
+                Dashboard
+
+            </a>
+
+
+            <!-- DATA LOADING -->
+
+            <a href="{{ url_for('data_loading') }}"
+               class="nav-item">
+
+                <span class="nav-icon">
+                    ▣
+                </span>
+
+                Data Loading
+
+            </a>
+
+
+            <!-- EDA -->
+
+            <a href="{{ url_for('eda') }}"
+               class="nav-item active">
+
+                <span class="nav-icon">
+                    ◒
+                </span>
+
+                Exploratory Analysis
+
+            </a>
+
+
+        </nav>
+
+
+        <div class="nav-label future-label">
+            PROJECT MODULES
+        </div>
+
+
+        <!-- ================= PREPROCESSING ================= -->
+
+        <a href="{{ url_for('preprocessing') }}"
+           class="nav-item">
+
+            <span class="nav-icon">
+                ⚙
+            </span>
+
+            Preprocessing
+
+        </a>
+
+
+        <!-- ================= MODEL TRAINING ================= -->
+
+        <div class="nav-item disabled">
+
+
+            <span class="nav-icon">
+                ◆
+            </span>
+
+
+            Model Training
+
+
+            <span class="soon">
+                Soon
+            </span>
+
+
+        </div>
+
+
+        <!-- ================= PREDICTION ================= -->
+
+        <div class="nav-item disabled">
+
+
+            <span class="nav-icon">
+                ↗
+            </span>
+
+
+            Prediction
+
+
+            <span class="soon">
+                Soon
+            </span>
+
+
+        </div>
+
+
+        <!-- ================= PROJECT STATUS ================= -->
+
+        <div class="sidebar-bottom">
+
+
+            <div class="status-dot"></div>
+
+
+            <div>
+
+                <strong>
+                    Project Status
+                </strong>
+
+
+                <span>
+                    Preprocessing completed
+                </span>
+
+            </div>
+
+
+        </div>
+
+
+    </aside>
+
+
+    <!-- ================= MAIN ================= -->
+
+    <main class="main-content">
+
+
+        <!-- ================= HEADER ================= -->
+
+        <header class="topbar">
+
+
+            <div>
+
+
+                <span class="eyebrow">
+                    MODULE 02 • EXPLORATORY ANALYSIS
+                </span>
+
+
+                <h1>
+                    Understand the Dataset
+                </h1>
+
+
+                <p>
+                    Discover distributions, quality labels
+                    and relationships between environmental features.
+                </p>
+
+
+            </div>
+
+
+            <div class="top-badge">
+
+
+                <span class="pulse"></span>
+
+
+                EDA Active
+
+
+            </div>
+
+
+        </header>
+
+
+        {% if error %}
+
+
+        <div class="error-box">
+            {{ error }}
+        </div>
+
+
+        {% else %}
+
+
+        <!-- ================= STATISTICS ================= -->
+
+        <section class="stats-grid">
+
+
+            <div class="stat-card">
+
+
+                <span>
+                    TOTAL ROWS
+                </span>
+
+
+                <strong>
+                    {{ eda.rows }}
+                </strong>
+
+
+                <small>
+                    Observations
+                </small>
+
+
+            </div>
+
+
+            <div class="stat-card">
+
+
+                <span>
+                    FEATURES
+                </span>
+
+
+                <strong>
+                    {{ eda.columns }}
+                </strong>
+
+
+                <small>
+                    Columns in dataset
+                </small>
+
+
+            </div>
+
+
+            <div class="stat-card">
+
+
+                <span>
+                    DUPLICATES
+                </span>
+
+
+                <strong>
+                    {{ eda.duplicate_rows }}
+                </strong>
+
+
+                <small>
+                    Repeated records
+                </small>
+
+
+            </div>
+
+
+            <div class="stat-card">
+
+
+                <span>
+                    MISSING VALUES
+                </span>
+
+
+                <strong>
+
+                    {% set total_missing = 0 %}
+
+                    {% for item in eda.missing %}
+
+                        {% set total_missing =
+                           total_missing + item.count %}
+
+                    {% endfor %}
+
+                    {{ total_missing }}
+
+                </strong>
+
+
+                <small>
+                    Across all columns
+                </small>
+
+
+            </div>
+
+
+        </section>
+
+
+        <!-- ================= TARGET ANALYSIS ================= -->
+
+        <section class="panel">
+
+
+            <div class="panel-heading">
+
+
+                <div>
+
+
+                    <span class="eyebrow">
+                        TARGET ANALYSIS
+                    </span>
+
+
+                    <h3>
+                        Fruit Quality Classes
+                    </h3>
+
+
+                </div>
+
+
+                <span class="section-number">
+                    01
+                </span>
+
+
+            </div>
+
+
+            <div class="analysis-grid">
+
+
+                <div>
+
+
+                    <div class="table-scroll compact">
+
+
+                        <table>
+
+
+                            <thead>
+
+
+                                <tr>
+
+                                    <th>
+                                        Class
+                                    </th>
+
+                                    <th>
+                                        Records
+                                    </th>
+
+                                </tr>
+
+
+                            </thead>
+
+
+                            <tbody>
+
+
+                            {% for key, value in eda.class_counts.items() %}
+
+
+                                <tr>
+
+
+                                    <td>
+
+                                        <strong>
+                                            {{ key }}
+                                        </strong>
+
+                                    </td>
+
+
+                                    <td>
+                                        {{ value }}
+                                    </td>
+
+
+                                </tr>
+
+
+                            {% endfor %}
+
+
+                            </tbody>
+
+
+                        </table>
+
+
+                    </div>
+
+
+                    <div class="insight">
+
+
+                        <span>
+                            💡
+                        </span>
+
+
+                        <p>
+
+                            The raw dataset contains both
+                            <b>Bad</b> and <b>BAD</b>.
+                            These can be standardized during preprocessing.
+
+                        </p>
+
+
+                    </div>
+
+
+                </div>
+
+
+                <div class="chart-card">
+
+
+                    <img
+                        src="{{ url_for('static', filename='charts/class_distribution.png') }}"
+                        alt="Class distribution">
+
+
+                </div>
+
+
+            </div>
+
+
+        </section>
+
+
+        <!-- ================= FRUIT TYPE ================= -->
+
+        <section class="panel">
+
+
+            <div class="panel-heading">
+
+
+                <div>
+
+
+                    <span class="eyebrow">
+                        CATEGORY ANALYSIS
+                    </span>
+
+
+                    <h3>
+                        Fruit Type Distribution
+                    </h3>
+
+
+                </div>
+
+
+                <span class="section-number">
+                    02
+                </span>
+
+
+            </div>
+
+
+            <div class="analysis-grid">
+
+
+                <div class="chart-card">
+
+
+                    <img
+                        src="{{ url_for('static', filename='charts/fruit_distribution.png') }}"
+                        alt="Fruit distribution">
+
+
+                </div>
+
+
+                <div class="table-scroll compact">
+
+
+                    <table>
+
+
+                        <thead>
+
+
+                            <tr>
+
+                                <th>
+                                    Fruit
+                                </th>
+
+                                <th>
+                                    Records
+                                </th>
+
+                            </tr>
+
+
+                        </thead>
+
+
+                        <tbody>
+
+
+                        {% for key, value in eda.fruit_counts.items() %}
+
+
+                            <tr>
+
+
+                                <td>
+
+                                    <strong>
+                                        {{ key }}
+                                    </strong>
+
+                                </td>
+
+
+                                <td>
+                                    {{ value }}
+                                </td>
+
+
+                            </tr>
+
+
+                        {% endfor %}
+
+
+                        </tbody>
+
+
+                    </table>
+
+
+                </div>
+
+
+            </div>
+
+
+        </section>
+
+
+        <!-- ================= NUMERICAL STATISTICS ================= -->
+
+        <section class="panel">
+
+
+            <div class="panel-heading">
+
+
+                <div>
+
+
+                    <span class="eyebrow">
+                        NUMERICAL ANALYSIS
+                    </span>
+
+
+                    <h3>
+                        Feature Statistics
+                    </h3>
+
+
+                </div>
+
+
+                <span class="section-number">
+                    03
+                </span>
+
+
+            </div>
+
+
+            <div class="table-scroll">
+
+
+                <table>
+
+
+                    <thead>
+
+
+                        <tr>
+
+
+                        {% for key in eda.numeric_description[0].keys() %}
+
+
+                            <th>
+                                {{ key }}
+                            </th>
+
+
+                        {% endfor %}
+
+
+                        </tr>
+
+
+                    </thead>
+
+
+                    <tbody>
+
+
+                    {% for row in eda.numeric_description %}
+
+
+                        <tr>
+
+
+                        {% for value in row.values() %}
+
+
+                            <td>
+                                {{ value }}
+                            </td>
+
+
+                        {% endfor %}
+
+
+                        </tr>
+
+
+                    {% endfor %}
+
+
+                    </tbody>
+
+
+                </table>
+
+
+            </div>
+
+
+        </section>
+
+
+        <!-- ================= DISTRIBUTIONS ================= -->
+
+        <section class="panel">
+
+
+            <div class="panel-heading">
+
+
+                <div>
+
+
+                    <span class="eyebrow">
+                        DISTRIBUTIONS
+                    </span>
+
+
+                    <h3>
+                        Environmental Parameters
+                    </h3>
+
+
+                </div>
+
+
+                <span class="section-number">
+                    04
+                </span>
+
+
+            </div>
+
+
+            <div class="chart-grid">
+
+
+                <!-- TEMPERATURE -->
+
+                <div class="chart-card">
+
+
+                    <div class="chart-title">
+                        Temperature
+                    </div>
+
+
+                    <img
+                        src="{{ url_for('static', filename='charts/temperature_distribution.png') }}"
+                        alt="Temperature">
+
+
+                </div>
+
+
+                <!-- HUMIDITY -->
+
+                <div class="chart-card">
+
+
+                    <div class="chart-title">
+                        Humidity
+                    </div>
+
+
+                    <img
+                        src="{{ url_for('static', filename='charts/humidity_distribution.png') }}"
+                        alt="Humidity">
+
+
+                </div>
+
+
+                <!-- LIGHT -->
+
+                <div class="chart-card">
+
+
+                    <div class="chart-title">
+                        Light Intensity
+                    </div>
+
+
+                    <img
+                        src="{{ url_for('static', filename='charts/light_distribution.png') }}"
+                        alt="Light">
+
+
+                </div>
+
+
+                <!-- CO2 -->
+
+                <div class="chart-card">
+
+
+                    <div class="chart-title">
+                        CO₂ Level
+                    </div>
+
+
+                    <img
+                        src="{{ url_for('static', filename='charts/co2_distribution.png') }}"
+                        alt="CO₂">
+
+
+                </div>
+
+
+            </div>
+
+
+        </section>
+
+
+        <!-- ================= CORRELATION ================= -->
+
+        <section class="panel">
+
+
+            <div class="panel-heading">
+
+
+                <div>
+
+
+                    <span class="eyebrow">
+                        RELATIONSHIPS
+                    </span>
+
+
+                    <h3>
+                        Correlation Matrix
+                    </h3>
+
+
+                </div>
+
+
+                <span class="section-number">
+                    05
+                </span>
+
+
+            </div>
+
+
+            <div class="center-chart">
+
+
+                <img
+                    src="{{ url_for('static', filename='charts/correlation_heatmap.png') }}"
+                    alt="Correlation matrix">
+
+
+            </div>
+
+
+        </section>
+
+
+        <!-- ================= FRUIT COMPARISON ================= -->
+
+        <section class="panel">
+
+
+            <div class="panel-heading">
+
+
+                <div>
+
+
+                    <span class="eyebrow">
+                        COMPARISON
+                    </span>
+
+
+                    <h3>
+                        Features by Fruit Type
+                    </h3>
+
+
+                </div>
+
+
+                <span class="section-number">
+                    06
+                </span>
+
+
+            </div>
+
+
+            <div class="chart-grid">
+
+
+                <!-- TEMPERATURE -->
+
+                <div class="chart-card">
+
+
+                    <div class="chart-title">
+                        Temperature by Fruit
+                    </div>
+
+
+                    <img
+                        src="{{ url_for('static', filename='charts/Temp_by_fruit.png') }}"
+                        alt="Temperature by fruit">
+
+
+                </div>
+
+
+                <!-- HUMIDITY -->
+
+                <div class="chart-card">
+
+
+                    <div class="chart-title">
+                        Humidity by Fruit
+                    </div>
+
+
+                    <img
+                        src="{{ url_for('static', filename='charts/Humid_pct_by_fruit.png') }}"
+                        alt="Humidity by fruit">
+
+
+                </div>
+
+
+                <!-- LIGHT -->
+
+                <div class="chart-card">
+
+
+                    <div class="chart-title">
+                        Light by Fruit
+                    </div>
+
+
+                    <img
+                        src="{{ url_for('static', filename='charts/Light_Fux_by_fruit.png') }}"
+                        alt="Light by fruit">
+
+
+                </div>
+
+
+                <!-- CO2 -->
+
+                <div class="chart-card">
+
+
+                    <div class="chart-title">
+                        CO₂ by Fruit
+                    </div>
+
+
+                    <img
+                        src="{{ url_for('static', filename='charts/CO2_pmm_by_fruit.png') }}"
+                        alt="CO₂ by fruit">
+
+
+                </div>
+
+
+            </div>
+
+
+        </section>
+
+
+        <!-- ================= NEXT MODULE ================= -->
+
+        <section class="panel">
+
+
+            <div class="panel-heading">
+
+
+                <div>
+
+
+                    <span class="eyebrow">
+                        NEXT MODULE
+                    </span>
+
+
+                    <h3>
+                        Continue to Preprocessing
+                    </h3>
+
+
+                </div>
+
+
+                <span class="section-number">
+                    07
+                </span>
+
+
+            </div>
+
+
+            <div class="insight">
+
+
+                <span>
+                    ⚙
+                </span>
+
+
+                <p>
+
+                    EDA is complete. Continue to preprocessing
+                    to handle duplicates, missing values, outliers,
+                    feature scaling and categorical encoding.
+
+                    <br><br>
+
+                    <a href="{{ url_for('preprocessing') }}"
+                       class="secondary-btn">
+
+                        Open Preprocessing →
+
+                    </a>
+
+                </p>
+
+
+            </div>
+
+
+        </section>
+
+
+        {% endif %}
+
+
+    </main>
+
+
+</div>
+
+
+</body>
+
+</html>
