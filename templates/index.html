@@ -1,0 +1,648 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>FruitSense | Quality Analytics</title>
+
+    <link
+        rel="stylesheet"
+        href="{{ url_for('static', filename='style.css') }}"
+    >
+
+</head>
+
+
+<body>
+
+<div class="app-layout">
+
+
+    <!-- =====================================================
+         SIDEBAR
+         ===================================================== -->
+
+    <aside class="sidebar">
+
+        <div class="brand">
+
+            <div class="brand-icon">
+                🍃
+            </div>
+
+            <div>
+
+                <h2>FruitSense</h2>
+
+                <p>Quality Analytics</p>
+
+            </div>
+
+        </div>
+
+
+        <div class="sidebar-section-title">
+            ANALYTICS
+        </div>
+
+
+        <!-- Dashboard -->
+
+        <a
+            href="{{ url_for('index') }}"
+            class="nav-item {% if active == 'dashboard' %}active{% endif %}"
+        >
+
+            <span class="nav-icon">⌂</span>
+
+            <span>Dashboard</span>
+
+        </a>
+
+
+        <!-- Data Loading -->
+
+        <a
+            href="{{ url_for('data_loading') }}"
+            class="nav-item {% if active == 'data-loading' %}active{% endif %}"
+        >
+
+            <span class="nav-icon">▣</span>
+
+            <span>Data Loading</span>
+
+        </a>
+
+
+        <!-- EDA -->
+
+        <a
+            href="{{ url_for('eda') }}"
+            class="nav-item {% if active == 'eda' %}active{% endif %}"
+        >
+
+            <span class="nav-icon">◒</span>
+
+            <span>Exploratory Analysis</span>
+
+        </a>
+
+
+        <!-- =================================================
+             MACHINE LEARNING OPTIONS
+             No "MACHINE LEARNING" heading intentionally.
+             ================================================= -->
+
+
+        <!-- Preprocessing -->
+
+        <a
+            href="{{ url_for('preprocessing') }}"
+            class="nav-item {% if active == 'preprocessing' %}active{% endif %}"
+        >
+
+            <span class="nav-icon">⚙</span>
+
+            <span>Preprocessing</span>
+
+        </a>
+
+
+        <!-- Linear Regression -->
+
+        <a
+            href="{{ url_for('linear_regression') }}"
+            class="nav-item {% if active == 'linear-regression' %}active{% endif %}"
+        >
+
+            <span class="nav-icon">📈</span>
+
+            <span>Linear Regression</span>
+
+        </a>
+
+
+        <!-- Logistic Regression -->
+
+        <a
+            href="{{ url_for('logistic_regression') }}"
+            class="nav-item {% if active == 'logistic-regression' %}active{% endif %}"
+        >
+
+            <span class="nav-icon">🎯</span>
+
+            <span>Logistic Regression</span>
+
+        </a>
+
+
+        <!-- Sidebar Bottom -->
+
+        <div class="sidebar-status">
+
+            <div class="status-dot"></div>
+
+            <div>
+
+                <strong>Project Status</strong>
+
+                <small>
+                    Classification active
+                </small>
+
+            </div>
+
+        </div>
+
+    </aside>
+
+
+
+    <!-- =====================================================
+         MAIN CONTENT
+         ===================================================== -->
+
+    <main class="main-content">
+
+
+        <!-- =================================================
+             HEADER
+             ================================================= -->
+
+        <header class="page-header">
+
+            <div>
+
+                <div class="eyebrow">
+                    FRESHCHAIN • QUALITY ANALYTICS
+                </div>
+
+                <h1>
+                    Fruit Quality
+                    <br>
+                    Intelligence
+                </h1>
+
+                <p>
+                    Analyze environmental conditions and
+                    predict fruit quality using machine learning.
+                </p>
+
+            </div>
+
+
+            <div class="system-status">
+
+                <span></span>
+
+                System Active
+
+            </div>
+
+        </header>
+
+
+
+        <!-- =================================================
+             ERROR
+             ================================================= -->
+
+        {% if error %}
+
+        <div class="error-box">
+
+            {{ error }}
+
+        </div>
+
+        {% endif %}
+
+
+
+        <!-- =================================================
+             DATA LOADING VIEW
+             ================================================= -->
+
+        {% if active == "data-loading" and summary %}
+
+        <section class="content-section">
+
+            <div class="section-heading">
+
+                <div>
+
+                    <div class="eyebrow">
+                        DATASET
+                    </div>
+
+                    <h2>
+                        Data Loading
+                    </h2>
+
+                    <p>
+                        Overview of the FreshChain dataset.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <div class="stats-grid">
+
+                <div class="stat-card">
+
+                    <span>Rows</span>
+
+                    <strong>
+                        {{ summary.rows }}
+                    </strong>
+
+                </div>
+
+
+                <div class="stat-card">
+
+                    <span>Columns</span>
+
+                    <strong>
+                        {{ summary.columns }}
+                    </strong>
+
+                </div>
+
+
+                <div class="stat-card">
+
+                    <span>Missing Values</span>
+
+                    <strong>
+                        {{ summary.missing_total }}
+                    </strong>
+
+                </div>
+
+
+                <div class="stat-card">
+
+                    <span>Duplicate Rows</span>
+
+                    <strong>
+                        {{ summary.duplicate_rows }}
+                    </strong>
+
+                </div>
+
+            </div>
+
+
+            <div class="card">
+
+                <h3>
+                    Dataset Columns
+                </h3>
+
+                <div class="tag-container">
+
+                    {% for column in summary.column_names %}
+
+                    <span class="tag">
+                        {{ column }}
+                    </span>
+
+                    {% endfor %}
+
+                </div>
+
+            </div>
+
+
+            <div class="card">
+
+                <h3>
+                    Dataset Preview
+                </h3>
+
+                <div class="table-wrapper">
+
+                    <table>
+
+                        <thead>
+
+                            <tr>
+
+                                {% for column in summary.column_names %}
+
+                                <th>
+                                    {{ column }}
+                                </th>
+
+                                {% endfor %}
+
+                            </tr>
+
+                        </thead>
+
+
+                        <tbody>
+
+                            {% for row in summary.preview %}
+
+                            <tr>
+
+                                {% for column in summary.column_names %}
+
+                                <td>
+                                    {{ row[column] }}
+                                </td>
+
+                                {% endfor %}
+
+                            </tr>
+
+                            {% endfor %}
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        {% else %}
+
+
+
+        <!-- =================================================
+             DASHBOARD
+             ================================================= -->
+
+        <section class="hero-card">
+
+            <div class="hero-content">
+
+                <div class="eyebrow light">
+                    FRESHCHAIN ANALYTICS PLATFORM
+                </div>
+
+                <h2>
+                    Understand your
+                    <span>fruit.</span>
+                    <br>
+                    Improve your
+                    <span>quality.</span>
+                </h2>
+
+                <p>
+
+                    Explore your fruit quality dataset,
+                    understand environmental patterns,
+                    preprocess the data and apply machine
+                    learning algorithms to support better
+                    quality decisions.
+
+                </p>
+
+
+                <div class="hero-buttons">
+
+                    <a
+                        href="{{ url_for('data_loading') }}"
+                        class="btn primary"
+                    >
+                        Load Dataset
+                    </a>
+
+
+                    <a
+                        href="{{ url_for('eda') }}"
+                        class="btn secondary"
+                    >
+                        Explore Data
+                    </a>
+
+                </div>
+
+            </div>
+
+
+            <div class="fruit-visual">
+
+                <div class="fruit-circle">
+
+                    🍎
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- =================================================
+             FEATURE CARDS
+             ================================================= -->
+
+        <section class="feature-grid">
+
+
+            <a
+                href="{{ url_for('eda') }}"
+                class="feature-card"
+            >
+
+                <div class="feature-icon">
+                    📊
+                </div>
+
+                <div>
+
+                    <small>
+                        ANALYSIS
+                    </small>
+
+                    <h3>
+                        Exploratory Data Analysis
+                    </h3>
+
+                    <p>
+                        Understand dataset patterns
+                    </p>
+
+                </div>
+
+            </a>
+
+
+
+            <a
+                href="{{ url_for('preprocessing') }}"
+                class="feature-card"
+            >
+
+                <div class="feature-icon orange">
+                    ⚙
+                </div>
+
+                <div>
+
+                    <small>
+                        PREPROCESSING
+                    </small>
+
+                    <h3>
+                        Data Preparation
+                    </h3>
+
+                    <p>
+                        Transform data for modelling
+                    </p>
+
+                </div>
+
+            </a>
+
+
+
+            <a
+                href="{{ url_for('logistic_regression') }}"
+                class="feature-card"
+            >
+
+                <div class="feature-icon blue">
+                    🎯
+                </div>
+
+                <div>
+
+                    <small>
+                        CLASSIFICATION
+                    </small>
+
+                    <h3>
+                        Logistic Regression
+                    </h3>
+
+                    <p>
+                        Predict fruit quality class
+                    </p>
+
+                </div>
+
+            </a>
+
+
+        </section>
+
+
+
+        <!-- =================================================
+             PROJECT OVERVIEW
+             ================================================= -->
+
+        <section class="content-section">
+
+            <div class="section-heading">
+
+                <div>
+
+                    <div class="eyebrow">
+                        PROJECT WORKFLOW
+                    </div>
+
+                    <h2>
+                        Fruit Quality Analysis Pipeline
+                    </h2>
+
+                </div>
+
+            </div>
+
+
+            <div class="workflow-grid">
+
+                <div class="workflow-card">
+
+                    <span>01</span>
+
+                    <h3>
+                        Data Loading
+                    </h3>
+
+                    <p>
+                        Load and inspect the FreshChain dataset.
+                    </p>
+
+                </div>
+
+
+                <div class="workflow-card">
+
+                    <span>02</span>
+
+                    <h3>
+                        EDA
+                    </h3>
+
+                    <p>
+                        Explore environmental and fruit-quality patterns.
+                    </p>
+
+                </div>
+
+
+                <div class="workflow-card">
+
+                    <span>03</span>
+
+                    <h3>
+                        Preprocessing
+                    </h3>
+
+                    <p>
+                        Handle missing values, outliers and scaling.
+                    </p>
+
+                </div>
+
+
+                <div class="workflow-card">
+
+                    <span>04</span>
+
+                    <h3>
+                        Regression
+                    </h3>
+
+                    <p>
+                        Apply linear and logistic regression models.
+                    </p>
+
+                </div>
+
+            </div>
+
+        </section>
+
+        {% endif %}
+
+
+    </main>
+
+</div>
+
+</body>
+
+</html>
