@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>FruitSense | Linear Regression</title>
+
+    <link
+        rel="stylesheet"
+        href="{{ url_for('static', filename='style.css') }}"
+    >
+
+</head>
+
+
+<body>
+
+<div class="app-layout">
+
+
+    <!-- SIDEBAR -->
+
+    <aside class="sidebar">
+
+        <div class="brand">
+
+            <div class="brand-icon">
+                🍃
+            </div>
+
+            <div>
+                <h2>FruitSense</h2>
+                <p>Quality Analytics</p>
+            </div>
+
+        </div>
+
+
+        <div class="sidebar-section-title">
+            ANALYTICS
+        </div>
+
+
+        <a
+            href="{{ url_for('index') }}"
+            class="nav-item"
+        >
+            <span class="nav-icon">⌂</span>
+            Dashboard
+        </a>
+
+
+        <a
+            href="{{ url_for('data_loading') }}"
+            class="nav-item"
+        >
+            <span class="nav-icon">▣</span>
+            Data Loading
+        </a>
+
+
+        <a
+            href="{{ url_for('eda') }}"
+            class="nav-item"
+        >
+            <span class="nav-icon">◒</span>
+            Exploratory Analysis
+        </a>
+
+
+        <a
+            href="{{ url_for('preprocessing') }}"
+            class="nav-item"
+        >
+            <span class="nav-icon">⚙</span>
+            Preprocessing
+        </a>
+
+
+        <a
+            href="{{ url_for('linear_regression') }}"
+            class="nav-item active"
+        >
+            <span class="nav-icon">📈</span>
+            Linear Regression
+        </a>
+
+
+        <a
+            href="{{ url_for('logistic_regression') }}"
+            class="nav-item"
+        >
+            <span class="nav-icon">🎯</span>
+            Logistic Regression
+        </a>
+
+
+        <div class="sidebar-status">
+
+            <div class="status-dot"></div>
+
+            <div>
+                <strong>Project Status</strong>
+                <small>Regression active</small>
+            </div>
+
+        </div>
+
+    </aside>
+
+
+
+    <!-- MAIN -->
+
+    <main class="main-content">
+
+        <header class="page-header">
+
+            <div>
+
+                <div class="eyebrow">
+                    MODULE 05 • LINEAR REGRESSION
+                </div>
+
+                <h1>
+                    Linear Regression
+                </h1>
+
+                <p>
+                    Predict CO₂ concentration from environmental conditions.
+                </p>
+
+            </div>
+
+            <div class="system-status">
+                <span></span>
+                Regression Active
+            </div>
+
+        </header>
+
+
+        {% if error %}
+
+        <div class="error-box">
+            {{ error }}
+        </div>
+
+        {% endif %}
+
+
+        {% if result %}
+
+
+        <!-- STATS -->
+
+        <div class="stats-grid">
+
+            <div class="stat-card">
+
+                <span>RMSE</span>
+
+                <strong>
+                    {{ result.rmse }}
+                </strong>
+
+            </div>
+
+
+            <div class="stat-card">
+
+                <span>MAE</span>
+
+                <strong>
+                    {{ result.mae }}
+                </strong>
+
+            </div>
+
+
+            <div class="stat-card">
+
+                <span>R² Score</span>
+
+                <strong>
+                    {{ result.r2 }}
+                </strong>
+
+            </div>
+
+
+            <div class="stat-card">
+
+                <span>Test Rows</span>
+
+                <strong>
+                    {{ result.test_rows }}
+                </strong>
+
+            </div>
+
+        </div>
+
+
+
+        <!-- FEATURES -->
+
+        <section class="content-section">
+
+            <div class="card">
+
+                <h3>
+                    Regression Configuration
+                </h3>
+
+                <p>
+                    <strong>Target:</strong>
+                    {{ result.target }}
+                </p>
+
+                <div class="tag-container">
+
+                    {% for feature in result.features %}
+
+                    <span class="tag">
+                        {{ feature }}
+                    </span>
+
+                    {% endfor %}
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- EQUATION -->
+
+        <section class="content-section">
+
+            <div class="card equation-card">
+
+                <div class="eyebrow">
+                    MODEL EQUATION
+                </div>
+
+                <h3>
+                    {{ result.equation }}
+                </h3>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- COEFFICIENTS -->
+
+        <section class="content-section">
+
+            <div class="card">
+
+                <h3>
+                    Model Coefficients
+                </h3>
+
+                <div class="table-wrapper">
+
+                    <table>
+
+                        <thead>
+
+                            <tr>
+
+                                <th>Feature</th>
+                                <th>Coefficient</th>
+
+                            </tr>
+
+                        </thead>
+
+
+                        <tbody>
+
+                            {% for feature, value in result.coefficients.items() %}
+
+                            <tr>
+
+                                <td>
+                                    {{ feature }}
+                                </td>
+
+                                <td>
+                                    {{ value }}
+                                </td>
+
+                            </tr>
+
+                            {% endfor %}
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- CHARTS -->
+
+        <section class="content-section">
+
+            <div class="chart-grid">
+
+                <div class="card">
+
+                    <h3>
+                        Actual vs Predicted
+                    </h3>
+
+                    <img
+                        src="{{ url_for('static', filename='charts/linear_actual_vs_predicted.png') }}"
+                        class="chart-image"
+                    >
+
+                </div>
+
+
+                <div class="card">
+
+                    <h3>
+                        Residual Distribution
+                    </h3>
+
+                    <img
+                        src="{{ url_for('static', filename='charts/linear_residuals.png') }}"
+                        class="chart-image"
+                    >
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        {% endif %}
+
+    </main>
+
+</div>
+
+</body>
+
+</html>

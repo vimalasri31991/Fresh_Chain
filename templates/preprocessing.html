@@ -1,0 +1,521 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>FruitSense | Preprocessing</title>
+
+    <link
+        rel="stylesheet"
+        href="{{ url_for('static', filename='style.css') }}"
+    >
+
+</head>
+
+
+<body>
+
+<div class="app-layout">
+
+
+    <!-- SIDEBAR -->
+
+    <aside class="sidebar">
+
+        <div class="brand">
+
+            <div class="brand-icon">
+                🍃
+            </div>
+
+            <div>
+                <h2>FruitSense</h2>
+                <p>Quality Analytics</p>
+            </div>
+
+        </div>
+
+
+        <div class="sidebar-section-title">
+            ANALYTICS
+        </div>
+
+
+        <a
+            href="{{ url_for('index') }}"
+            class="nav-item"
+        >
+            <span class="nav-icon">⌂</span>
+            Dashboard
+        </a>
+
+
+        <a
+            href="{{ url_for('data_loading') }}"
+            class="nav-item"
+        >
+            <span class="nav-icon">▣</span>
+            Data Loading
+        </a>
+
+
+        <a
+            href="{{ url_for('eda') }}"
+            class="nav-item"
+        >
+            <span class="nav-icon">◒</span>
+            Exploratory Analysis
+        </a>
+
+
+        <a
+            href="{{ url_for('preprocessing') }}"
+            class="nav-item active"
+        >
+            <span class="nav-icon">⚙</span>
+            Preprocessing
+        </a>
+
+
+        <a
+            href="{{ url_for('linear_regression') }}"
+            class="nav-item"
+        >
+            <span class="nav-icon">📈</span>
+            Linear Regression
+        </a>
+
+
+        <a
+            href="{{ url_for('logistic_regression') }}"
+            class="nav-item"
+        >
+            <span class="nav-icon">🎯</span>
+            Logistic Regression
+        </a>
+
+
+        <div class="sidebar-status">
+
+            <div class="status-dot"></div>
+
+            <div>
+                <strong>Project Status</strong>
+                <small>Classification active</small>
+            </div>
+
+        </div>
+
+    </aside>
+
+
+
+    <!-- MAIN -->
+
+    <main class="main-content">
+
+        <header class="page-header">
+
+            <div>
+
+                <div class="eyebrow">
+                    MODULE 04 • DATA PREPARATION
+                </div>
+
+                <h1>
+                    Preprocessing
+                </h1>
+
+                <p>
+                    Clean, transform and prepare data for machine learning.
+                </p>
+
+            </div>
+
+            <div class="system-status">
+                <span></span>
+                Processing Active
+            </div>
+
+        </header>
+
+
+        {% if error %}
+
+        <div class="error-box">
+            {{ error }}
+        </div>
+
+        {% endif %}
+
+
+        {% if result %}
+
+
+        <!-- STATS -->
+
+        <div class="stats-grid">
+
+            <div class="stat-card">
+
+                <span>Original Rows</span>
+
+                <strong>
+                    {{ result.original_rows }}
+                </strong>
+
+            </div>
+
+
+            <div class="stat-card">
+
+                <span>Duplicates Removed</span>
+
+                <strong>
+                    {{ result.duplicate_count }}
+                </strong>
+
+            </div>
+
+
+            <div class="stat-card">
+
+                <span>Training Rows</span>
+
+                <strong>
+                    {{ result.train_rows }}
+                </strong>
+
+            </div>
+
+
+            <div class="stat-card">
+
+                <span>Testing Rows</span>
+
+                <strong>
+                    {{ result.test_rows }}
+                </strong>
+
+            </div>
+
+        </div>
+
+
+
+        <!-- FEATURES -->
+
+        <section class="content-section">
+
+            <div class="card">
+
+                <h3>
+                    Numeric Features
+                </h3>
+
+                <div class="tag-container">
+
+                    {% for column in result.numeric_columns %}
+
+                    <span class="tag">
+                        {{ column }}
+                    </span>
+
+                    {% endfor %}
+
+                </div>
+
+            </div>
+
+
+            <div class="card">
+
+                <h3>
+                    Categorical Features
+                </h3>
+
+                <div class="tag-container">
+
+                    {% for column in result.categorical_columns %}
+
+                    <span class="tag">
+                        {{ column }}
+                    </span>
+
+                    {% endfor %}
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- OUTLIERS -->
+
+        <section class="content-section">
+
+            <div class="card">
+
+                <h3>
+                    IQR Outlier Analysis
+                </h3>
+
+                <div class="table-wrapper">
+
+                    <table>
+
+                        <thead>
+
+                            <tr>
+
+                                <th>Feature</th>
+                                <th>Q1</th>
+                                <th>Q3</th>
+                                <th>IQR</th>
+                                <th>Lower Fence</th>
+                                <th>Upper Fence</th>
+                                <th>Train Outliers</th>
+                                <th>Test Outliers</th>
+
+                            </tr>
+
+                        </thead>
+
+
+                        <tbody>
+
+                            {% for row in result.outlier_summary %}
+
+                            <tr>
+
+                                <td>{{ row["Feature"] }}</td>
+
+                                <td>{{ row["Q1"] }}</td>
+
+                                <td>{{ row["Q3"] }}</td>
+
+                                <td>{{ row["IQR"] }}</td>
+
+                                <td>{{ row["Lower Fence"] }}</td>
+
+                                <td>{{ row["Upper Fence"] }}</td>
+
+                                <td>{{ row["Training Outliers"] }}</td>
+
+                                <td>{{ row["Testing Outliers"] }}</td>
+
+                            </tr>
+
+                            {% endfor %}
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- SCALING -->
+
+        <section class="content-section">
+
+            <div class="card">
+
+                <h3>
+                    Min-Max Scaling Preview
+                </h3>
+
+                <div class="table-wrapper">
+
+                    <table>
+
+                        <thead>
+
+                            <tr>
+
+                                {% for key in result.minmax_preview[0].keys() %}
+
+                                <th>
+                                    {{ key }}
+                                </th>
+
+                                {% endfor %}
+
+                            </tr>
+
+                        </thead>
+
+
+                        <tbody>
+
+                            {% for row in result.minmax_preview %}
+
+                            <tr>
+
+                                {% for value in row.values() %}
+
+                                <td>
+                                    {{ value }}
+                                </td>
+
+                                {% endfor %}
+
+                            </tr>
+
+                            {% endfor %}
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+            </div>
+
+
+
+            <div class="card">
+
+                <h3>
+                    Standard Scaling Preview
+                </h3>
+
+                <div class="table-wrapper">
+
+                    <table>
+
+                        <thead>
+
+                            <tr>
+
+                                {% for key in result.standard_preview[0].keys() %}
+
+                                <th>
+                                    {{ key }}
+                                </th>
+
+                                {% endfor %}
+
+                            </tr>
+
+                        </thead>
+
+
+                        <tbody>
+
+                            {% for row in result.standard_preview %}
+
+                            <tr>
+
+                                {% for value in row.values() %}
+
+                                <td>
+                                    {{ value }}
+                                </td>
+
+                                {% endfor %}
+
+                            </tr>
+
+                            {% endfor %}
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- ONE HOT ENCODING -->
+
+        <section class="content-section">
+
+            <div class="card">
+
+                <h3>
+                    One-Hot Encoding
+                </h3>
+
+                <div class="tag-container">
+
+                    {% for column in result.onehot_columns %}
+
+                    <span class="tag">
+                        {{ column }}
+                    </span>
+
+                    {% endfor %}
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- FINAL FEATURES -->
+
+        <section class="content-section">
+
+            <div class="card">
+
+                <h3>
+                    Final Feature Matrix
+                </h3>
+
+                <p class="muted">
+                    Training shape:
+                    {{ result.X_train_shape }}
+                </p>
+
+                <p class="muted">
+                    Testing shape:
+                    {{ result.X_test_shape }}
+                </p>
+
+                <div class="tag-container">
+
+                    {% for feature in result.final_features %}
+
+                    <span class="tag">
+                        {{ feature }}
+                    </span>
+
+                    {% endfor %}
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        {% endif %}
+
+    </main>
+
+</div>
+
+</body>
+
+</html>
