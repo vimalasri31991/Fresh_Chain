@@ -1,3 +1,5 @@
+from pathlib import Path
+
 import pandas as pd
 
 from sklearn.model_selection import train_test_split
@@ -9,6 +11,15 @@ from sklearn.preprocessing import (
 )
 
 from ml.data_loader import load_data
+
+
+# ============================================================
+# PROJECT DIRECTORY
+# ============================================================
+
+BASE_DIR = Path(__file__).resolve().parent.parent
+
+PREPROCESSED_PATH = BASE_DIR / "preprocessed_data.csv"
 
 
 # ============================================================
@@ -31,6 +42,12 @@ CATEGORICAL_COLS = [
 TARGET_COL = "Class"
 
 
+CLASS_MAPPING = {
+    "BAD": 0,
+    "Good": 1
+}
+
+
 # ============================================================
 # CLASS NORMALIZATION
 # ============================================================
@@ -50,10 +67,31 @@ def normalize_class(series):
 
 
 # ============================================================
-# MAIN PREPROCESSING
+# ONE-HOT ENCODER
 # ============================================================
 
-def preprocess_data():
+def create_encoder():
+
+    try:
+
+        return OneHotEncoder(
+            handle_unknown="ignore",
+            sparse_output=False
+        )
+
+    except TypeError:
+
+        return OneHotEncoder(
+            handle_unknown="ignore",
+            sparse=False
+        )
+
+
+# ============================================================
+# CREATE PREPROCESSED DATASET
+# ============================================================
+
+def create_preprocessed_file():
 
     df = load_data().copy()
 
@@ -62,15 +100,11 @@ def preprocess_data():
     # REMOVE DUPLICATES
     # ========================================================
 
-    duplicate_count = int(
-        df.duplicated().sum()
-    )
-
-    df = df.drop_duplicates()
+    df = df.drop_duplicates().copy()
 
 
     # ========================================================
-    # NORMALIZE CLASS LABELS
+    # NORMALIZE CLASS
     # ========================================================
 
     df[TARGET_COL] = normalize_class(
@@ -79,7 +113,7 @@ def preprocess_data():
 
 
     # ========================================================
-    # REMOVE INVALID CLASS ROWS
+    # REMOVE INVALID CLASS VALUES
     # ========================================================
 
     df = df[
@@ -90,82 +124,224 @@ def preprocess_data():
 
 
     # ========================================================
-    # TRAIN TEST SPLIT
-    # ========================================================
-
-    train_df, test_df = train_test_split(
-        df,
-        test_size=0.30,
-        random_state=42,
-        stratify=df[TARGET_COL]
-    )
-
-    train_df = train_df.copy()
-    test_df = test_df.copy()
-
-
-    # ========================================================
-    # MISSING NUMERICAL VALUES
+    # HANDLE NUMERICAL MISSING VALUES
     # ========================================================
 
     for column in NUMERIC_COLS:
 
-        median_value = (
-            train_df[column]
-            .median()
-        )
+        median_value = df[column].median()
 
-        train_df[column] = (
-            train_df[column]
-            .fillna(median_value)
-        )
-
-        test_df[column] = (
-            test_df[column]
+        df[column] = (
+            df[column]
             .fillna(median_value)
         )
 
 
     # ========================================================
-    # MISSING CATEGORICAL VALUES
+    # HANDLE CATEGORICAL MISSING VALUES
     # ========================================================
 
     for column in CATEGORICAL_COLS:
 
-        mode_values = (
-            train_df[column]
-            .mode()
-        )
+        mode_values = df[column].mode()
 
         if len(mode_values) > 0:
 
             mode_value = mode_values.iloc[0]
 
-            train_df[column] = (
-                train_df[column]
+            df[column] = (
+                df[column]
                 .fillna(mode_value)
             )
 
-            test_df[column] = (
-                test_df[column]
-                .fillna(mode_value)
+        else:
+
+            df[column] = (
+                df[column]
+                .fillna("Unknown")
             )
 
 
     # ========================================================
-    # IQR OUTLIER HANDLING
+    # IQR OUTLIER TREATMENT
     # ========================================================
+
+    for column in NUMERIC_COLS:
+
+        Q1 = df[column].quantile(0.25)
+
+        Q3 = df[column].quantile(0.75)
+
+        IQR = Q3 - Q1
+
+        lower_fence = (
+            Q1 - 1.5 * IQR
+        )
+
+        upper_fence = (
+            Q3 + 1.5 * IQR
+        )
+
+        df[column] = (
+            df[column]
+            .clip(
+                lower=lower_fence,
+                upper=upper_fence
+            )
+        )
+
+
+    # ========================================================
+    # ONE-HOT ENCODE FRUIT
+    # ========================================================
+
+    encoder = create_encoder()
+
+    encoded = encoder.fit_transform(
+        df[CATEGORICAL_COLS]
+    )
+
+    encoded_columns = (
+        encoder
+        .get_feature_names_out(
+            CATEGORICAL_COLS
+        )
+    )
+
+    encoded_df = pd.DataFrame(
+        encoded,
+        columns=encoded_columns,
+        index=df.index
+    )
+
+
+    # ========================================================
+    # CLASS ENCODING
+    # ========================================================
+
+    df["Class_Encoded"] = (
+        df[TARGET_COL]
+        .map(CLASS_MAPPING)
+    )
+
+
+    # ========================================================
+    # FINAL PREPROCESSED DATA
+    #
+    # Keep numerical values unscaled here.
+    #
+    # Reason:
+    # Scaling will be performed AFTER train/test split
+    # inside algorithms that require it.
+    # ========================================================
+
+    final_df = pd.concat(
+        [
+            df[NUMERIC_COLS],
+            encoded_df,
+            df[["Class_Encoded"]]
+        ],
+        axis=1
+    )
+
+
+    # ========================================================
+    # SAVE FILE
+    # ========================================================
+
+    final_df.to_csv(
+        PREPROCESSED_PATH,
+        index=False
+    )
+
+
+    return final_df
+
+
+# ============================================================
+# FULL PREPROCESSING SUMMARY
+# ============================================================
+
+def preprocess_data():
+
+    original_df = load_data()
+
+    original_rows = int(
+        original_df.shape[0]
+    )
+
+
+    original_columns = int(
+        original_df.shape[1]
+    )
+
+
+    duplicate_count = int(
+        original_df.duplicated().sum()
+    )
+
+
+    # Create final file
+
+    final_df = create_preprocessed_file()
+
+
+    # ========================================================
+    # TRAIN TEST SPLIT FOR DISPLAY
+    # ========================================================
+
+    X = final_df.drop(
+        columns=["Class_Encoded"]
+    )
+
+    y = final_df["Class_Encoded"]
+
+
+    X_train, X_test, y_train, y_test = train_test_split(
+        X,
+        y,
+        test_size=0.30,
+        random_state=42,
+        stratify=y
+    )
+
+
+    # ========================================================
+    # OUTLIER SUMMARY
+    #
+    # Calculated from cleaned original data.
+    # ========================================================
+
+    cleaned = original_df.drop_duplicates().copy()
+
+    cleaned[TARGET_COL] = normalize_class(
+        cleaned[TARGET_COL]
+    )
+
+    cleaned = cleaned[
+        cleaned[TARGET_COL].isin(
+            ["BAD", "Good"]
+        )
+    ].copy()
+
 
     outlier_summary = []
 
 
     for column in NUMERIC_COLS:
 
-        Q1 = train_df[column].quantile(
+        cleaned[column] = (
+            cleaned[column]
+            .fillna(
+                cleaned[column].median()
+            )
+        )
+
+        Q1 = cleaned[column].quantile(
             0.25
         )
 
-        Q3 = train_df[column].quantile(
+        Q3 = cleaned[column].quantile(
             0.75
         )
 
@@ -179,49 +355,11 @@ def preprocess_data():
             Q3 + 1.5 * IQR
         )
 
-
-        train_outliers = (
-            (
-                train_df[column]
-                < lower_fence
-            )
+        outliers = (
+            (cleaned[column] < lower_fence)
             |
-            (
-                train_df[column]
-                > upper_fence
-            )
+            (cleaned[column] > upper_fence)
         ).sum()
-
-
-        test_outliers = (
-            (
-                test_df[column]
-                < lower_fence
-            )
-            |
-            (
-                test_df[column]
-                > upper_fence
-            )
-        ).sum()
-
-
-        train_df[column] = (
-            train_df[column]
-            .clip(
-                lower=lower_fence,
-                upper=upper_fence
-            )
-        )
-
-
-        test_df[column] = (
-            test_df[column]
-            .clip(
-                lower=lower_fence,
-                upper=upper_fence
-            )
-        )
 
 
         outlier_summary.append({
@@ -251,195 +389,78 @@ def preprocess_data():
                 ),
 
             "Training Outliers":
-                int(train_outliers),
+                int(outliers),
 
             "Testing Outliers":
-                int(test_outliers)
+                0
 
         })
 
 
     # ========================================================
-    # MIN-MAX SCALING
+    # SCALING PREVIEWS
     # ========================================================
+
+    numeric_data = final_df[
+        NUMERIC_COLS
+    ]
+
 
     minmax_scaler = MinMaxScaler()
 
-    train_minmax = (
+    minmax_result = (
         minmax_scaler
         .fit_transform(
-            train_df[NUMERIC_COLS]
-        )
-    )
-
-    test_minmax = (
-        minmax_scaler
-        .transform(
-            test_df[NUMERIC_COLS]
+            numeric_data
         )
     )
 
 
-    train_minmax_df = pd.DataFrame(
-        train_minmax,
-        columns=NUMERIC_COLS,
-        index=train_df.index
+    minmax_df = pd.DataFrame(
+        minmax_result,
+        columns=NUMERIC_COLS
     )
 
-    test_minmax_df = pd.DataFrame(
-        test_minmax,
-        columns=NUMERIC_COLS,
-        index=test_df.index
-    )
-
-
-    # ========================================================
-    # STANDARD SCALING
-    # ========================================================
 
     standard_scaler = StandardScaler()
 
-    train_standard = (
+    standard_result = (
         standard_scaler
         .fit_transform(
-            train_df[NUMERIC_COLS]
-        )
-    )
-
-    test_standard = (
-        standard_scaler
-        .transform(
-            test_df[NUMERIC_COLS]
+            numeric_data
         )
     )
 
 
-    train_standard_df = pd.DataFrame(
-        train_standard,
-        columns=NUMERIC_COLS,
-        index=train_df.index
-    )
-
-    test_standard_df = pd.DataFrame(
-        test_standard,
-        columns=NUMERIC_COLS,
-        index=test_df.index
+    standard_df = pd.DataFrame(
+        standard_result,
+        columns=NUMERIC_COLS
     )
 
 
     # ========================================================
-    # ONE HOT ENCODING
-    # ========================================================
-
-    ohe = OneHotEncoder(
-        handle_unknown="ignore",
-        sparse_output=False
-    )
-
-
-    train_ohe = (
-        ohe.fit_transform(
-            train_df[CATEGORICAL_COLS]
-        )
-    )
-
-    test_ohe = (
-        ohe.transform(
-            test_df[CATEGORICAL_COLS]
-        )
-    )
-
-
-    ohe_columns = (
-        ohe.get_feature_names_out(
-            CATEGORICAL_COLS
-        )
-    )
-
-
-    train_ohe_df = pd.DataFrame(
-        train_ohe,
-        columns=ohe_columns,
-        index=train_df.index
-    )
-
-    test_ohe_df = pd.DataFrame(
-        test_ohe,
-        columns=ohe_columns,
-        index=test_df.index
-    )
-
-
-    # ========================================================
-    # TARGET ENCODING
-    # ========================================================
-
-    class_mapping = {
-        "BAD": 0,
-        "Good": 1
-    }
-
-
-    y_train = (
-        normalize_class(
-            train_df[TARGET_COL]
-        )
-        .map(class_mapping)
-    )
-
-    y_test = (
-        normalize_class(
-            test_df[TARGET_COL]
-        )
-        .map(class_mapping)
-    )
-
-
-    # ========================================================
-    # FINAL FEATURES
-    # ========================================================
-
-    X_train = pd.concat(
-        [
-            train_standard_df,
-            train_ohe_df
-        ],
-        axis=1
-    )
-
-
-    X_test = pd.concat(
-        [
-            test_standard_df,
-            test_ohe_df
-        ],
-        axis=1
-    )
-
-
-    # ========================================================
-    # RETURN
+    # FINAL RESULT
     # ========================================================
 
     return {
 
         "original_rows":
-            int(load_data().shape[0]),
+            original_rows,
 
         "original_columns":
-            int(load_data().shape[1]),
+            original_columns,
 
         "duplicate_count":
             duplicate_count,
 
         "cleaned_rows":
-            int(df.shape[0]),
+            int(final_df.shape[0]),
 
         "train_rows":
-            int(train_df.shape[0]),
+            int(X_train.shape[0]),
 
         "test_rows":
-            int(test_df.shape[0]),
+            int(X_test.shape[0]),
 
         "numeric_columns":
             NUMERIC_COLS,
@@ -451,7 +472,7 @@ def preprocess_data():
             outlier_summary,
 
         "minmax_preview":
-            train_minmax_df
+            minmax_df
             .head(5)
             .round(3)
             .to_dict(
@@ -459,7 +480,7 @@ def preprocess_data():
             ),
 
         "standard_preview":
-            train_standard_df
+            standard_df
             .head(5)
             .round(3)
             .to_dict(
@@ -467,23 +488,35 @@ def preprocess_data():
             ),
 
         "onehot_columns":
-            list(ohe_columns),
+            [
+                column
+                for column in final_df.columns
+                if column.startswith("Fruit_")
+            ],
 
         "onehot_preview":
-            train_ohe_df
+            final_df[
+                [
+                    column
+                    for column in final_df.columns
+                    if column.startswith("Fruit_")
+                ]
+            ]
             .head(5)
             .to_dict(
                 orient="records"
             ),
 
         "class_mapping":
-            class_mapping,
+            CLASS_MAPPING,
 
         "classes":
             ["BAD", "Good"],
 
         "final_features":
-            list(X_train.columns),
+            list(
+                X.columns
+            ),
 
         "final_train_preview":
             X_train
@@ -502,7 +535,11 @@ def preprocess_data():
             list(X_train.shape),
 
         "X_test_shape":
-            list(X_test.shape)
+            list(X_test.shape),
+
+        "preprocessed_file":
+            str(PREPROCESSED_PATH.name)
+
     }
 
 

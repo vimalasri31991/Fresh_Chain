@@ -36,115 +36,88 @@
             </div>
 
             <div>
-
                 <h2>FruitSense</h2>
-
-                <p>
-                    Quality Analytics
-                </p>
-
+                <p>Quality Analytics</p>
             </div>
 
         </div>
-
 
         <div class="sidebar-section-title">
             ANALYTICS
         </div>
 
-
-        <a
-            href="{{ url_for('index') }}"
-            class="nav-item"
-        >
-
+        <a href="{{ url_for('index') }}" class="nav-item{% if active == 'dashboard' %} active{% endif %}">
             <span class="nav-icon">⌂</span>
-
             Dashboard
-
         </a>
 
-
-        <a
-            href="{{ url_for('data_loading') }}"
-            class="nav-item"
-        >
-
+        <a href="{{ url_for('data_loading') }}" class="nav-item{% if active == 'data-loading' %} active{% endif %}">
             <span class="nav-icon">▣</span>
-
             Data Loading
-
         </a>
 
-
-        <a
-            href="{{ url_for('eda') }}"
-            class="nav-item"
-        >
-
+        <a href="{{ url_for('eda') }}" class="nav-item{% if active == 'eda' %} active{% endif %}">
             <span class="nav-icon">◒</span>
-
             Exploratory Analysis
-
         </a>
 
-
-        <a
-            href="{{ url_for('preprocessing') }}"
-            class="nav-item"
-        >
-
+        <a href="{{ url_for('preprocessing') }}" class="nav-item{% if active == 'preprocessing' %} active{% endif %}">
             <span class="nav-icon">⚙</span>
-
             Preprocessing
-
         </a>
 
-
-        <a
-            href="{{ url_for('linear_regression') }}"
-            class="nav-item"
-        >
-
+        <a href="{{ url_for('linear_regression') }}" class="nav-item{% if active == 'linear-regression' %} active{% endif %}">
             <span class="nav-icon">📈</span>
-
             Linear Regression
-
         </a>
 
-
-        <a
-            href="{{ url_for('logistic_regression') }}"
-            class="nav-item active"
-        >
-
+        <a href="{{ url_for('logistic_regression') }}" class="nav-item{% if active == 'logistic-regression' %} active{% endif %}">
             <span class="nav-icon">🎯</span>
-
             Logistic Regression
-
         </a>
 
+        <a href="{{ url_for('regularisation') }}" class="nav-item{% if active == 'regularisation' %} active{% endif %}">
+            <span class="nav-icon">λ</span>
+            Regularisation
+        </a>
+
+        <a href="{{ url_for('decision_tree') }}" class="nav-item{% if active == 'decision-tree' %} active{% endif %}">
+            <span class="nav-icon">🌳</span>
+            Decision Tree
+        </a>
+
+        <a href="{{ url_for('random_forest') }}" class="nav-item{% if active == 'random-forest' %} active{% endif %}">
+            <span class="nav-icon">🌲</span>
+            Random Forest
+        </a>
+
+        <a href="{{ url_for('cost_complexity') }}" class="nav-item{% if active == 'cost-complexity' %} active{% endif %}">
+            <span class="nav-icon">✂</span>
+            Cost-Complexity
+        </a>
+
+        <a href="{{ url_for('ada_boost') }}" class="nav-item{% if active == 'ada-boost' %} active{% endif %}">
+            <span class="nav-icon">⚡</span>
+            AdaBoost
+        </a>
+
+        <a href="{{ url_for('gradient_boost') }}" class="nav-item{% if active == 'gradient-boost' %} active{% endif %}">
+            <span class="nav-icon">↗</span>
+            Gradient Boost
+        </a>
 
         <div class="sidebar-status">
 
             <div class="status-dot"></div>
 
             <div>
-
-                <strong>
-                    Project Status
-                </strong>
-
-                <small>
-                    Classification active
-                </small>
-
+                <strong>Project Status</strong>
+                <small>Analytics active</small>
             </div>
 
         </div>
 
     </aside>
-
 
 
     <!-- MAIN CONTENT -->
@@ -184,7 +157,6 @@
         </header>
 
 
-
         <!-- ERROR -->
 
         {% if error %}
@@ -198,18 +170,14 @@
         {% endif %}
 
 
-
         {% if result %}
 
 
-        <!-- =================================================
-             MODEL OVERVIEW
-             ================================================= -->
+        <!-- MODEL OVERVIEW -->
 
         <section class="content-section">
 
             <div class="stats-grid">
-
 
                 <div class="stat-card">
 
@@ -262,16 +230,12 @@
 
                 </div>
 
-
             </div>
 
         </section>
 
 
-
-        <!-- =================================================
-             DATASET INFORMATION
-             ================================================= -->
+        <!-- DATASET INFORMATION -->
 
         <section class="content-section">
 
@@ -313,9 +277,7 @@
                     {% for feature in result.features %}
 
                     <span class="tag">
-
                         {{ feature }}
-
                     </span>
 
                     {% endfor %}
@@ -327,10 +289,7 @@
         </section>
 
 
-
-        <!-- =================================================
-             MODEL COMPARISON
-             ================================================= -->
+        <!-- MODEL COMPARISON -->
 
         <section class="content-section">
 
@@ -353,29 +312,12 @@
 
                             <tr>
 
-                                <th>
-                                    Model
-                                </th>
-
-                                <th>
-                                    Train Accuracy
-                                </th>
-
-                                <th>
-                                    Test Accuracy
-                                </th>
-
-                                <th>
-                                    Precision
-                                </th>
-
-                                <th>
-                                    Recall
-                                </th>
-
-                                <th>
-                                    F1 Score
-                                </th>
+                                <th>Model</th>
+                                <th>Train Accuracy</th>
+                                <th>Test Accuracy</th>
+                                <th>Precision</th>
+                                <th>Recall</th>
+                                <th>F1 Score</th>
 
                             </tr>
 
@@ -389,11 +331,9 @@
                             <tr>
 
                                 <td>
-
                                     <strong>
                                         {{ row.name }}
                                     </strong>
-
                                 </td>
 
                                 <td>
@@ -431,10 +371,7 @@
         </section>
 
 
-
-        <!-- =================================================
-             BEST MODEL
-             ================================================= -->
+        <!-- BEST MODEL -->
 
         <section class="content-section">
 
@@ -481,10 +418,7 @@
         </section>
 
 
-
-        <!-- =================================================
-             CONFUSION MATRIX
-             ================================================= -->
+        <!-- CONFUSION MATRIX -->
 
         <section class="content-section">
 
@@ -568,15 +502,11 @@
         </section>
 
 
-
-        <!-- =================================================
-             CONFUSION MATRIX CHARTS
-             ================================================= -->
+        <!-- CONFUSION MATRIX CHARTS -->
 
         <section class="content-section">
 
             <div class="chart-grid">
-
 
                 <div class="card">
 
@@ -618,7 +548,6 @@
                     >
 
                 </div>
-
 
             </div>
 

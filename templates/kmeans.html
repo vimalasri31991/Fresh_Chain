@@ -1,0 +1,630 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>K-Means Clustering - FruitSense</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='style.css') }}">
+
+    <style>
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+        }
+
+        .page-content {
+            margin-left: 268px;
+            padding: 40px;
+            min-height: 100vh;
+            background: #f8f7f2;
+        }
+
+        .page-title {
+            font-size: 32px;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .page-subtitle {
+            color: #777;
+            margin-bottom: 30px;
+        }
+
+        .section {
+            background: white;
+            border-radius: 18px;
+            padding: 25px;
+            margin-bottom: 25px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+        }
+
+        .section h2 {
+            margin-top: 0;
+            margin-bottom: 8px;
+        }
+
+        .section p {
+            color: #777;
+        }
+
+        .charts {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 25px;
+            margin-top: 20px;
+        }
+
+        .chart-box {
+            background: #fafafa;
+            border-radius: 15px;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .chart-box img {
+            width: 100%;
+            max-width: 700px;
+            border-radius: 10px;
+        }
+
+        .selection-box {
+            background: #fff9e8;
+            border-radius: 18px;
+            padding: 30px;
+            margin-top: 20px;
+        }
+
+        .selection-box h2 {
+            margin-top: 0;
+        }
+
+        .form-row {
+            display: flex;
+            gap: 20px;
+            align-items: end;
+            flex-wrap: wrap;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .form-group label {
+            font-weight: 600;
+        }
+
+        select {
+            width: 240px;
+            padding: 13px;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            background: white;
+            font-size: 15px;
+        }
+
+        .run-button {
+            padding: 13px 25px;
+            border: none;
+            border-radius: 10px;
+            background: #6f8f72;
+            color: white;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .run-button:hover {
+            opacity: 0.9;
+        }
+
+        .error-box {
+            background: #ffe9e9;
+            color: #b00020;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+
+        .selected-box {
+            background: #eaf5ed;
+            border-radius: 12px;
+            padding: 15px;
+            margin-top: 20px;
+            font-weight: 600;
+        }
+
+        .performance-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .metric-card {
+            background: #fafafa;
+            border-radius: 15px;
+            padding: 22px;
+            text-align: center;
+        }
+
+        .metric-title {
+            color: #777;
+            font-size: 14px;
+            margin-bottom: 10px;
+        }
+
+        .metric-value {
+            font-size: 25px;
+            font-weight: 700;
+        }
+
+        .cluster-list {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .cluster-card {
+            background: #f4f1e8;
+            border-radius: 12px;
+            padding: 18px;
+            text-align: center;
+        }
+
+        .cluster-name {
+            font-weight: 600;
+        }
+
+        .cluster-count {
+            font-size: 24px;
+            font-weight: 700;
+            margin-top: 5px;
+        }
+
+        @media (max-width: 1000px) {
+
+            .page-content {
+                margin-left: 0;
+            }
+
+            .charts {
+                grid-template-columns: 1fr;
+            }
+
+            .performance-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+
+            .cluster-list {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+    <aside class="sidebar">
+
+        <div class="logo">
+            FruitSense
+        </div>
+
+        <div class="nav-section">
+
+            <a href="{{ url_for('index') }}"
+               class="nav-item {% if active == 'dashboard' %}active{% endif %}">
+                <span class="nav-icon">●</span>
+                <span>Dashboard</span>
+            </a>
+
+            <a href="{{ url_for('data_loading') }}"
+               class="nav-item {% if active == 'data-loading' %}active{% endif %}">
+                <span class="nav-icon">●</span>
+                <span>Data Loading</span>
+            </a>
+
+            <a href="{{ url_for('eda') }}"
+               class="nav-item {% if active == 'eda' %}active{% endif %}">
+                <span class="nav-icon">●</span>
+                <span>EDA</span>
+            </a>
+
+            <a href="{{ url_for('preprocessing') }}"
+               class="nav-item {% if active == 'preprocessing' %}active{% endif %}">
+                <span class="nav-icon">●</span>
+                <span>Preprocessing</span>
+            </a>
+
+            <a href="{{ url_for('regularisation') }}"
+               class="nav-item {% if active == 'regularisation' %}active{% endif %}">
+                <span class="nav-icon">●</span>
+                <span>Regularisation</span>
+            </a>
+
+            <a href="{{ url_for('decision_tree') }}"
+               class="nav-item {% if active == 'decision-tree' %}active{% endif %}">
+                <span class="nav-icon">●</span>
+                <span>Decision Tree</span>
+            </a>
+
+            <a href="{{ url_for('random_forest') }}"
+               class="nav-item {% if active == 'random-forest' %}active{% endif %}">
+                <span class="nav-icon">●</span>
+                <span>Random Forest</span>
+            </a>
+
+            <a href="{{ url_for('cost_complexity') }}"
+               class="nav-item {% if active == 'cost-complexity' %}active{% endif %}">
+                <span class="nav-icon">●</span>
+                <span>Cost Complexity</span>
+            </a>
+
+            <a href="{{ url_for('ada_boost') }}"
+               class="nav-item {% if active == 'ada-boost' %}active{% endif %}">
+                <span class="nav-icon">●</span>
+                <span>AdaBoost</span>
+            </a>
+
+            <a href="{{ url_for('gradient_boost') }}"
+               class="nav-item {% if active == 'gradient-boost' %}active{% endif %}">
+                <span class="nav-icon">●</span>
+                <span>Gradient Boost</span>
+            </a>
+
+            <a href="{{ url_for('linear_regression') }}"
+               class="nav-item {% if active == 'linear-regression' %}active{% endif %}">
+                <span class="nav-icon">●</span>
+                <span>Linear Regression</span>
+            </a>
+
+            <a href="{{ url_for('logistic_regression') }}"
+               class="nav-item {% if active == 'logistic-regression' %}active{% endif %}">
+                <span class="nav-icon">●</span>
+                <span>Logistic Regression</span>
+            </a>
+
+            <a href="{{ url_for('kmeans') }}"
+               class="nav-item {% if active == 'kmeans' %}active{% endif %}">
+                <span class="nav-icon">●</span>
+                <span>K-Means Clustering</span>
+            </a>
+
+        </div>
+
+    </aside>
+
+
+    <main class="page-content">
+
+        <div class="page-title">
+            K-Means Clustering
+        </div>
+
+        <div class="page-subtitle">
+            K calculation, manual K selection and performance evaluation
+        </div>
+
+
+        {% if error %}
+
+        <div class="error-box">
+            {{ error }}
+        </div>
+
+        {% endif %}
+
+
+        {% if k_results %}
+
+        <div class="section">
+
+            <h2>
+                K Calculation
+            </h2>
+
+            <p>
+                Use the Elbow Method and Silhouette Method graphs
+                to manually decide the suitable K value.
+            </p>
+
+
+            <div class="charts">
+
+                <div class="chart-box">
+
+                    <h3>
+                        Elbow Method
+                    </h3>
+
+                    <img
+                        src="{{ url_for('static', filename=k_results.elbow_chart) }}"
+                        alt="Elbow Method Graph">
+
+                </div>
+
+
+                <div class="chart-box">
+
+                    <h3>
+                        Silhouette Method
+                    </h3>
+
+                    <img
+                        src="{{ url_for('static', filename=k_results.silhouette_chart) }}"
+                        alt="Silhouette Method Graph">
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <div class="section">
+
+            <div class="selection-box">
+
+                <h2>
+                    Manual K Selection
+                </h2>
+
+                <p>
+                    Select the method you used to decide K,
+                    then select the K value and run K-Means.
+                </p>
+
+
+                <form
+                    action="{{ url_for('kmeans') }}"
+                    method="POST">
+
+
+                    <div class="form-row">
+
+
+                        <div class="form-group">
+
+                            <label for="method">
+                                Select Method
+                            </label>
+
+                            <select
+                                name="method"
+                                id="method"
+                                required>
+
+                                <option value="">
+                                    -- Select Method --
+                                </option>
+
+                                <option
+                                    value="elbow"
+                                    {% if selected_method == 'elbow' %}
+                                    selected
+                                    {% endif %}>
+
+                                    Elbow Method
+
+                                </option>
+
+                                <option
+                                    value="silhouette"
+                                    {% if selected_method == 'silhouette' %}
+                                    selected
+                                    {% endif %}>
+
+                                    Silhouette Method
+
+                                </option>
+
+                            </select>
+
+                        </div>
+
+
+                        <div class="form-group">
+
+                            <label for="k">
+                                Select K Value
+                            </label>
+
+                            <select
+                                name="k"
+                                id="k"
+                                required>
+
+                                <option value="">
+                                    -- Select K --
+                                </option>
+
+                                {% for value in k_results.k_values %}
+
+                                <option
+                                    value="{{ value }}"
+                                    {% if selected_k == value %}
+                                    selected
+                                    {% endif %}>
+
+                                    K = {{ value }}
+
+                                </option>
+
+                                {% endfor %}
+
+                            </select>
+
+                        </div>
+
+
+                        <button
+                            type="submit"
+                            class="run-button">
+
+                            Run K-Means
+
+                        </button>
+
+
+                    </div>
+
+                </form>
+
+
+                {% if selected_k %}
+
+                <div class="selected-box">
+
+                    Selected Method:
+                    {% if selected_method == 'elbow' %}
+                        Elbow Method
+                    {% else %}
+                        Silhouette Method
+                    {% endif %}
+
+                    &nbsp;&nbsp; | &nbsp;&nbsp;
+
+                    Selected K:
+                    {{ selected_k }}
+
+                </div>
+
+                {% endif %}
+
+            </div>
+
+        </div>
+
+        {% endif %}
+
+
+        {% if performance %}
+
+        <div class="section">
+
+            <h2>
+                K-Means Performance Evaluation
+            </h2>
+
+            <p>
+                Performance results for the manually selected K.
+            </p>
+
+
+            <div class="performance-grid">
+
+
+                <div class="metric-card">
+
+                    <div class="metric-title">
+                        Selected K
+                    </div>
+
+                    <div class="metric-value">
+                        {{ performance.k }}
+                    </div>
+
+                </div>
+
+
+                <div class="metric-card">
+
+                    <div class="metric-title">
+                        Silhouette Score
+                    </div>
+
+                    <div class="metric-value">
+                        {{ performance.silhouette_score }}
+                    </div>
+
+                </div>
+
+
+                <div class="metric-card">
+
+                    <div class="metric-title">
+                        Davies-Bouldin Score
+                    </div>
+
+                    <div class="metric-value">
+                        {{ performance.davies_bouldin_score }}
+                    </div>
+
+                </div>
+
+
+                <div class="metric-card">
+
+                    <div class="metric-title">
+                        WCSS
+                    </div>
+
+                    <div class="metric-value">
+                        {{ performance.inertia }}
+                    </div>
+
+                </div>
+
+
+            </div>
+
+        </div>
+
+
+        {% if cluster_counts %}
+
+        <div class="section">
+
+            <h2>
+                Cluster Distribution
+            </h2>
+
+            <p>
+                Number of data points assigned to each cluster.
+            </p>
+
+
+            <div class="cluster-list">
+
+                {% for cluster, count in cluster_counts.items() %}
+
+                <div class="cluster-card">
+
+                    <div class="cluster-name">
+                        Cluster {{ cluster }}
+                    </div>
+
+                    <div class="cluster-count">
+                        {{ count }}
+                    </div>
+
+                </div>
+
+                {% endfor %}
+
+            </div>
+
+        </div>
+
+        {% endif %}
+
+        {% endif %}
+
+    </main>
+
+</body>
+
+</html>

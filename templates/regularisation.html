@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>FruitSense | Regularisation</title>
+
+    <link
+        rel="stylesheet"
+        href="{{ url_for('static', filename='style.css') }}"
+    >
+
+</head>
+
+
+<body>
+
+<div class="app-layout">
+
+
+    <aside class="sidebar">
+
+        <div class="brand">
+
+            <div class="brand-icon">
+                🍃
+            </div>
+
+            <div>
+                <h2>FruitSense</h2>
+                <p>Quality Analytics</p>
+            </div>
+
+        </div>
+
+
+        <div class="sidebar-section-title">
+            ANALYTICS
+        </div>
+
+
+        <a href="{{ url_for('index') }}" class="nav-item">
+            <span class="nav-icon">⌂</span>
+            Dashboard
+        </a>
+
+
+        <a href="{{ url_for('data_loading') }}" class="nav-item">
+            <span class="nav-icon">▣</span>
+            Data Loading
+        </a>
+
+
+        <a href="{{ url_for('eda') }}" class="nav-item">
+            <span class="nav-icon">◒</span>
+            Exploratory Analysis
+        </a>
+
+
+        <a href="{{ url_for('preprocessing') }}" class="nav-item">
+            <span class="nav-icon">⚙</span>
+            Preprocessing
+        </a>
+
+
+        <a
+            href="{{ url_for('regularisation') }}"
+            class="nav-item active"
+        >
+            <span class="nav-icon">λ</span>
+            Regularisation
+        </a>
+
+
+        <a href="{{ url_for('decision_tree') }}" class="nav-item">
+            <span class="nav-icon">🌳</span>
+            Decision Tree
+        </a>
+
+
+        <a href="{{ url_for('random_forest') }}" class="nav-item">
+            <span class="nav-icon">🌲</span>
+            Random Forest
+        </a>
+
+
+        <a href="{{ url_for('cost_complexity') }}" class="nav-item">
+            <span class="nav-icon">✂</span>
+            Cost-Complexity
+        </a>
+
+
+        <a href="{{ url_for('ada_boost') }}" class="nav-item">
+            <span class="nav-icon">⚡</span>
+            AdaBoost
+        </a>
+
+
+        <a href="{{ url_for('gradient_boost') }}" class="nav-item">
+            <span class="nav-icon">↗</span>
+            Gradient Boost
+        </a>
+
+
+        <a href="{{ url_for('linear_regression') }}" class="nav-item">
+            <span class="nav-icon">📈</span>
+            Linear Regression
+        </a>
+
+
+        <a href="{{ url_for('logistic_regression') }}" class="nav-item">
+            <span class="nav-icon">🎯</span>
+            Logistic Regression
+        </a>
+
+
+        <div class="sidebar-status">
+
+            <div class="status-dot"></div>
+
+            <div>
+
+                <strong>Project Status</strong>
+
+                <small>Classification active</small>
+
+            </div>
+
+        </div>
+
+    </aside>
+
+
+    <main class="main-content">
+
+        <header class="page-header">
+
+            <div>
+
+                <div class="eyebrow">
+                    MODULE 05 • CLASSIFICATION
+                </div>
+
+                <h1>
+                    Regularisation
+                </h1>
+
+                <p>
+                    Compare L1 and L2 regularisation for
+                    fruit quality classification.
+                </p>
+
+            </div>
+
+            <div class="system-status">
+
+                <span></span>
+
+                Model Active
+
+            </div>
+
+        </header>
+
+
+        {% if error %}
+
+        <div class="error-box">
+            {{ error }}
+        </div>
+
+        {% endif %}
+
+
+        {% if result %}
+
+
+        <div class="stats-grid">
+
+            <div class="stat-card">
+
+                <span>
+                    L1 Accuracy
+                </span>
+
+                <strong>
+                    {{ "%.2f"|format(result.l1.accuracy * 100) }}%
+                </strong>
+
+            </div>
+
+
+            <div class="stat-card">
+
+                <span>
+                    L2 Accuracy
+                </span>
+
+                <strong>
+                    {{ "%.2f"|format(result.l2.accuracy * 100) }}%
+                </strong>
+
+            </div>
+
+
+            <div class="stat-card">
+
+                <span>
+                    Training Rows
+                </span>
+
+                <strong>
+                    {{ result.train_rows }}
+                </strong>
+
+            </div>
+
+
+            <div class="stat-card">
+
+                <span>
+                    Testing Rows
+                </span>
+
+                <strong>
+                    {{ result.test_rows }}
+                </strong>
+
+            </div>
+
+        </div>
+
+
+        <section class="content-section">
+
+            <div class="card">
+
+                <h3>
+                    L1 vs L2 Regularisation
+                </h3>
+
+                <div class="table-wrapper">
+
+                    <table>
+
+                        <thead>
+
+                            <tr>
+
+                                <th>
+                                    Metric
+                                </th>
+
+                                <th>
+                                    L1
+                                </th>
+
+                                <th>
+                                    L2
+                                </th>
+
+                            </tr>
+
+                        </thead>
+
+                        <tbody>
+
+                            <tr>
+                                <td>Accuracy</td>
+                                <td>
+                                    {{ "%.4f"|format(result.l1.accuracy) }}
+                                </td>
+                                <td>
+                                    {{ "%.4f"|format(result.l2.accuracy) }}
+                                </td>
+                            </tr>
+
+
+                            <tr>
+                                <td>Precision</td>
+                                <td>
+                                    {{ "%.4f"|format(result.l1.precision) }}
+                                </td>
+                                <td>
+                                    {{ "%.4f"|format(result.l2.precision) }}
+                                </td>
+                            </tr>
+
+
+                            <tr>
+                                <td>Recall</td>
+                                <td>
+                                    {{ "%.4f"|format(result.l1.recall) }}
+                                </td>
+                                <td>
+                                    {{ "%.4f"|format(result.l2.recall) }}
+                                </td>
+                            </tr>
+
+
+                            <tr>
+                                <td>F1 Score</td>
+                                <td>
+                                    {{ "%.4f"|format(result.l1.f1) }}
+                                </td>
+                                <td>
+                                    {{ "%.4f"|format(result.l2.f1) }}
+                                </td>
+                            </tr>
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <section class="content-section">
+
+            <div class="card">
+
+                <h3>
+                    L1 Confusion Matrix
+                </h3>
+
+                <div class="table-wrapper">
+
+                    <table>
+
+                        <tr>
+                            <th></th>
+                            <th>Predicted BAD</th>
+                            <th>Predicted Good</th>
+                        </tr>
+
+                        <tr>
+                            <th>Actual BAD</th>
+                            <td>{{ result.l1.confusion_matrix[0][0] }}</td>
+                            <td>{{ result.l1.confusion_matrix[0][1] }}</td>
+                        </tr>
+
+                        <tr>
+                            <th>Actual Good</th>
+                            <td>{{ result.l1.confusion_matrix[1][0] }}</td>
+                            <td>{{ result.l1.confusion_matrix[1][1] }}</td>
+                        </tr>
+
+                    </table>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <section class="content-section">
+
+            <div class="card">
+
+                <h3>
+                    L2 Confusion Matrix
+                </h3>
+
+                <div class="table-wrapper">
+
+                    <table>
+
+                        <tr>
+                            <th></th>
+                            <th>Predicted BAD</th>
+                            <th>Predicted Good</th>
+                        </tr>
+
+                        <tr>
+                            <th>Actual BAD</th>
+                            <td>{{ result.l2.confusion_matrix[0][0] }}</td>
+                            <td>{{ result.l2.confusion_matrix[0][1] }}</td>
+                        </tr>
+
+                        <tr>
+                            <th>Actual Good</th>
+                            <td>{{ result.l2.confusion_matrix[1][0] }}</td>
+                            <td>{{ result.l2.confusion_matrix[1][1] }}</td>
+                        </tr>
+
+                    </table>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        {% endif %}
+
+    </main>
+
+</div>
+
+</body>
+
+</html>

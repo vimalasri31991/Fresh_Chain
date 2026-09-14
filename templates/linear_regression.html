@@ -2,28 +2,19 @@
 <html lang="en">
 
 <head>
-
     <meta charset="UTF-8">
-
-    <meta
-        name="viewport"
-        content="width=device-width, initial-scale=1.0"
-    >
-
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>FruitSense | Linear Regression</title>
 
     <link
         rel="stylesheet"
         href="{{ url_for('static', filename='style.css') }}"
     >
-
 </head>
-
 
 <body>
 
 <div class="app-layout">
-
 
     <!-- SIDEBAR -->
 
@@ -42,65 +33,69 @@
 
         </div>
 
-
         <div class="sidebar-section-title">
             ANALYTICS
         </div>
 
-
-        <a
-            href="{{ url_for('index') }}"
-            class="nav-item"
-        >
+        <a href="{{ url_for('index') }}" class="nav-item{% if active == 'dashboard' %} active{% endif %}">
             <span class="nav-icon">⌂</span>
             Dashboard
         </a>
 
-
-        <a
-            href="{{ url_for('data_loading') }}"
-            class="nav-item"
-        >
+        <a href="{{ url_for('data_loading') }}" class="nav-item{% if active == 'data-loading' %} active{% endif %}">
             <span class="nav-icon">▣</span>
             Data Loading
         </a>
 
-
-        <a
-            href="{{ url_for('eda') }}"
-            class="nav-item"
-        >
+        <a href="{{ url_for('eda') }}" class="nav-item{% if active == 'eda' %} active{% endif %}">
             <span class="nav-icon">◒</span>
             Exploratory Analysis
         </a>
 
-
-        <a
-            href="{{ url_for('preprocessing') }}"
-            class="nav-item"
-        >
+        <a href="{{ url_for('preprocessing') }}" class="nav-item{% if active == 'preprocessing' %} active{% endif %}">
             <span class="nav-icon">⚙</span>
             Preprocessing
         </a>
 
-
-        <a
-            href="{{ url_for('linear_regression') }}"
-            class="nav-item active"
-        >
+        <a href="{{ url_for('linear_regression') }}" class="nav-item{% if active == 'linear-regression' %} active{% endif %}">
             <span class="nav-icon">📈</span>
             Linear Regression
         </a>
 
-
-        <a
-            href="{{ url_for('logistic_regression') }}"
-            class="nav-item"
-        >
+        <a href="{{ url_for('logistic_regression') }}" class="nav-item{% if active == 'logistic-regression' %} active{% endif %}">
             <span class="nav-icon">🎯</span>
             Logistic Regression
         </a>
 
+        <a href="{{ url_for('regularisation') }}" class="nav-item{% if active == 'regularisation' %} active{% endif %}">
+            <span class="nav-icon">λ</span>
+            Regularisation
+        </a>
+
+        <a href="{{ url_for('decision_tree') }}" class="nav-item{% if active == 'decision-tree' %} active{% endif %}">
+            <span class="nav-icon">🌳</span>
+            Decision Tree
+        </a>
+
+        <a href="{{ url_for('random_forest') }}" class="nav-item{% if active == 'random-forest' %} active{% endif %}">
+            <span class="nav-icon">🌲</span>
+            Random Forest
+        </a>
+
+        <a href="{{ url_for('cost_complexity') }}" class="nav-item{% if active == 'cost-complexity' %} active{% endif %}">
+            <span class="nav-icon">✂</span>
+            Cost-Complexity
+        </a>
+
+        <a href="{{ url_for('ada_boost') }}" class="nav-item{% if active == 'ada-boost' %} active{% endif %}">
+            <span class="nav-icon">⚡</span>
+            AdaBoost
+        </a>
+
+        <a href="{{ url_for('gradient_boost') }}" class="nav-item{% if active == 'gradient-boost' %} active{% endif %}">
+            <span class="nav-icon">↗</span>
+            Gradient Boost
+        </a>
 
         <div class="sidebar-status">
 
@@ -108,13 +103,12 @@
 
             <div>
                 <strong>Project Status</strong>
-                <small>Regression active</small>
+                <small>Analytics active</small>
             </div>
 
         </div>
 
     </aside>
-
 
 
     <!-- MAIN -->
@@ -157,7 +151,6 @@
 
 
         {% if result %}
-
 
         <!-- STATS -->
 
@@ -209,7 +202,6 @@
         </div>
 
 
-
         <!-- FEATURES -->
 
         <section class="content-section">
@@ -242,7 +234,6 @@
         </section>
 
 
-
         <!-- EQUATION -->
 
         <section class="content-section">
@@ -262,7 +253,6 @@
         </section>
 
 
-
         <!-- COEFFICIENTS -->
 
         <section class="content-section">
@@ -280,14 +270,11 @@
                         <thead>
 
                             <tr>
-
                                 <th>Feature</th>
                                 <th>Coefficient</th>
-
                             </tr>
 
                         </thead>
-
 
                         <tbody>
 
@@ -316,7 +303,6 @@
             </div>
 
         </section>
-
 
 
         <!-- CHARTS -->

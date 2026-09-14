@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>FruitSense | Decision Tree</title>
+
+    <link
+        rel="stylesheet"
+        href="{{ url_for('static', filename='style.css') }}"
+    >
+
+</head>
+
+
+<body>
+
+<div class="app-layout">
+
+
+    <!-- SIDEBAR -->
+
+    <aside class="sidebar">
+
+        <div class="brand">
+
+            <div class="brand-icon">
+                🍃
+            </div>
+
+            <div>
+
+                <h2>FruitSense</h2>
+
+                <p>Quality Analytics</p>
+
+            </div>
+
+        </div>
+
+
+        <div class="sidebar-section-title">
+            ANALYTICS
+        </div>
+
+
+        <a href="{{ url_for('index') }}" class="nav-item">
+            <span class="nav-icon">⌂</span>
+            Dashboard
+        </a>
+
+
+        <a href="{{ url_for('data_loading') }}" class="nav-item">
+            <span class="nav-icon">▣</span>
+            Data Loading
+        </a>
+
+
+        <a href="{{ url_for('eda') }}" class="nav-item">
+            <span class="nav-icon">◒</span>
+            Exploratory Analysis
+        </a>
+
+
+        <a
+            href="{{ url_for('preprocessing') }}"
+            class="nav-item"
+        >
+            <span class="nav-icon">⚙</span>
+            Preprocessing
+        </a>
+
+
+        <a
+            href="{{ url_for('regularisation') }}"
+            class="nav-item"
+        >
+            <span class="nav-icon">λ</span>
+            Regularisation
+        </a>
+
+
+        <a
+            href="{{ url_for('decision_tree') }}"
+            class="nav-item active"
+        >
+            <span class="nav-icon">🌳</span>
+            Decision Tree
+        </a>
+
+
+        <a
+            href="{{ url_for('random_forest') }}"
+            class="nav-item"
+        >
+            <span class="nav-icon">🌲</span>
+            Random Forest
+        </a>
+
+
+        <a
+            href="{{ url_for('cost_complexity') }}"
+            class="nav-item"
+        >
+            <span class="nav-icon">✂</span>
+            Cost-Complexity
+        </a>
+
+
+        <a
+            href="{{ url_for('ada_boost') }}"
+            class="nav-item"
+        >
+            <span class="nav-icon">⚡</span>
+            AdaBoost
+        </a>
+
+
+        <a
+            href="{{ url_for('gradient_boost') }}"
+            class="nav-item"
+        >
+            <span class="nav-icon">↗</span>
+            Gradient Boost
+        </a>
+
+
+        <a
+            href="{{ url_for('linear_regression') }}"
+            class="nav-item"
+        >
+            <span class="nav-icon">📈</span>
+            Linear Regression
+        </a>
+
+
+        <a
+            href="{{ url_for('logistic_regression') }}"
+            class="nav-item"
+        >
+            <span class="nav-icon">🎯</span>
+            Logistic Regression
+        </a>
+
+
+        <div class="sidebar-status">
+
+            <div class="status-dot"></div>
+
+            <div>
+
+                <strong>Project Status</strong>
+
+                <small>Classification active</small>
+
+            </div>
+
+        </div>
+
+    </aside>
+
+
+    <!-- MAIN -->
+
+    <main class="main-content">
+
+        <header class="page-header">
+
+            <div>
+
+                <div class="eyebrow">
+                    MODULE 06 • CLASSIFICATION
+                </div>
+
+                <h1>
+                    Decision Tree
+                </h1>
+
+                <p>
+                    Classify fruit quality using a decision tree
+                    trained on the preprocessed dataset.
+                </p>
+
+            </div>
+
+            <div class="system-status">
+                <span></span>
+                Model Active
+            </div>
+
+        </header>
+
+
+        {% if error %}
+
+        <div class="error-box">
+            {{ error }}
+        </div>
+
+        {% endif %}
+
+
+        {% if result %}
+
+        <div class="stats-grid">
+
+            <div class="stat-card">
+                <span>Training Accuracy</span>
+                <strong>
+                    {{ "%.2f"|format(result.train_accuracy * 100) }}%
+                </strong>
+            </div>
+
+
+            <div class="stat-card">
+                <span>Testing Accuracy</span>
+                <strong>
+                    {{ "%.2f"|format(result.test_accuracy * 100) }}%
+                </strong>
+            </div>
+
+
+            <div class="stat-card">
+                <span>Tree Depth</span>
+                <strong>
+                    {{ result.tree_depth }}
+                </strong>
+            </div>
+
+
+            <div class="stat-card">
+                <span>Leaf Nodes</span>
+                <strong>
+                    {{ result.leaf_count }}
+                </strong>
+            </div>
+
+        </div>
+
+
+        <section class="content-section">
+
+            <div class="card">
+
+                <h3>
+                    Classification Metrics
+                </h3>
+
+                <div class="table-wrapper">
+
+                    <table>
+
+                        <thead>
+
+                            <tr>
+                                <th>Metric</th>
+                                <th>Value</th>
+                            </tr>
+
+                        </thead>
+
+                        <tbody>
+
+                            <tr>
+                                <td>Precision</td>
+                                <td>
+                                    {{ "%.4f"|format(result.precision) }}
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <td>Recall</td>
+                                <td>
+                                    {{ "%.4f"|format(result.recall) }}
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <td>F1 Score</td>
+                                <td>
+                                    {{ "%.4f"|format(result.f1) }}
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <td>Training Rows</td>
+                                <td>{{ result.train_rows }}</td>
+                            </tr>
+
+                            <tr>
+                                <td>Testing Rows</td>
+                                <td>{{ result.test_rows }}</td>
+                            </tr>
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <section class="content-section">
+
+            <div class="card">
+
+                <h3>
+                    Confusion Matrix
+                </h3>
+
+                <div class="table-wrapper">
+
+                    <table>
+
+                        <thead>
+
+                            <tr>
+                                <th></th>
+                                <th>Predicted BAD</th>
+                                <th>Predicted Good</th>
+                            </tr>
+
+                        </thead>
+
+                        <tbody>
+
+                            <tr>
+                                <th>Actual BAD</th>
+                                <td>{{ result.confusion_matrix[0][0] }}</td>
+                                <td>{{ result.confusion_matrix[0][1] }}</td>
+                            </tr>
+
+                            <tr>
+                                <th>Actual Good</th>
+                                <td>{{ result.confusion_matrix[1][0] }}</td>
+                                <td>{{ result.confusion_matrix[1][1] }}</td>
+                            </tr>
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+            </div>
+
+        </section>
+
+        {% endif %}
+
+    </main>
+
+</div>
+
+</body>
+
+</html>
