@@ -38,7 +38,7 @@ def load_data():
     return df, X_scaled
 
 
-def calculate_k():
+def calculate_k(selected_k=None):
 
     df, X = load_data()
 
@@ -93,11 +93,40 @@ def calculate_k():
         marker="o"
     )
 
-    plt.xlabel("Number of Clusters (K)")
+    if selected_k is not None:
+        selected_index = k_values.index(selected_k)
 
+        plt.scatter(
+            selected_k,
+            wcss[selected_index],
+            color="red",
+            s=100,
+            zorder=5
+        )
+
+        plt.axvline(
+            selected_k,
+            color="red",
+            linestyle="--",
+            alpha=0.6
+        )
+
+        plt.annotate(
+            f"Selected K = {selected_k}",
+            (selected_k, wcss[selected_index]),
+            xytext=(10, 10),
+            textcoords="offset points",
+            color="red",
+            fontweight="bold"
+        )
+
+    plt.xlabel("Number of Clusters (K)")
     plt.ylabel("WCSS")
 
-    plt.title("Elbow Method")
+    if selected_k is not None:
+        plt.title(f"Elbow Method - Selected K = {selected_k}")
+    else:
+        plt.title("Elbow Method")
 
     plt.xticks(k_values)
 
@@ -125,11 +154,40 @@ def calculate_k():
         marker="o"
     )
 
-    plt.xlabel("Number of Clusters (K)")
+    if selected_k is not None:
+        selected_index = k_values.index(selected_k)
 
+        plt.scatter(
+            selected_k,
+            silhouette_scores[selected_index],
+            color="red",
+            s=100,
+            zorder=5
+        )
+
+        plt.axvline(
+            selected_k,
+            color="red",
+            linestyle="--",
+            alpha=0.6
+        )
+
+        plt.annotate(
+            f"Selected K = {selected_k}",
+            (selected_k, silhouette_scores[selected_index]),
+            xytext=(10, 10),
+            textcoords="offset points",
+            color="red",
+            fontweight="bold"
+        )
+
+    plt.xlabel("Number of Clusters (K)")
     plt.ylabel("Silhouette Score")
 
-    plt.title("Silhouette Method")
+    if selected_k is not None:
+        plt.title(f"Silhouette Method - Selected K = {selected_k}")
+    else:
+        plt.title("Silhouette Method")
 
     plt.xticks(k_values)
 

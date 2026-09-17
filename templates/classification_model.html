@@ -152,6 +152,17 @@
         </a>
 
 
+        <!-- K-MEANS -->
+
+        <a
+            href="{{ url_for('kmeans') }}"
+            class="nav-item {% if active == 'kmeans' %}active{% endif %}"
+        >
+            <span class="nav-icon">●</span>
+            K-Means Clustering
+        </a>
+
+
         <div class="sidebar-status">
 
             <div class="status-dot"></div>
@@ -215,9 +226,7 @@
         {% if result %}
 
 
-        <!-- =================================================
-             MAIN METRICS
-             ================================================= -->
+        <!-- MAIN METRICS -->
 
         <div class="stats-grid">
 
@@ -276,9 +285,7 @@
         </div>
 
 
-        <!-- =================================================
-             DETAILS
-             ================================================= -->
+        <!-- DETAILS -->
 
         <section class="content-section">
 
@@ -388,9 +395,7 @@
         </section>
 
 
-        <!-- =================================================
-             CLASSIFICATION METRICS
-             ================================================= -->
+        <!-- CLASSIFICATION METRICS -->
 
         <section class="content-section">
 
@@ -481,9 +486,7 @@
         </section>
 
 
-        <!-- =================================================
-             CONFUSION MATRIX
-             ================================================= -->
+        <!-- CONFUSION MATRIX -->
 
         <section class="content-section">
 

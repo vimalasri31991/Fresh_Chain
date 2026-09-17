@@ -69,6 +69,10 @@
             text-align: center;
         }
 
+        .chart-box h3 {
+            margin-top: 0;
+        }
+
         .chart-box img {
             width: 100%;
             max-width: 700px;
@@ -209,6 +213,7 @@
             .cluster-list {
                 grid-template-columns: 1fr 1fr;
             }
+
         }
 
     </style>
@@ -227,80 +232,106 @@
 
             <a href="{{ url_for('index') }}"
                class="nav-item {% if active == 'dashboard' %}active{% endif %}">
+
                 <span class="nav-icon">●</span>
                 <span>Dashboard</span>
+
             </a>
 
             <a href="{{ url_for('data_loading') }}"
                class="nav-item {% if active == 'data-loading' %}active{% endif %}">
+
                 <span class="nav-icon">●</span>
                 <span>Data Loading</span>
+
             </a>
 
             <a href="{{ url_for('eda') }}"
                class="nav-item {% if active == 'eda' %}active{% endif %}">
+
                 <span class="nav-icon">●</span>
                 <span>EDA</span>
+
             </a>
 
             <a href="{{ url_for('preprocessing') }}"
                class="nav-item {% if active == 'preprocessing' %}active{% endif %}">
+
                 <span class="nav-icon">●</span>
                 <span>Preprocessing</span>
+
             </a>
 
             <a href="{{ url_for('regularisation') }}"
                class="nav-item {% if active == 'regularisation' %}active{% endif %}">
+
                 <span class="nav-icon">●</span>
                 <span>Regularisation</span>
+
             </a>
 
             <a href="{{ url_for('decision_tree') }}"
                class="nav-item {% if active == 'decision-tree' %}active{% endif %}">
+
                 <span class="nav-icon">●</span>
                 <span>Decision Tree</span>
+
             </a>
 
             <a href="{{ url_for('random_forest') }}"
                class="nav-item {% if active == 'random-forest' %}active{% endif %}">
+
                 <span class="nav-icon">●</span>
                 <span>Random Forest</span>
+
             </a>
 
             <a href="{{ url_for('cost_complexity') }}"
                class="nav-item {% if active == 'cost-complexity' %}active{% endif %}">
+
                 <span class="nav-icon">●</span>
                 <span>Cost Complexity</span>
+
             </a>
 
             <a href="{{ url_for('ada_boost') }}"
                class="nav-item {% if active == 'ada-boost' %}active{% endif %}">
+
                 <span class="nav-icon">●</span>
                 <span>AdaBoost</span>
+
             </a>
 
             <a href="{{ url_for('gradient_boost') }}"
                class="nav-item {% if active == 'gradient-boost' %}active{% endif %}">
+
                 <span class="nav-icon">●</span>
                 <span>Gradient Boost</span>
+
             </a>
 
             <a href="{{ url_for('linear_regression') }}"
                class="nav-item {% if active == 'linear-regression' %}active{% endif %}">
+
                 <span class="nav-icon">●</span>
                 <span>Linear Regression</span>
+
             </a>
 
             <a href="{{ url_for('logistic_regression') }}"
                class="nav-item {% if active == 'logistic-regression' %}active{% endif %}">
+
                 <span class="nav-icon">●</span>
                 <span>Logistic Regression</span>
+
             </a>
 
             <a href="{{ url_for('kmeans') }}"
                class="nav-item {% if active == 'kmeans' %}active{% endif %}">
+
                 <span class="nav-icon">●</span>
                 <span>K-Means Clustering</span>
+
             </a>
 
         </div>
@@ -351,7 +382,7 @@
                     </h3>
 
                     <img
-                        src="{{ url_for('static', filename=k_results.elbow_chart) }}"
+                        src="{{ url_for('static', filename=k_results.elbow_chart) }}?k={{ selected_k or '' }}"
                         alt="Elbow Method Graph">
 
                 </div>
@@ -364,7 +395,7 @@
                     </h3>
 
                     <img
-                        src="{{ url_for('static', filename=k_results.silhouette_chart) }}"
+                        src="{{ url_for('static', filename=k_results.silhouette_chart) }}?k={{ selected_k or '' }}"
                         alt="Silhouette Method Graph">
 
                 </div>
@@ -489,15 +520,21 @@
                 <div class="selected-box">
 
                     Selected Method:
+
                     {% if selected_method == 'elbow' %}
+
                         Elbow Method
+
                     {% else %}
+
                         Silhouette Method
+
                     {% endif %}
 
                     &nbsp;&nbsp; | &nbsp;&nbsp;
 
                     Selected K:
+
                     {{ selected_k }}
 
                 </div>
@@ -622,6 +659,7 @@
         {% endif %}
 
         {% endif %}
+
 
     </main>
 

@@ -15,7 +15,7 @@ from ml.gradient_boost import get_gradient_boost
 from ml.k_calculation import calculate_k
 from ml.kmeanfinal import perform_kmeans
 from ml.kmeansperformance import evaluate_kmeans
-
+from flask import Flask, render_template, request
 
 app = Flask(__name__)
 
@@ -291,9 +291,9 @@ def kmeans():
                 selected_k
             )
 
-            cluster_counts = performance[
+            cluster_counts = performance.get(
                 "clusters"
-            ]
+            )
 
     except Exception as e:
 
@@ -312,4 +312,8 @@ def kmeans():
 
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(
+        debug=True,
+        host="127.0.0.1",
+        port=5000
+    )

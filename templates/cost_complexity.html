@@ -1,5 +1,294 @@
-{% set page_title = "Cost-Complexity Pruning" %}
-{% set module_label = "MODULE 08 • TREE PRUNING" %}
-{% set description = "Reduce decision-tree complexity using cost-complexity pruning." %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FruitSense | Cost-Complexity Pruning</title>
 
-{% include "classification_model.html" %}
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+<body>
+
+<div class="app-layout">
+
+    <aside class="sidebar">
+
+        <div class="brand">
+            <div class="brand-icon">🍃</div>
+            <div>
+                <h2>FruitSense</h2>
+                <p>Quality Analytics</p>
+            </div>
+        </div>
+
+        <div class="sidebar-section-title">
+            ANALYTICS
+        </div>
+
+        <a href="{{ url_for('index') }}"
+           class="nav-item">
+            <span class="nav-icon">⌂</span>
+            <span>Dashboard</span>
+        </a>
+
+        <a href="{{ url_for('data_loading') }}"
+           class="nav-item">
+            <span class="nav-icon">▣</span>
+            <span>Data Loading</span>
+        </a>
+
+        <a href="{{ url_for('eda') }}"
+           class="nav-item">
+            <span class="nav-icon">◒</span>
+            <span>Exploratory Analysis</span>
+        </a>
+
+        <a href="{{ url_for('preprocessing') }}"
+           class="nav-item">
+            <span class="nav-icon">⚙</span>
+            <span>Preprocessing</span>
+        </a>
+
+        <a href="{{ url_for('linear_regression') }}"
+           class="nav-item">
+            <span class="nav-icon">📈</span>
+            <span>Linear Regression</span>
+        </a>
+
+        <a href="{{ url_for('logistic_regression') }}"
+           class="nav-item">
+            <span class="nav-icon">🎯</span>
+            <span>Logistic Regression</span>
+        </a>
+
+        <a href="{{ url_for('regularisation') }}"
+           class="nav-item">
+            <span class="nav-icon">λ</span>
+            <span>Regularisation</span>
+        </a>
+
+        <a href="{{ url_for('decision_tree') }}"
+           class="nav-item">
+            <span class="nav-icon">🌳</span>
+            <span>Decision Tree</span>
+        </a>
+
+        <a href="{{ url_for('random_forest') }}"
+           class="nav-item">
+            <span class="nav-icon">🌲</span>
+            <span>Random Forest</span>
+        </a>
+
+        <a href="{{ url_for('cost_complexity') }}"
+           class="nav-item active">
+            <span class="nav-icon">✂</span>
+            <span>Cost-Complexity</span>
+        </a>
+
+        <a href="{{ url_for('ada_boost') }}"
+           class="nav-item">
+            <span class="nav-icon">⚡</span>
+            <span>AdaBoost</span>
+        </a>
+
+        <a href="{{ url_for('gradient_boost') }}"
+           class="nav-item">
+            <span class="nav-icon">↗</span>
+            <span>Gradient Boost</span>
+        </a>
+
+        <a href="{{ url_for('kmeans') }}"
+           class="nav-item">
+            <span class="nav-icon">●</span>
+            <span>K-Means Clustering</span>
+        </a>
+
+        <div class="sidebar-status">
+            <div class="status-dot"></div>
+            <div>
+                <strong>Project Status</strong>
+                <small>Classification active</small>
+            </div>
+        </div>
+
+    </aside>
+
+
+    <main class="main-content">
+
+        <header class="page-header">
+
+            <div>
+                <div class="eyebrow">
+                    FRESHCHAIN • QUALITY ANALYTICS
+                </div>
+
+                <h1>
+                    Cost-Complexity
+                    <br>
+                    Pruning
+                </h1>
+
+                <p>
+                    Reduce decision-tree complexity using
+                    cost-complexity pruning.
+                </p>
+            </div>
+
+            <div class="system-status">
+                <span></span>
+                System Active
+            </div>
+
+        </header>
+
+
+        {% if error %}
+
+        <div class="error-box">
+            {{ error }}
+        </div>
+
+        {% endif %}
+
+
+        <section class="content-section">
+
+            <div class="section-heading">
+
+                <div>
+                    <div class="eyebrow">
+                        MODULE 08 • TREE PRUNING
+                    </div>
+
+                    <h2>
+                        Cost-Complexity Pruning
+                    </h2>
+
+                    <p>
+                        Optimize the decision tree by selecting
+                        an appropriate pruning parameter.
+                    </p>
+                </div>
+
+            </div>
+
+
+            {% if result %}
+
+            <div class="stats-grid">
+
+                {% if result.accuracy is defined %}
+                <div class="stat-card">
+                    <span>Accuracy</span>
+                    <strong>{{ result.accuracy }}</strong>
+                </div>
+                {% endif %}
+
+                {% if result.best_alpha is defined %}
+                <div class="stat-card">
+                    <span>Best Alpha</span>
+                    <strong>{{ result.best_alpha }}</strong>
+                </div>
+                {% endif %}
+
+                {% if result.train_accuracy is defined %}
+                <div class="stat-card">
+                    <span>Train Accuracy</span>
+                    <strong>{{ result.train_accuracy }}</strong>
+                </div>
+                {% endif %}
+
+                {% if result.test_accuracy is defined %}
+                <div class="stat-card">
+                    <span>Test Accuracy</span>
+                    <strong>{{ result.test_accuracy }}</strong>
+                </div>
+                {% endif %}
+
+            </div>
+
+
+            {% if result.chart %}
+
+            <div class="card">
+
+                <h3>
+                    Cost-Complexity Analysis
+                </h3>
+
+                <div style="text-align:center; margin-top:20px;">
+
+                    <img
+                        src="{{ url_for('static', filename=result.chart) }}"
+                        alt="Cost Complexity Chart"
+                        style="max-width:100%; border-radius:12px;"
+                    >
+
+                </div>
+
+            </div>
+
+            {% endif %}
+
+
+            <div class="card">
+
+                <h3>
+                    Model Results
+                </h3>
+
+                {% for key, value in result.items() %}
+
+                    {% if key != "chart" %}
+
+                    <div style="
+                        display:flex;
+                        justify-content:space-between;
+                        gap:20px;
+                        padding:12px 0;
+                        border-bottom:1px solid #e5e7eb;
+                    ">
+
+                        <strong>
+                            {{ key|replace("_", " ")|title }}
+                        </strong>
+
+                        <span>
+                            {{ value }}
+                        </span>
+
+                    </div>
+
+                    {% endif %}
+
+                {% endfor %}
+
+            </div>
+
+            {% else %}
+
+            <div class="card">
+
+                <h3>
+                    Cost-Complexity Pruning
+                </h3>
+
+                <p>
+                    No result is available yet.
+                </p>
+
+            </div>
+
+            {% endif %}
+
+        </section>
+
+    </main>
+
+</div>
+
+</body>
+</html>
