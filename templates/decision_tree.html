@@ -25,130 +25,315 @@
 <div class="app-layout">
 
 
+    <!-- ========================= -->
     <!-- SIDEBAR -->
+    <!-- ========================= -->
 
     <aside class="sidebar">
 
+
+        <!-- BRAND -->
+
         <div class="brand">
 
-            <div class="brand-icon">
-                🍃
-            </div>
+            <div class="brand-icon">🍃</div>
 
             <div>
-
                 <h2>FruitSense</h2>
-
                 <p>Quality Analytics</p>
-
             </div>
 
         </div>
 
+
+        <!-- SECTION TITLE -->
 
         <div class="sidebar-section-title">
             ANALYTICS
         </div>
 
 
-        <a href="{{ url_for('index') }}" class="nav-item">
+        <!-- DASHBOARD -->
+
+        <a
+            href="{{ url_for('index') }}"
+            class="nav-item{% if active == 'dashboard' %} active{% endif %}"
+        >
+
             <span class="nav-icon">⌂</span>
-            Dashboard
+            <span>Dashboard</span>
+
         </a>
 
 
-        <a href="{{ url_for('data_loading') }}" class="nav-item">
+        <!-- DATA LOADING -->
+
+        <a
+            href="{{ url_for('data_loading') }}"
+            class="nav-item{% if active == 'data-loading' %} active{% endif %}"
+        >
+
             <span class="nav-icon">▣</span>
-            Data Loading
+            <span>Data Loading</span>
+
         </a>
 
 
-        <a href="{{ url_for('eda') }}" class="nav-item">
+        <!-- EXPLORATORY ANALYSIS -->
+
+        <a
+            href="{{ url_for('eda') }}"
+            class="nav-item{% if active == 'eda' %} active{% endif %}"
+        >
+
             <span class="nav-icon">◒</span>
-            Exploratory Analysis
+            <span>Exploratory Analysis</span>
+
         </a>
 
+
+        <!-- PREPROCESSING -->
 
         <a
             href="{{ url_for('preprocessing') }}"
-            class="nav-item"
+            class="nav-item{% if active == 'preprocessing' %} active{% endif %}"
         >
+
             <span class="nav-icon">⚙</span>
-            Preprocessing
+            <span>Preprocessing</span>
+
         </a>
 
+
+        <!-- ========================= -->
+        <!-- REGRESSION DROPDOWN -->
+        <!-- ========================= -->
+
+        <details
+            class="nav-dropdown"
+            {% if active in [
+                'linear-regression',
+                'logistic-regression',
+                'regularisation'
+            ] %}open{% endif %}
+        >
+
+            <summary class="dropdown-toggle">
+
+                <span class="dropdown-left">
+
+                    <span class="nav-icon">📈</span>
+
+                    <span>Regression</span>
+
+                </span>
+
+                <span class="dropdown-arrow">
+                    ▾
+                </span>
+
+            </summary>
+
+
+            <div class="dropdown-content">
+
+
+                <!-- LINEAR REGRESSION -->
+
+                <a
+                    href="{{ url_for('linear_regression') }}"
+                    class="nav-subitem{% if active == 'linear-regression' %} active{% endif %}"
+                >
+
+                    <span class="sub-icon">📈</span>
+
+                    <span>
+                        Linear Regression
+                    </span>
+
+                </a>
+
+
+                <!-- LOGISTIC REGRESSION -->
+
+                <a
+                    href="{{ url_for('logistic_regression') }}"
+                    class="nav-subitem{% if active == 'logistic-regression' %} active{% endif %}"
+                >
+
+                    <span class="sub-icon">🎯</span>
+
+                    <span>
+                        Logistic Regression
+                    </span>
+
+                </a>
+
+
+                <!-- REGULARISATION -->
+
+                <a
+                    href="{{ url_for('regularisation') }}"
+                    class="nav-subitem{% if active == 'regularisation' %} active{% endif %}"
+                >
+
+                    <span class="sub-icon">λ</span>
+
+                    <span>
+                        Regularisation
+                    </span>
+
+                </a>
+
+
+            </div>
+
+        </details>
+
+
+        <!-- ========================= -->
+        <!-- TREE & ENSEMBLE DROPDOWN -->
+        <!-- ========================= -->
+
+        <details
+            class="nav-dropdown"
+            {% if active in [
+                'decision-tree',
+                'random-forest',
+                'cost-complexity',
+                'ada-boost',
+                'gradient-boost'
+            ] %}open{% endif %}
+        >
+
+            <summary class="dropdown-toggle">
+
+                <span class="dropdown-left">
+
+                    <span class="nav-icon">🌳</span>
+
+                    <span>
+                        Tree &amp; Ensemble
+                    </span>
+
+                </span>
+
+                <span class="dropdown-arrow">
+                    ▾
+                </span>
+
+            </summary>
+
+
+            <div class="dropdown-content">
+
+
+                <!-- DECISION TREE -->
+
+                <a
+                    href="{{ url_for('decision_tree') }}"
+                    class="nav-subitem{% if active == 'decision-tree' %} active{% endif %}"
+                >
+
+                    <span class="sub-icon">🌳</span>
+
+                    <span>
+                        Decision Tree
+                    </span>
+
+                </a>
+
+
+                <!-- RANDOM FOREST -->
+
+                <a
+                    href="{{ url_for('random_forest') }}"
+                    class="nav-subitem{% if active == 'random-forest' %} active{% endif %}"
+                >
+
+                    <span class="sub-icon">🌲</span>
+
+                    <span>
+                        Random Forest
+                    </span>
+
+                </a>
+
+
+                <!-- COST COMPLEXITY -->
+
+                <a
+                    href="{{ url_for('cost_complexity') }}"
+                    class="nav-subitem{% if active == 'cost-complexity' %} active{% endif %}"
+                >
+
+                    <span class="sub-icon">✂</span>
+
+                    <span>
+                        Cost-Complexity
+                    </span>
+
+                </a>
+
+
+                <!-- ADABOOST -->
+
+                <a
+                    href="{{ url_for('ada_boost') }}"
+                    class="nav-subitem{% if active == 'ada-boost' %} active{% endif %}"
+                >
+
+                    <span class="sub-icon">⚡</span>
+
+                    <span>
+                        AdaBoost
+                    </span>
+
+                </a>
+
+
+                <!-- GRADIENT BOOST -->
+
+                <a
+                    href="{{ url_for('gradient_boost') }}"
+                    class="nav-subitem{% if active == 'gradient-boost' %} active{% endif %}"
+                >
+
+                    <span class="sub-icon">↗</span>
+
+                    <span>
+                        Gradient Boost
+                    </span>
+
+                </a>
+
+
+            </div>
+
+        </details>
+
+
+        <!-- ========================= -->
+        <!-- K-MEANS -->
+        <!-- ========================= -->
 
         <a
-            href="{{ url_for('regularisation') }}"
-            class="nav-item"
+            href="{{ url_for('kmeans') }}"
+            class="nav-item{% if active == 'kmeans' %} active{% endif %}"
         >
-            <span class="nav-icon">λ</span>
-            Regularisation
+
+            <span class="nav-icon">●</span>
+
+            <span>
+                K-Means Clustering
+            </span>
+
         </a>
 
 
-        <a
-            href="{{ url_for('decision_tree') }}"
-            class="nav-item active"
-        >
-            <span class="nav-icon">🌳</span>
-            Decision Tree
-        </a>
-
-
-        <a
-            href="{{ url_for('random_forest') }}"
-            class="nav-item"
-        >
-            <span class="nav-icon">🌲</span>
-            Random Forest
-        </a>
-
-
-        <a
-            href="{{ url_for('cost_complexity') }}"
-            class="nav-item"
-        >
-            <span class="nav-icon">✂</span>
-            Cost-Complexity
-        </a>
-
-
-        <a
-            href="{{ url_for('ada_boost') }}"
-            class="nav-item"
-        >
-            <span class="nav-icon">⚡</span>
-            AdaBoost
-        </a>
-
-
-        <a
-            href="{{ url_for('gradient_boost') }}"
-            class="nav-item"
-        >
-            <span class="nav-icon">↗</span>
-            Gradient Boost
-        </a>
-
-
-        <a
-            href="{{ url_for('linear_regression') }}"
-            class="nav-item"
-        >
-            <span class="nav-icon">📈</span>
-            Linear Regression
-        </a>
-
-
-        <a
-            href="{{ url_for('logistic_regression') }}"
-            class="nav-item"
-        >
-            <span class="nav-icon">🎯</span>
-            Logistic Regression
-        </a>
-
+        <!-- ========================= -->
+        <!-- SIDEBAR STATUS -->
+        <!-- ========================= -->
 
         <div class="sidebar-status">
 
@@ -156,20 +341,30 @@
 
             <div>
 
-                <strong>Project Status</strong>
+                <strong>
+                    Project Status
+                </strong>
 
-                <small>Classification active</small>
+                <small>
+                    Analytics active
+                </small>
 
             </div>
 
         </div>
 
+
     </aside>
 
 
-    <!-- MAIN -->
+    <!-- ========================= -->
+    <!-- MAIN CONTENT -->
+    <!-- ========================= -->
 
     <main class="main-content">
+
+
+        <!-- PAGE HEADER -->
 
         <header class="page-header">
 
@@ -179,9 +374,11 @@
                     MODULE 06 • CLASSIFICATION
                 </div>
 
+
                 <h1>
                     Decision Tree
                 </h1>
+
 
                 <p>
                     Classify fruit quality using a decision tree
@@ -190,60 +387,109 @@
 
             </div>
 
+
             <div class="system-status">
+
                 <span></span>
+
                 Model Active
+
             </div>
 
         </header>
 
 
+        <!-- ERROR MESSAGE -->
+
         {% if error %}
 
         <div class="error-box">
+
             {{ error }}
+
         </div>
 
         {% endif %}
 
 
+        <!-- ========================= -->
+        <!-- MODEL RESULT -->
+        <!-- ========================= -->
+
         {% if result %}
+
+
+        <!-- STATISTICS -->
 
         <div class="stats-grid">
 
+
+            <!-- TRAINING ACCURACY -->
+
             <div class="stat-card">
-                <span>Training Accuracy</span>
+
+                <span>
+                    Training Accuracy
+                </span>
+
                 <strong>
                     {{ "%.2f"|format(result.train_accuracy * 100) }}%
                 </strong>
+
             </div>
 
 
+            <!-- TESTING ACCURACY -->
+
             <div class="stat-card">
-                <span>Testing Accuracy</span>
+
+                <span>
+                    Testing Accuracy
+                </span>
+
                 <strong>
                     {{ "%.2f"|format(result.test_accuracy * 100) }}%
                 </strong>
+
             </div>
 
 
+            <!-- TREE DEPTH -->
+
             <div class="stat-card">
-                <span>Tree Depth</span>
+
+                <span>
+                    Tree Depth
+                </span>
+
                 <strong>
                     {{ result.tree_depth }}
                 </strong>
+
             </div>
 
 
+            <!-- LEAF NODES -->
+
             <div class="stat-card">
-                <span>Leaf Nodes</span>
+
+                <span>
+                    Leaf Nodes
+                </span>
+
                 <strong>
                     {{ result.leaf_count }}
                 </strong>
+
             </div>
+
 
         </div>
 
+
+        <!-- ========================= -->
+        <!-- CLASSIFICATION METRICS -->
+        <!-- ========================= -->
 
         <section class="content-section">
 
@@ -253,53 +499,99 @@
                     Classification Metrics
                 </h3>
 
+
                 <div class="table-wrapper">
 
                     <table>
 
+
                         <thead>
 
                             <tr>
-                                <th>Metric</th>
-                                <th>Value</th>
+
+                                <th>
+                                    Metric
+                                </th>
+
+                                <th>
+                                    Value
+                                </th>
+
                             </tr>
 
                         </thead>
 
+
                         <tbody>
 
+
                             <tr>
-                                <td>Precision</td>
+
+                                <td>
+                                    Precision
+                                </td>
+
                                 <td>
                                     {{ "%.4f"|format(result.precision) }}
                                 </td>
+
                             </tr>
 
+
                             <tr>
-                                <td>Recall</td>
+
+                                <td>
+                                    Recall
+                                </td>
+
                                 <td>
                                     {{ "%.4f"|format(result.recall) }}
                                 </td>
+
                             </tr>
 
+
                             <tr>
-                                <td>F1 Score</td>
+
+                                <td>
+                                    F1 Score
+                                </td>
+
                                 <td>
                                     {{ "%.4f"|format(result.f1) }}
                                 </td>
+
                             </tr>
 
-                            <tr>
-                                <td>Training Rows</td>
-                                <td>{{ result.train_rows }}</td>
-                            </tr>
 
                             <tr>
-                                <td>Testing Rows</td>
-                                <td>{{ result.test_rows }}</td>
+
+                                <td>
+                                    Training Rows
+                                </td>
+
+                                <td>
+                                    {{ result.train_rows }}
+                                </td>
+
                             </tr>
+
+
+                            <tr>
+
+                                <td>
+                                    Testing Rows
+                                </td>
+
+                                <td>
+                                    {{ result.test_rows }}
+                                </td>
+
+                            </tr>
+
 
                         </tbody>
+
 
                     </table>
 
@@ -309,6 +601,10 @@
 
         </section>
 
+
+        <!-- ========================= -->
+        <!-- CONFUSION MATRIX -->
+        <!-- ========================= -->
 
         <section class="content-section">
 
@@ -318,35 +614,70 @@
                     Confusion Matrix
                 </h3>
 
+
                 <div class="table-wrapper">
 
                     <table>
 
+
                         <thead>
 
                             <tr>
+
                                 <th></th>
-                                <th>Predicted BAD</th>
-                                <th>Predicted Good</th>
+
+                                <th>
+                                    Predicted BAD
+                                </th>
+
+                                <th>
+                                    Predicted Good
+                                </th>
+
                             </tr>
 
                         </thead>
 
+
                         <tbody>
 
-                            <tr>
-                                <th>Actual BAD</th>
-                                <td>{{ result.confusion_matrix[0][0] }}</td>
-                                <td>{{ result.confusion_matrix[0][1] }}</td>
-                            </tr>
 
                             <tr>
-                                <th>Actual Good</th>
-                                <td>{{ result.confusion_matrix[1][0] }}</td>
-                                <td>{{ result.confusion_matrix[1][1] }}</td>
+
+                                <th>
+                                    Actual BAD
+                                </th>
+
+                                <td>
+                                    {{ result.confusion_matrix[0][0] }}
+                                </td>
+
+                                <td>
+                                    {{ result.confusion_matrix[0][1] }}
+                                </td>
+
                             </tr>
+
+
+                            <tr>
+
+                                <th>
+                                    Actual Good
+                                </th>
+
+                                <td>
+                                    {{ result.confusion_matrix[1][0] }}
+                                </td>
+
+                                <td>
+                                    {{ result.confusion_matrix[1][1] }}
+                                </td>
+
+                            </tr>
+
 
                         </tbody>
+
 
                     </table>
 
@@ -356,11 +687,15 @@
 
         </section>
 
+
         {% endif %}
+
 
     </main>
 
+
 </div>
+
 
 </body>
 

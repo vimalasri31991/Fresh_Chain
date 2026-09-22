@@ -25,539 +25,712 @@
 <div class="app-layout">
 
 
-    <!-- SIDEBAR -->
+<!-- SIDEBAR -->
+<aside class="sidebar">
 
-    <aside class="sidebar">
 
-        <div class="brand">
+    <!-- BRAND -->
+    <div class="brand">
 
-            <div class="brand-icon">
-                🍃
+        <div class="brand-icon">🍃</div>
+
+        <div>
+            <h2>FruitSense</h2>
+            <p>Quality Analytics</p>
+        </div>
+
+    </div>
+
+
+    <!-- SECTION TITLE -->
+    <div class="sidebar-section-title">
+        ANALYTICS
+    </div>
+
+
+    <!-- DASHBOARD -->
+    <a
+        href="{{ url_for('index') }}"
+        class="nav-item{% if active == 'dashboard' %} active{% endif %}"
+    >
+
+        <span class="nav-icon">⌂</span>
+        <span>Dashboard</span>
+
+    </a>
+
+
+    <!-- DATA LOADING -->
+    <a
+        href="{{ url_for('data_loading') }}"
+        class="nav-item{% if active == 'data-loading' %} active{% endif %}"
+    >
+
+        <span class="nav-icon">▣</span>
+        <span>Data Loading</span>
+
+    </a>
+
+
+    <!-- EXPLORATORY ANALYSIS -->
+    <a
+        href="{{ url_for('eda') }}"
+        class="nav-item{% if active == 'eda' %} active{% endif %}"
+    >
+
+        <span class="nav-icon">◒</span>
+        <span>Exploratory Analysis</span>
+
+    </a>
+
+
+    <!-- PREPROCESSING -->
+    <a
+        href="{{ url_for('preprocessing') }}"
+        class="nav-item{% if active == 'preprocessing' %} active{% endif %}"
+    >
+
+        <span class="nav-icon">⚙</span>
+        <span>Preprocessing</span>
+
+    </a>
+
+
+    <!-- =========================================
+         REGRESSION DROPDOWN
+         ========================================= -->
+
+    <details
+        class="nav-dropdown"
+        {% if active in ['linear-regression', 'logistic-regression', 'regularisation'] %}open{% endif %}
+    >
+
+        <summary class="dropdown-toggle">
+
+            <span class="dropdown-left">
+
+                <span class="nav-icon">📈</span>
+
+                <span>Regression</span>
+
+            </span>
+
+            <span class="dropdown-arrow">
+                ▾
+            </span>
+
+        </summary>
+
+
+        <div class="dropdown-content">
+
+
+            <!-- LINEAR REGRESSION -->
+            <a
+                href="{{ url_for('linear_regression') }}"
+                class="nav-subitem{% if active == 'linear-regression' %} active{% endif %}"
+            >
+
+                <span class="sub-icon">📈</span>
+                <span>Linear Regression</span>
+
+            </a>
+
+
+            <!-- LOGISTIC REGRESSION -->
+            <a
+                href="{{ url_for('logistic_regression') }}"
+                class="nav-subitem{% if active == 'logistic-regression' %} active{% endif %}"
+            >
+
+                <span class="sub-icon">🎯</span>
+                <span>Logistic Regression</span>
+
+            </a>
+
+
+            <!-- REGULARISATION -->
+            <a
+                href="{{ url_for('regularisation') }}"
+                class="nav-subitem{% if active == 'regularisation' %} active{% endif %}"
+            >
+
+                <span class="sub-icon">λ</span>
+                <span>Regularisation</span>
+
+            </a>
+
+        </div>
+
+    </details>
+
+
+    <!-- =========================================
+         TREE & ENSEMBLE DROPDOWN
+         ========================================= -->
+
+    <details
+        class="nav-dropdown"
+        {% if active in ['decision-tree', 'random-forest', 'cost-complexity', 'ada-boost', 'gradient-boost'] %}open{% endif %}
+    >
+
+        <summary class="dropdown-toggle">
+
+            <span class="dropdown-left">
+
+                <span class="nav-icon">🌳</span>
+
+                <span>Tree &amp; Ensemble</span>
+
+            </span>
+
+            <span class="dropdown-arrow">
+                ▾
+            </span>
+
+        </summary>
+
+
+        <div class="dropdown-content">
+
+
+            <!-- DECISION TREE -->
+            <a
+                href="{{ url_for('decision_tree') }}"
+                class="nav-subitem{% if active == 'decision-tree' %} active{% endif %}"
+            >
+
+                <span class="sub-icon">🌳</span>
+                <span>Decision Tree</span>
+
+            </a>
+
+
+            <!-- RANDOM FOREST -->
+            <a
+                href="{{ url_for('random_forest') }}"
+                class="nav-subitem{% if active == 'random-forest' %} active{% endif %}"
+            >
+
+                <span class="sub-icon">🌲</span>
+                <span>Random Forest</span>
+
+            </a>
+
+
+            <!-- COST COMPLEXITY -->
+            <a
+                href="{{ url_for('cost_complexity') }}"
+                class="nav-subitem{% if active == 'cost-complexity' %} active{% endif %}"
+            >
+
+                <span class="sub-icon">✂</span>
+                <span>Cost-Complexity</span>
+
+            </a>
+
+
+            <!-- ADABOOST -->
+            <a
+                href="{{ url_for('ada_boost') }}"
+                class="nav-subitem{% if active == 'ada-boost' %} active{% endif %}"
+            >
+
+                <span class="sub-icon">⚡</span>
+                <span>AdaBoost</span>
+
+            </a>
+
+
+            <!-- GRADIENT BOOST -->
+            <a
+                href="{{ url_for('gradient_boost') }}"
+                class="nav-subitem{% if active == 'gradient-boost' %} active{% endif %}"
+            >
+
+                <span class="sub-icon">↗</span>
+                <span>Gradient Boost</span>
+
+            </a>
+
+        </div>
+
+    </details>
+
+
+    <!-- =========================================
+         K-MEANS
+         ========================================= -->
+
+    <a
+        href="{{ url_for('kmeans') }}"
+        class="nav-item{% if active == 'kmeans' %} active{% endif %}"
+    >
+
+        <span class="nav-icon">●</span>
+        <span>K-Means Clustering</span>
+
+    </a>
+
+
+    <!-- SIDEBAR STATUS -->
+    <div class="sidebar-status">
+
+        <div class="status-dot"></div>
+
+        <div>
+
+            <strong>Project Status</strong>
+
+            <small>
+                Analytics active
+            </small>
+
+        </div>
+
+    </div>
+
+</aside>
+
+
+<!-- MAIN CONTENT -->
+
+<main class="main-content">
+
+
+    <!-- HEADER -->
+
+    <header class="page-header">
+
+        <div>
+
+            <div class="eyebrow">
+                MODULE 06 • LOGISTIC REGRESSION
             </div>
 
-            <div>
-                <h2>FruitSense</h2>
-                <p>Quality Analytics</p>
+            <h1>
+                Logistic Regression
+            </h1>
+
+            <p>
+                Classify fruit quality using environmental conditions.
+            </p>
+
+        </div>
+
+
+        <div class="system-status">
+
+            <span></span>
+
+            Classification Active
+
+        </div>
+
+    </header>
+
+
+    <!-- ERROR -->
+
+    {% if error %}
+
+    <div class="error-box">
+
+        {{ error }}
+
+    </div>
+
+    {% endif %}
+
+
+    {% if result %}
+
+
+    <!-- MODEL OVERVIEW -->
+
+    <section class="content-section">
+
+        <div class="stats-grid">
+
+            <div class="stat-card">
+
+                <span>
+                    Best Model
+                </span>
+
+                <strong>
+                    {{ result.best_model }}
+                </strong>
+
+            </div>
+
+
+            <div class="stat-card">
+
+                <span>
+                    Best Accuracy
+                </span>
+
+                <strong>
+                    {{ result.best_accuracy }}%
+                </strong>
+
+            </div>
+
+
+            <div class="stat-card">
+
+                <span>
+                    Precision
+                </span>
+
+                <strong>
+                    {{ result.best_precision }}%
+                </strong>
+
+            </div>
+
+
+            <div class="stat-card">
+
+                <span>
+                    F1 Score
+                </span>
+
+                <strong>
+                    {{ result.best_f1 }}%
+                </strong>
+
             </div>
 
         </div>
 
-        <div class="sidebar-section-title">
-            ANALYTICS
-        </div>
+    </section>
 
-        <a href="{{ url_for('index') }}" class="nav-item{% if active == 'dashboard' %} active{% endif %}">
-            <span class="nav-icon">⌂</span>
-            Dashboard
-        </a>
 
-        <a href="{{ url_for('data_loading') }}" class="nav-item{% if active == 'data-loading' %} active{% endif %}">
-            <span class="nav-icon">▣</span>
-            Data Loading
-        </a>
+    <!-- DATASET INFORMATION -->
 
-        <a href="{{ url_for('eda') }}" class="nav-item{% if active == 'eda' %} active{% endif %}">
-            <span class="nav-icon">◒</span>
-            Exploratory Analysis
-        </a>
+    <section class="content-section">
 
-        <a href="{{ url_for('preprocessing') }}" class="nav-item{% if active == 'preprocessing' %} active{% endif %}">
-            <span class="nav-icon">⚙</span>
-            Preprocessing
-        </a>
+        <div class="card">
 
-        <a href="{{ url_for('linear_regression') }}" class="nav-item{% if active == 'linear-regression' %} active{% endif %}">
-            <span class="nav-icon">📈</span>
-            Linear Regression
-        </a>
+            <div class="eyebrow">
+                MODEL CONFIGURATION
+            </div>
 
-        <a href="{{ url_for('logistic_regression') }}" class="nav-item{% if active == 'logistic-regression' %} active{% endif %}">
-            <span class="nav-icon">🎯</span>
-            Logistic Regression
-        </a>
+            <h3>
+                Classification Setup
+            </h3>
 
-        <a href="{{ url_for('regularisation') }}" class="nav-item{% if active == 'regularisation' %} active{% endif %}">
-            <span class="nav-icon">λ</span>
-            Regularisation
-        </a>
 
-        <a href="{{ url_for('decision_tree') }}" class="nav-item{% if active == 'decision-tree' %} active{% endif %}">
-            <span class="nav-icon">🌳</span>
-            Decision Tree
-        </a>
+            <p>
 
-        <a href="{{ url_for('random_forest') }}" class="nav-item{% if active == 'random-forest' %} active{% endif %}">
-            <span class="nav-icon">🌲</span>
-            Random Forest
-        </a>
+                <strong>
+                    Target:
+                </strong>
 
-        <a href="{{ url_for('cost_complexity') }}" class="nav-item{% if active == 'cost-complexity' %} active{% endif %}">
-            <span class="nav-icon">✂</span>
-            Cost-Complexity
-        </a>
+                {{ result.target }}
 
-        <a href="{{ url_for('ada_boost') }}" class="nav-item{% if active == 'ada-boost' %} active{% endif %}">
-            <span class="nav-icon">⚡</span>
-            AdaBoost
-        </a>
+            </p>
 
-        <a href="{{ url_for('gradient_boost') }}" class="nav-item{% if active == 'gradient-boost' %} active{% endif %}">
-            <span class="nav-icon">↗</span>
-            Gradient Boost
-        </a>
 
-        <div class="sidebar-status">
+            <p>
 
-            <div class="status-dot"></div>
+                <strong>
+                    Classes:
+                </strong>
 
-            <div>
-                <strong>Project Status</strong>
-                <small>Analytics active</small>
+                {{ result.classes|join(", ") }}
+
+            </p>
+
+
+            <div class="tag-container">
+
+                {% for feature in result.features %}
+
+                <span class="tag">
+                    {{ feature }}
+                </span>
+
+                {% endfor %}
+
             </div>
 
         </div>
 
-    </aside>
+    </section>
 
 
-    <!-- MAIN CONTENT -->
+    <!-- MODEL COMPARISON -->
 
-    <main class="main-content">
+    <section class="content-section">
 
+        <div class="card">
 
-        <!-- HEADER -->
-
-        <header class="page-header">
-
-            <div>
-
-                <div class="eyebrow">
-                    MODULE 06 • LOGISTIC REGRESSION
-                </div>
-
-                <h1>
-                    Logistic Regression
-                </h1>
-
-                <p>
-                    Classify fruit quality using environmental conditions.
-                </p>
-
+            <div class="eyebrow">
+                MODEL COMPARISON
             </div>
 
+            <h2>
+                Logistic Regression Results
+            </h2>
 
-            <div class="system-status">
 
-                <span></span>
+            <div class="table-wrapper">
 
-                Classification Active
+                <table>
+
+                    <thead>
+
+                        <tr>
+
+                            <th>Model</th>
+                            <th>Train Accuracy</th>
+                            <th>Test Accuracy</th>
+                            <th>Precision</th>
+                            <th>Recall</th>
+                            <th>F1 Score</th>
+
+                        </tr>
+
+                    </thead>
+
+
+                    <tbody>
+
+                        {% for row in result.comparison %}
+
+                        <tr>
+
+                            <td>
+                                <strong>
+                                    {{ row.name }}
+                                </strong>
+                            </td>
+
+                            <td>
+                                {{ row.train_accuracy }}%
+                            </td>
+
+                            <td>
+                                {{ row.test_accuracy }}%
+                            </td>
+
+                            <td>
+                                {{ row.precision }}%
+                            </td>
+
+                            <td>
+                                {{ row.recall }}%
+                            </td>
+
+                            <td>
+                                {{ row.f1 }}%
+                            </td>
+
+                        </tr>
+
+                        {% endfor %}
+
+                    </tbody>
+
+                </table>
 
             </div>
-
-        </header>
-
-
-        <!-- ERROR -->
-
-        {% if error %}
-
-        <div class="error-box">
-
-            {{ error }}
 
         </div>
 
-        {% endif %}
+    </section>
 
 
-        {% if result %}
+    <!-- BEST MODEL -->
+
+    <section class="content-section">
+
+        <div class="card best-model-card">
+
+            <div class="eyebrow">
+                BEST PERFORMING MODEL
+            </div>
+
+            <h2>
+                {{ result.best_model }}
+            </h2>
+
+            <p>
+                Test accuracy:
+                <strong>
+                    {{ result.best_accuracy }}%
+                </strong>
+            </p>
+
+            <p>
+                Precision:
+                <strong>
+                    {{ result.best_precision }}%
+                </strong>
+            </p>
+
+            <p>
+                Recall:
+                <strong>
+                    {{ result.best_recall }}%
+                </strong>
+            </p>
+
+            <p>
+                F1 Score:
+                <strong>
+                    {{ result.best_f1 }}%
+                </strong>
+            </p>
+
+        </div>
+
+    </section>
 
 
-        <!-- MODEL OVERVIEW -->
+    <!-- CONFUSION MATRIX -->
 
-        <section class="content-section">
+    <section class="content-section">
 
-            <div class="stats-grid">
+        <div class="card">
 
-                <div class="stat-card">
+            <div class="eyebrow">
+                CONFUSION MATRIX
+            </div>
 
-                    <span>
-                        Best Model
-                    </span>
-
-                    <strong>
-                        {{ result.best_model }}
-                    </strong>
-
-                </div>
+            <h2>
+                Best Model Classification Matrix
+            </h2>
 
 
-                <div class="stat-card">
+            <div class="confusion-wrapper">
 
-                    <span>
-                        Best Accuracy
-                    </span>
+                <table class="confusion-table">
 
-                    <strong>
-                        {{ result.best_accuracy }}%
-                    </strong>
+                    <thead>
 
-                </div>
+                        <tr>
 
+                            <th></th>
 
-                <div class="stat-card">
+                            <th>
+                                Predicted Bad
+                            </th>
 
-                    <span>
-                        Precision
-                    </span>
+                            <th>
+                                Predicted Good
+                            </th>
 
-                    <strong>
-                        {{ result.best_precision }}%
-                    </strong>
+                        </tr>
 
-                </div>
+                    </thead>
 
 
-                <div class="stat-card">
+                    <tbody>
 
-                    <span>
-                        F1 Score
-                    </span>
+                        <tr>
 
-                    <strong>
-                        {{ result.best_f1 }}%
-                    </strong>
+                            <th>
+                                Actual Bad
+                            </th>
 
-                </div>
+                            <td>
+                                {{ result.best_confusion_matrix[0][0] }}
+                            </td>
+
+                            <td>
+                                {{ result.best_confusion_matrix[0][1] }}
+                            </td>
+
+                        </tr>
+
+
+                        <tr>
+
+                            <th>
+                                Actual Good
+                            </th>
+
+                            <td>
+                                {{ result.best_confusion_matrix[1][0] }}
+                            </td>
+
+                            <td>
+                                {{ result.best_confusion_matrix[1][1] }}
+                            </td>
+
+                        </tr>
+
+                    </tbody>
+
+                </table>
 
             </div>
 
-        </section>
+        </div>
+
+    </section>
 
 
-        <!-- DATASET INFORMATION -->
+    <!-- CONFUSION MATRIX CHARTS -->
 
-        <section class="content-section">
+    <section class="content-section">
+
+        <div class="chart-grid">
 
             <div class="card">
-
-                <div class="eyebrow">
-                    MODEL CONFIGURATION
-                </div>
 
                 <h3>
-                    Classification Setup
+                    Unscaled
                 </h3>
 
-
-                <p>
-
-                    <strong>
-                        Target:
-                    </strong>
-
-                    {{ result.target }}
-
-                </p>
-
-
-                <p>
-
-                    <strong>
-                        Classes:
-                    </strong>
-
-                    {{ result.classes|join(", ") }}
-
-                </p>
-
-
-                <div class="tag-container">
-
-                    {% for feature in result.features %}
-
-                    <span class="tag">
-                        {{ feature }}
-                    </span>
-
-                    {% endfor %}
-
-                </div>
+                <img
+                    src="{{ url_for('static', filename='charts/logistic_unscaled_confusion.png') }}"
+                    class="chart-image"
+                >
 
             </div>
 
-        </section>
-
-
-        <!-- MODEL COMPARISON -->
-
-        <section class="content-section">
 
             <div class="card">
 
-                <div class="eyebrow">
-                    MODEL COMPARISON
-                </div>
+                <h3>
+                    StandardScaler
+                </h3>
 
-                <h2>
-                    Logistic Regression Results
-                </h2>
-
-
-                <div class="table-wrapper">
-
-                    <table>
-
-                        <thead>
-
-                            <tr>
-
-                                <th>Model</th>
-                                <th>Train Accuracy</th>
-                                <th>Test Accuracy</th>
-                                <th>Precision</th>
-                                <th>Recall</th>
-                                <th>F1 Score</th>
-
-                            </tr>
-
-                        </thead>
-
-
-                        <tbody>
-
-                            {% for row in result.comparison %}
-
-                            <tr>
-
-                                <td>
-                                    <strong>
-                                        {{ row.name }}
-                                    </strong>
-                                </td>
-
-                                <td>
-                                    {{ row.train_accuracy }}%
-                                </td>
-
-                                <td>
-                                    {{ row.test_accuracy }}%
-                                </td>
-
-                                <td>
-                                    {{ row.precision }}%
-                                </td>
-
-                                <td>
-                                    {{ row.recall }}%
-                                </td>
-
-                                <td>
-                                    {{ row.f1 }}%
-                                </td>
-
-                            </tr>
-
-                            {% endfor %}
-
-                        </tbody>
-
-                    </table>
-
-                </div>
+                <img
+                    src="{{ url_for('static', filename='charts/logistic_standard_confusion.png') }}"
+                    class="chart-image"
+                >
 
             </div>
 
-        </section>
-
-
-        <!-- BEST MODEL -->
-
-        <section class="content-section">
-
-            <div class="card best-model-card">
-
-                <div class="eyebrow">
-                    BEST PERFORMING MODEL
-                </div>
-
-                <h2>
-                    {{ result.best_model }}
-                </h2>
-
-                <p>
-                    Test accuracy:
-                    <strong>
-                        {{ result.best_accuracy }}%
-                    </strong>
-                </p>
-
-                <p>
-                    Precision:
-                    <strong>
-                        {{ result.best_precision }}%
-                    </strong>
-                </p>
-
-                <p>
-                    Recall:
-                    <strong>
-                        {{ result.best_recall }}%
-                    </strong>
-                </p>
-
-                <p>
-                    F1 Score:
-                    <strong>
-                        {{ result.best_f1 }}%
-                    </strong>
-                </p>
-
-            </div>
-
-        </section>
-
-
-        <!-- CONFUSION MATRIX -->
-
-        <section class="content-section">
 
             <div class="card">
 
-                <div class="eyebrow">
-                    CONFUSION MATRIX
-                </div>
+                <h3>
+                    MinMaxScaler
+                </h3>
 
-                <h2>
-                    Best Model Classification Matrix
-                </h2>
-
-
-                <div class="confusion-wrapper">
-
-                    <table class="confusion-table">
-
-                        <thead>
-
-                            <tr>
-
-                                <th></th>
-
-                                <th>
-                                    Predicted Bad
-                                </th>
-
-                                <th>
-                                    Predicted Good
-                                </th>
-
-                            </tr>
-
-                        </thead>
-
-
-                        <tbody>
-
-                            <tr>
-
-                                <th>
-                                    Actual Bad
-                                </th>
-
-                                <td>
-                                    {{ result.best_confusion_matrix[0][0] }}
-                                </td>
-
-                                <td>
-                                    {{ result.best_confusion_matrix[0][1] }}
-                                </td>
-
-                            </tr>
-
-
-                            <tr>
-
-                                <th>
-                                    Actual Good
-                                </th>
-
-                                <td>
-                                    {{ result.best_confusion_matrix[1][0] }}
-                                </td>
-
-                                <td>
-                                    {{ result.best_confusion_matrix[1][1] }}
-                                </td>
-
-                            </tr>
-
-                        </tbody>
-
-                    </table>
-
-                </div>
+                <img
+                    src="{{ url_for('static', filename='charts/logistic_minmax_confusion.png') }}"
+                    class="chart-image"
+                >
 
             </div>
 
-        </section>
+        </div>
+
+    </section>
 
 
-        <!-- CONFUSION MATRIX CHARTS -->
-
-        <section class="content-section">
-
-            <div class="chart-grid">
-
-                <div class="card">
-
-                    <h3>
-                        Unscaled
-                    </h3>
-
-                    <img
-                        src="{{ url_for('static', filename='charts/logistic_unscaled_confusion.png') }}"
-                        class="chart-image"
-                    >
-
-                </div>
+    {% endif %}
 
 
-                <div class="card">
-
-                    <h3>
-                        StandardScaler
-                    </h3>
-
-                    <img
-                        src="{{ url_for('static', filename='charts/logistic_standard_confusion.png') }}"
-                        class="chart-image"
-                    >
-
-                </div>
-
-
-                <div class="card">
-
-                    <h3>
-                        MinMaxScaler
-                    </h3>
-
-                    <img
-                        src="{{ url_for('static', filename='charts/logistic_minmax_confusion.png') }}"
-                        class="chart-image"
-                    >
-
-                </div>
-
-            </div>
-
-        </section>
-
-
-        {% endif %}
-
-
-    </main>
+</main>
 
 </div>
 

@@ -1,178 +1,199 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FruitSense | Cost-Complexity Pruning</title>
 
-    <meta
-        name="viewport"
-        content="width=device-width, initial-scale=1.0"
-    >
-
-    <title>
-        FruitSense | {{ page_title }}
-    </title>
-
-    <link
-        rel="stylesheet"
-        href="{{ url_for('static', filename='style.css') }}"
-    >
-
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='style.css') }}">
 </head>
-
 
 <body>
 
 <div class="app-layout">
 
-
-    <!-- SIDEBAR -->
-
     <aside class="sidebar">
 
         <div class="brand">
-
-            <div class="brand-icon">
-                🍃
-            </div>
-
+            <div class="brand-icon">🍃</div>
             <div>
-
                 <h2>FruitSense</h2>
-
                 <p>Quality Analytics</p>
-
             </div>
-
         </div>
-
 
         <div class="sidebar-section-title">
             ANALYTICS
         </div>
 
-
-        <a href="{{ url_for('index') }}" class="nav-item">
+        <!-- Dashboard -->
+        <a href="{{ url_for('index') }}"
+           class="nav-item{% if active == 'dashboard' %} active{% endif %}">
             <span class="nav-icon">⌂</span>
-            Dashboard
+            <span>Dashboard</span>
         </a>
 
-
-        <a href="{{ url_for('data_loading') }}" class="nav-item">
+        <!-- Data Loading -->
+        <a href="{{ url_for('data_loading') }}"
+           class="nav-item{% if active == 'data-loading' %} active{% endif %}">
             <span class="nav-icon">▣</span>
-            Data Loading
+            <span>Data Loading</span>
         </a>
 
-
-        <a href="{{ url_for('eda') }}" class="nav-item">
+        <!-- Exploratory Analysis -->
+        <a href="{{ url_for('eda') }}"
+           class="nav-item{% if active == 'eda' %} active{% endif %}">
             <span class="nav-icon">◒</span>
-            Exploratory Analysis
+            <span>Exploratory Analysis</span>
         </a>
 
-
-        <a
-            href="{{ url_for('preprocessing') }}"
-            class="nav-item"
-        >
+        <!-- Preprocessing -->
+        <a href="{{ url_for('preprocessing') }}"
+           class="nav-item{% if active == 'preprocessing' %} active{% endif %}">
             <span class="nav-icon">⚙</span>
-            Preprocessing
+            <span>Preprocessing</span>
         </a>
 
 
-        <a
-            href="{{ url_for('regularisation') }}"
-            class="nav-item {% if active == 'regularisation' %}active{% endif %}"
-        >
-            <span class="nav-icon">λ</span>
-            Regularisation
-        </a>
+        <!-- ========================= -->
+        <!-- REGRESSION DROPDOWN -->
+        <!-- ========================= -->
+
+        <details class="nav-dropdown"
+            {% if active in ['linear-regression',
+                             'logistic-regression',
+                             'regularisation'] %}open{% endif %}>
+
+            <summary class="dropdown-toggle">
+
+                <span class="dropdown-left">
+                    <span class="nav-icon">📈</span>
+                    <span>Regression</span>
+                </span>
+
+                <span class="dropdown-arrow">▾</span>
+
+            </summary>
+
+            <div class="dropdown-content">
+
+                <a href="{{ url_for('linear_regression') }}"
+                   class="nav-subitem{% if active == 'linear-regression' %} active{% endif %}">
+
+                    <span class="sub-icon">📈</span>
+                    <span>Linear Regression</span>
+
+                </a>
+
+                <a href="{{ url_for('logistic_regression') }}"
+                   class="nav-subitem{% if active == 'logistic-regression' %} active{% endif %}">
+
+                    <span class="sub-icon">🎯</span>
+                    <span>Logistic Regression</span>
+
+                </a>
+
+                <a href="{{ url_for('regularisation') }}"
+                   class="nav-subitem{% if active == 'regularisation' %} active{% endif %}">
+
+                    <span class="sub-icon">λ</span>
+                    <span>Regularisation</span>
+
+                </a>
+
+            </div>
+
+        </details>
 
 
-        <a
-            href="{{ url_for('decision_tree') }}"
-            class="nav-item {% if active == 'decision-tree' %}active{% endif %}"
-        >
-            <span class="nav-icon">🌳</span>
-            Decision Tree
-        </a>
+        <!-- ========================= -->
+        <!-- TREE & ENSEMBLE DROPDOWN -->
+        <!-- ========================= -->
+
+        <details class="nav-dropdown"
+            {% if active in ['decision-tree',
+                             'random-forest',
+                             'cost-complexity',
+                             'ada-boost',
+                             'gradient-boost'] %}open{% endif %}>
+
+            <summary class="dropdown-toggle">
+
+                <span class="dropdown-left">
+                    <span class="nav-icon">🌳</span>
+                    <span>Tree &amp; Ensemble</span>
+                </span>
+
+                <span class="dropdown-arrow">▾</span>
+
+            </summary>
+
+            <div class="dropdown-content">
+
+                <a href="{{ url_for('decision_tree') }}"
+                   class="nav-subitem{% if active == 'decision-tree' %} active{% endif %}">
+
+                    <span class="sub-icon">🌳</span>
+                    <span>Decision Tree</span>
+
+                </a>
+
+                <a href="{{ url_for('random_forest') }}"
+                   class="nav-subitem{% if active == 'random-forest' %} active{% endif %}">
+
+                    <span class="sub-icon">🌲</span>
+                    <span>Random Forest</span>
+
+                </a>
+
+                <a href="{{ url_for('cost_complexity') }}"
+                   class="nav-subitem{% if active == 'cost-complexity' %} active{% endif %}">
+
+                    <span class="sub-icon">✂</span>
+                    <span>Cost-Complexity</span>
+
+                </a>
+
+                <a href="{{ url_for('ada_boost') }}"
+                   class="nav-subitem{% if active == 'ada-boost' %} active{% endif %}">
+
+                    <span class="sub-icon">⚡</span>
+                    <span>AdaBoost</span>
+
+                </a>
+
+                <a href="{{ url_for('gradient_boost') }}"
+                   class="nav-subitem{% if active == 'gradient-boost' %} active{% endif %}">
+
+                    <span class="sub-icon">↗</span>
+                    <span>Gradient Boost</span>
+
+                </a>
+
+            </div>
+
+        </details>
 
 
-        <a
-            href="{{ url_for('random_forest') }}"
-            class="nav-item {% if active == 'random-forest' %}active{% endif %}"
-        >
-            <span class="nav-icon">🌲</span>
-            Random Forest
-        </a>
+        <!-- K-Means -->
+        <a href="{{ url_for('kmeans') }}"
+           class="nav-item{% if active == 'kmeans' %} active{% endif %}">
 
-
-        <a
-            href="{{ url_for('cost_complexity') }}"
-            class="nav-item {% if active == 'cost-complexity' %}active{% endif %}"
-        >
-            <span class="nav-icon">✂</span>
-            Cost-Complexity
-        </a>
-
-
-        <a
-            href="{{ url_for('ada_boost') }}"
-            class="nav-item {% if active == 'ada-boost' %}active{% endif %}"
-        >
-            <span class="nav-icon">⚡</span>
-            AdaBoost
-        </a>
-
-
-        <a
-            href="{{ url_for('gradient_boost') }}"
-            class="nav-item {% if active == 'gradient-boost' %}active{% endif %}"
-        >
-            <span class="nav-icon">↗</span>
-            Gradient Boost
-        </a>
-
-
-        <a
-            href="{{ url_for('linear_regression') }}"
-            class="nav-item"
-        >
-            <span class="nav-icon">📈</span>
-            Linear Regression
-        </a>
-
-
-        <a
-            href="{{ url_for('logistic_regression') }}"
-            class="nav-item"
-        >
-            <span class="nav-icon">🎯</span>
-            Logistic Regression
-        </a>
-
-
-        <!-- K-MEANS -->
-
-        <a
-            href="{{ url_for('kmeans') }}"
-            class="nav-item {% if active == 'kmeans' %}active{% endif %}"
-        >
             <span class="nav-icon">●</span>
-            K-Means Clustering
+            <span>K-Means Clustering</span>
+
         </a>
 
 
+        <!-- Sidebar Status -->
         <div class="sidebar-status">
 
             <div class="status-dot"></div>
 
             <div>
-
                 <strong>Project Status</strong>
-
-                <small>Classification active</small>
-
+                <small>Analytics active</small>
             </div>
 
         </div>
@@ -180,25 +201,29 @@
     </aside>
 
 
-    <!-- MAIN -->
+    <!-- ========================= -->
+    <!-- MAIN CONTENT -->
+    <!-- ========================= -->
 
     <main class="main-content">
-
 
         <header class="page-header">
 
             <div>
 
                 <div class="eyebrow">
-                    {{ module_label }}
+                    FRESHCHAIN • QUALITY ANALYTICS
                 </div>
 
                 <h1>
-                    {{ page_title }}
+                    Cost-Complexity
+                    <br>
+                    Pruning
                 </h1>
 
                 <p>
-                    {{ description }}
+                    Reduce decision-tree complexity using
+                    cost-complexity pruning.
                 </p>
 
             </div>
@@ -206,8 +231,7 @@
             <div class="system-status">
 
                 <span></span>
-
-                Model Active
+                System Active
 
             </div>
 
@@ -223,408 +247,175 @@
         {% endif %}
 
 
-        {% if result %}
-
-
-        <!-- MAIN METRICS -->
-
-        <div class="stats-grid">
-
-
-            <div class="stat-card">
-
-                <span>
-                    Training Accuracy
-                </span>
-
-                <strong>
-                    {{ "%.2f"|format(result.train_accuracy * 100) }}%
-                </strong>
-
-            </div>
-
-
-            <div class="stat-card">
-
-                <span>
-                    Testing Accuracy
-                </span>
-
-                <strong>
-                    {{ "%.2f"|format(result.test_accuracy * 100) }}%
-                </strong>
-
-            </div>
-
-
-            <div class="stat-card">
-
-                <span>
-                    Precision
-                </span>
-
-                <strong>
-                    {{ "%.3f"|format(result.precision) }}
-                </strong>
-
-            </div>
-
-
-            <div class="stat-card">
-
-                <span>
-                    F1 Score
-                </span>
-
-                <strong>
-                    {{ "%.3f"|format(result.f1) }}
-                </strong>
-
-            </div>
-
-        </div>
-
-
-        <!-- DETAILS -->
-
         <section class="content-section">
 
-            <div class="card">
+            <div class="section-heading">
 
-                <h3>
-                    Model Details
-                </h3>
+                <div>
 
-                <div class="table-wrapper">
+                    <div class="eyebrow">
+                        MODULE 08 • TREE PRUNING
+                    </div>
 
-                    <table>
+                    <h2>
+                        Cost-Complexity Pruning
+                    </h2>
 
-                        <tbody>
-
-                            <tr>
-                                <th>Training Rows</th>
-                                <td>{{ result.train_rows }}</td>
-                            </tr>
-
-                            <tr>
-                                <th>Testing Rows</th>
-                                <td>{{ result.test_rows }}</td>
-                            </tr>
-
-                            {% if result.n_estimators is defined %}
-
-                            <tr>
-                                <th>Number of Estimators</th>
-                                <td>{{ result.n_estimators }}</td>
-                            </tr>
-
-                            {% endif %}
-
-
-                            {% if result.learning_rate is defined %}
-
-                            <tr>
-                                <th>Learning Rate</th>
-                                <td>{{ result.learning_rate }}</td>
-                            </tr>
-
-                            {% endif %}
-
-
-                            {% if result.max_depth is defined %}
-
-                            <tr>
-                                <th>Maximum Depth</th>
-                                <td>{{ result.max_depth }}</td>
-                            </tr>
-
-                            {% endif %}
-
-
-                            {% if result.tree_depth is defined %}
-
-                            <tr>
-                                <th>Tree Depth</th>
-                                <td>{{ result.tree_depth }}</td>
-                            </tr>
-
-                            {% endif %}
-
-
-                            {% if result.leaf_count is defined %}
-
-                            <tr>
-                                <th>Leaf Nodes</th>
-                                <td>{{ result.leaf_count }}</td>
-                            </tr>
-
-                            {% endif %}
-
-
-                            {% if result.best_alpha is defined %}
-
-                            <tr>
-                                <th>Best Cost-Complexity Alpha</th>
-                                <td>
-                                    {{ "%.6f"|format(result.best_alpha) }}
-                                </td>
-                            </tr>
-
-                            {% endif %}
-
-
-                            {% if result.candidate_alphas is defined %}
-
-                            <tr>
-                                <th>Candidate Alpha Values</th>
-                                <td>
-                                    {{ result.candidate_alphas }}
-                                </td>
-                            </tr>
-
-                            {% endif %}
-
-                        </tbody>
-
-                    </table>
+                    <p>
+                        Optimize the decision tree by selecting
+                        an appropriate pruning parameter.
+                    </p>
 
                 </div>
 
             </div>
 
-        </section>
+
+            {% if result %}
+
+            <div class="stats-grid">
+
+                {% if result.accuracy is defined %}
+
+                <div class="stat-card">
+
+                    <span>Accuracy</span>
+
+                    <strong>
+                        {{ result.accuracy }}
+                    </strong>
+
+                </div>
+
+                {% endif %}
 
 
-        <!-- CLASSIFICATION METRICS -->
+                {% if result.best_alpha is defined %}
 
-        <section class="content-section">
+                <div class="stat-card">
+
+                    <span>Best Alpha</span>
+
+                    <strong>
+                        {{ result.best_alpha }}
+                    </strong>
+
+                </div>
+
+                {% endif %}
+
+
+                {% if result.train_accuracy is defined %}
+
+                <div class="stat-card">
+
+                    <span>Train Accuracy</span>
+
+                    <strong>
+                        {{ result.train_accuracy }}
+                    </strong>
+
+                </div>
+
+                {% endif %}
+
+
+                {% if result.test_accuracy is defined %}
+
+                <div class="stat-card">
+
+                    <span>Test Accuracy</span>
+
+                    <strong>
+                        {{ result.test_accuracy }}
+                    </strong>
+
+                </div>
+
+                {% endif %}
+
+            </div>
+
+
+            {% if result.chart %}
 
             <div class="card">
 
                 <h3>
-                    Classification Metrics
+                    Cost-Complexity Analysis
                 </h3>
 
-                <div class="table-wrapper">
+                <div style="text-align:center; margin-top:20px;">
 
-                    <table>
-
-                        <thead>
-
-                            <tr>
-
-                                <th>
-                                    Metric
-                                </th>
-
-                                <th>
-                                    Value
-                                </th>
-
-                            </tr>
-
-                        </thead>
-
-                        <tbody>
-
-                            <tr>
-
-                                <td>
-                                    Accuracy
-                                </td>
-
-                                <td>
-                                    {{ "%.4f"|format(result.test_accuracy) }}
-                                </td>
-
-                            </tr>
-
-                            <tr>
-
-                                <td>
-                                    Precision
-                                </td>
-
-                                <td>
-                                    {{ "%.4f"|format(result.precision) }}
-                                </td>
-
-                            </tr>
-
-                            <tr>
-
-                                <td>
-                                    Recall
-                                </td>
-
-                                <td>
-                                    {{ "%.4f"|format(result.recall) }}
-                                </td>
-
-                            </tr>
-
-                            <tr>
-
-                                <td>
-                                    F1 Score
-                                </td>
-
-                                <td>
-                                    {{ "%.4f"|format(result.f1) }}
-                                </td>
-
-                            </tr>
-
-                        </tbody>
-
-                    </table>
+                    <img
+                        src="{{ url_for('static', filename=result.chart) }}"
+                        alt="Cost Complexity Chart"
+                        style="max-width:100%; border-radius:12px;"
+                    >
 
                 </div>
 
             </div>
 
-        </section>
+            {% endif %}
 
-
-        <!-- CONFUSION MATRIX -->
-
-        <section class="content-section">
 
             <div class="card">
 
                 <h3>
-                    Confusion Matrix
+                    Model Results
                 </h3>
 
-                <div class="table-wrapper">
+                {% for key, value in result.items() %}
 
-                    <table>
+                    {% if key != "chart" %}
 
-                        <thead>
+                    <div style="
+                        display:flex;
+                        justify-content:space-between;
+                        gap:20px;
+                        padding:12px 0;
+                        border-bottom:1px solid #e5e7eb;
+                    ">
 
-                            <tr>
+                        <strong>
+                            {{ key|replace("_", " ")|title }}
+                        </strong>
 
-                                <th></th>
+                        <span>
+                            {{ value }}
+                        </span>
 
-                                <th>
-                                    Predicted BAD
-                                </th>
+                    </div>
 
-                                <th>
-                                    Predicted Good
-                                </th>
+                    {% endif %}
 
-                            </tr>
-
-                        </thead>
-
-
-                        <tbody>
-
-                            <tr>
-
-                                <th>
-                                    Actual BAD
-                                </th>
-
-                                <td>
-                                    {{ result.confusion_matrix[0][0] }}
-                                </td>
-
-                                <td>
-                                    {{ result.confusion_matrix[0][1] }}
-                                </td>
-
-                            </tr>
-
-
-                            <tr>
-
-                                <th>
-                                    Actual Good
-                                </th>
-
-                                <td>
-                                    {{ result.confusion_matrix[1][0] }}
-                                </td>
-
-                                <td>
-                                    {{ result.confusion_matrix[1][1] }}
-                                </td>
-
-                            </tr>
-
-                        </tbody>
-
-                    </table>
-
-                </div>
+                {% endfor %}
 
             </div>
 
-        </section>
 
-
-        {% if result.feature_importance is defined %}
-
-        <section class="content-section">
+            {% else %}
 
             <div class="card">
 
                 <h3>
-                    Feature Importance
+                    Cost-Complexity Pruning
                 </h3>
 
-                <div class="table-wrapper">
-
-                    <table>
-
-                        <thead>
-
-                            <tr>
-                                <th>Feature</th>
-                                <th>Importance</th>
-                            </tr>
-
-                        </thead>
-
-                        <tbody>
-
-                            {% for feature, importance in result.feature_importance.items() %}
-
-                            <tr>
-
-                                <td>
-                                    {{ feature }}
-                                </td>
-
-                                <td>
-                                    {{ importance }}
-                                </td>
-
-                            </tr>
-
-                            {% endfor %}
-
-                        </tbody>
-
-                    </table>
-
-                </div>
+                <p>
+                    No result is available yet.
+                </p>
 
             </div>
 
+            {% endif %}
+
         </section>
-
-        {% endif %}
-
-
-        {% endif %}
 
     </main>
 
 </div>
 
 </body>
-
 </html>

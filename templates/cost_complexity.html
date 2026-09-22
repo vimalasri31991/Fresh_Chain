@@ -13,117 +13,275 @@
 
 <div class="app-layout">
 
+    <!-- ========================= -->
+    <!-- SIDEBAR -->
+    <!-- ========================= -->
+
     <aside class="sidebar">
 
+        <!-- BRAND -->
         <div class="brand">
+
             <div class="brand-icon">🍃</div>
+
             <div>
                 <h2>FruitSense</h2>
                 <p>Quality Analytics</p>
             </div>
+
         </div>
 
+
+        <!-- SECTION TITLE -->
         <div class="sidebar-section-title">
             ANALYTICS
         </div>
 
+
+        <!-- DASHBOARD -->
         <a href="{{ url_for('index') }}"
-           class="nav-item">
+           class="nav-item{% if active == 'dashboard' %} active{% endif %}">
+
             <span class="nav-icon">⌂</span>
             <span>Dashboard</span>
+
         </a>
 
+
+        <!-- DATA LOADING -->
         <a href="{{ url_for('data_loading') }}"
-           class="nav-item">
+           class="nav-item{% if active == 'data-loading' %} active{% endif %}">
+
             <span class="nav-icon">▣</span>
             <span>Data Loading</span>
+
         </a>
 
+
+        <!-- EXPLORATORY ANALYSIS -->
         <a href="{{ url_for('eda') }}"
-           class="nav-item">
+           class="nav-item{% if active == 'eda' %} active{% endif %}">
+
             <span class="nav-icon">◒</span>
             <span>Exploratory Analysis</span>
+
         </a>
 
+
+        <!-- PREPROCESSING -->
         <a href="{{ url_for('preprocessing') }}"
-           class="nav-item">
+           class="nav-item{% if active == 'preprocessing' %} active{% endif %}">
+
             <span class="nav-icon">⚙</span>
             <span>Preprocessing</span>
+
         </a>
 
-        <a href="{{ url_for('linear_regression') }}"
-           class="nav-item">
-            <span class="nav-icon">📈</span>
-            <span>Linear Regression</span>
-        </a>
 
-        <a href="{{ url_for('logistic_regression') }}"
-           class="nav-item">
-            <span class="nav-icon">🎯</span>
-            <span>Logistic Regression</span>
-        </a>
+        <!-- ========================= -->
+        <!-- REGRESSION -->
+        <!-- ========================= -->
 
-        <a href="{{ url_for('regularisation') }}"
-           class="nav-item">
-            <span class="nav-icon">λ</span>
-            <span>Regularisation</span>
-        </a>
+        <details class="nav-dropdown"
+            {% if active in [
+                'linear-regression',
+                'logistic-regression',
+                'regularisation'
+            ] %}open{% endif %}>
 
-        <a href="{{ url_for('decision_tree') }}"
-           class="nav-item">
-            <span class="nav-icon">🌳</span>
-            <span>Decision Tree</span>
-        </a>
+            <summary class="dropdown-toggle">
 
-        <a href="{{ url_for('random_forest') }}"
-           class="nav-item">
-            <span class="nav-icon">🌲</span>
-            <span>Random Forest</span>
-        </a>
+                <span class="dropdown-left">
 
-        <a href="{{ url_for('cost_complexity') }}"
-           class="nav-item active">
-            <span class="nav-icon">✂</span>
-            <span>Cost-Complexity</span>
-        </a>
+                    <span class="nav-icon">📈</span>
 
-        <a href="{{ url_for('ada_boost') }}"
-           class="nav-item">
-            <span class="nav-icon">⚡</span>
-            <span>AdaBoost</span>
-        </a>
+                    <span>Regression</span>
 
-        <a href="{{ url_for('gradient_boost') }}"
-           class="nav-item">
-            <span class="nav-icon">↗</span>
-            <span>Gradient Boost</span>
-        </a>
+                </span>
+
+                <span class="dropdown-arrow">
+                    ▾
+                </span>
+
+            </summary>
+
+
+            <div class="dropdown-content">
+
+                <!-- LINEAR REGRESSION -->
+                <a href="{{ url_for('linear_regression') }}"
+                   class="nav-subitem{% if active == 'linear-regression' %} active{% endif %}">
+
+                    <span class="sub-icon">📈</span>
+                    <span>Linear Regression</span>
+
+                </a>
+
+
+                <!-- LOGISTIC REGRESSION -->
+                <a href="{{ url_for('logistic_regression') }}"
+                   class="nav-subitem{% if active == 'logistic-regression' %} active{% endif %}">
+
+                    <span class="sub-icon">🎯</span>
+                    <span>Logistic Regression</span>
+
+                </a>
+
+
+                <!-- REGULARISATION -->
+                <a href="{{ url_for('regularisation') }}"
+                   class="nav-subitem{% if active == 'regularisation' %} active{% endif %}">
+
+                    <span class="sub-icon">λ</span>
+                    <span>Regularisation</span>
+
+                </a>
+
+            </div>
+
+        </details>
+
+
+        <!-- ========================= -->
+        <!-- TREE & ENSEMBLE -->
+        <!-- ========================= -->
+
+        <details class="nav-dropdown"
+            {% if active in [
+                'decision-tree',
+                'random-forest',
+                'cost-complexity',
+                'ada-boost',
+                'gradient-boost'
+            ] %}open{% endif %}>
+
+            <summary class="dropdown-toggle">
+
+                <span class="dropdown-left">
+
+                    <span class="nav-icon">🌳</span>
+
+                    <span>Tree &amp; Ensemble</span>
+
+                </span>
+
+                <span class="dropdown-arrow">
+                    ▾
+                </span>
+
+            </summary>
+
+
+            <div class="dropdown-content">
+
+                <!-- DECISION TREE -->
+                <a href="{{ url_for('decision_tree') }}"
+                   class="nav-subitem{% if active == 'decision-tree' %} active{% endif %}">
+
+                    <span class="sub-icon">🌳</span>
+                    <span>Decision Tree</span>
+
+                </a>
+
+
+                <!-- RANDOM FOREST -->
+                <a href="{{ url_for('random_forest') }}"
+                   class="nav-subitem{% if active == 'random-forest' %} active{% endif %}">
+
+                    <span class="sub-icon">🌲</span>
+                    <span>Random Forest</span>
+
+                </a>
+
+
+                <!-- COST COMPLEXITY -->
+                <a href="{{ url_for('cost_complexity') }}"
+                   class="nav-subitem{% if active == 'cost-complexity' %} active{% endif %}">
+
+                    <span class="sub-icon">✂</span>
+                    <span>Cost-Complexity</span>
+
+                </a>
+
+
+                <!-- ADABOOST -->
+                <a href="{{ url_for('ada_boost') }}"
+                   class="nav-subitem{% if active == 'ada-boost' %} active{% endif %}">
+
+                    <span class="sub-icon">⚡</span>
+                    <span>AdaBoost</span>
+
+                </a>
+
+
+                <!-- GRADIENT BOOST -->
+                <a href="{{ url_for('gradient_boost') }}"
+                   class="nav-subitem{% if active == 'gradient-boost' %} active{% endif %}">
+
+                    <span class="sub-icon">↗</span>
+                    <span>Gradient Boost</span>
+
+                </a>
+
+            </div>
+
+        </details>
+
+
+        <!-- ========================= -->
+        <!-- K-MEANS -->
+        <!-- ========================= -->
 
         <a href="{{ url_for('kmeans') }}"
-           class="nav-item">
+           class="nav-item{% if active == 'kmeans' %} active{% endif %}">
+
             <span class="nav-icon">●</span>
             <span>K-Means Clustering</span>
+
         </a>
 
+
+        <!-- ========================= -->
+        <!-- SIDEBAR STATUS -->
+        <!-- ========================= -->
+
         <div class="sidebar-status">
+
             <div class="status-dot"></div>
+
             <div>
-                <strong>Project Status</strong>
-                <small>Classification active</small>
+
+                <strong>
+                    Project Status
+                </strong>
+
+                <small>
+                    Analytics active
+                </small>
+
             </div>
+
         </div>
 
     </aside>
 
 
+    <!-- ========================= -->
+    <!-- MAIN CONTENT -->
+    <!-- ========================= -->
+
     <main class="main-content">
 
+
+        <!-- PAGE HEADER -->
         <header class="page-header">
 
             <div>
+
                 <div class="eyebrow">
                     FRESHCHAIN • QUALITY ANALYTICS
                 </div>
+
 
                 <h1>
                     Cost-Complexity
@@ -131,20 +289,27 @@
                     Pruning
                 </h1>
 
+
                 <p>
                     Reduce decision-tree complexity using
                     cost-complexity pruning.
                 </p>
+
             </div>
 
+
             <div class="system-status">
+
                 <span></span>
+
                 System Active
+
             </div>
 
         </header>
 
 
+        <!-- ERROR -->
         {% if error %}
 
         <div class="error-box">
@@ -154,63 +319,115 @@
         {% endif %}
 
 
+        <!-- CONTENT -->
         <section class="content-section">
 
+
+            <!-- SECTION HEADING -->
             <div class="section-heading">
 
                 <div>
+
                     <div class="eyebrow">
                         MODULE 08 • TREE PRUNING
                     </div>
+
 
                     <h2>
                         Cost-Complexity Pruning
                     </h2>
 
+
                     <p>
                         Optimize the decision tree by selecting
                         an appropriate pruning parameter.
                     </p>
+
                 </div>
 
             </div>
 
 
+            <!-- RESULT -->
             {% if result %}
 
+
+            <!-- STATISTICS -->
             <div class="stats-grid">
 
+
                 {% if result.accuracy is defined %}
+
                 <div class="stat-card">
-                    <span>Accuracy</span>
-                    <strong>{{ result.accuracy }}</strong>
+
+                    <span>
+                        Accuracy
+                    </span>
+
+                    <strong>
+                        {{ result.accuracy }}
+                    </strong>
+
                 </div>
+
                 {% endif %}
+
 
                 {% if result.best_alpha is defined %}
+
                 <div class="stat-card">
-                    <span>Best Alpha</span>
-                    <strong>{{ result.best_alpha }}</strong>
+
+                    <span>
+                        Best Alpha
+                    </span>
+
+                    <strong>
+                        {{ result.best_alpha }}
+                    </strong>
+
                 </div>
+
                 {% endif %}
+
 
                 {% if result.train_accuracy is defined %}
+
                 <div class="stat-card">
-                    <span>Train Accuracy</span>
-                    <strong>{{ result.train_accuracy }}</strong>
+
+                    <span>
+                        Train Accuracy
+                    </span>
+
+                    <strong>
+                        {{ result.train_accuracy }}
+                    </strong>
+
                 </div>
+
                 {% endif %}
 
+
                 {% if result.test_accuracy is defined %}
+
                 <div class="stat-card">
-                    <span>Test Accuracy</span>
-                    <strong>{{ result.test_accuracy }}</strong>
+
+                    <span>
+                        Test Accuracy
+                    </span>
+
+                    <strong>
+                        {{ result.test_accuracy }}
+                    </strong>
+
                 </div>
+
                 {% endif %}
+
 
             </div>
 
 
+            <!-- CHART -->
             {% if result.chart %}
 
             <div class="card">
@@ -219,12 +436,19 @@
                     Cost-Complexity Analysis
                 </h3>
 
-                <div style="text-align:center; margin-top:20px;">
+
+                <div style="
+                    text-align:center;
+                    margin-top:20px;
+                ">
 
                     <img
                         src="{{ url_for('static', filename=result.chart) }}"
                         alt="Cost Complexity Chart"
-                        style="max-width:100%; border-radius:12px;"
+                        style="
+                            max-width:100%;
+                            border-radius:12px;
+                        "
                     >
 
                 </div>
@@ -234,13 +458,16 @@
             {% endif %}
 
 
+            <!-- MODEL RESULTS -->
             <div class="card">
 
                 <h3>
                     Model Results
                 </h3>
 
+
                 {% for key, value in result.items() %}
+
 
                     {% if key != "chart" %}
 
@@ -252,29 +479,38 @@
                         border-bottom:1px solid #e5e7eb;
                     ">
 
+
                         <strong>
                             {{ key|replace("_", " ")|title }}
                         </strong>
+
 
                         <span>
                             {{ value }}
                         </span>
 
+
                     </div>
 
                     {% endif %}
 
+
                 {% endfor %}
+
 
             </div>
 
+
             {% else %}
 
+
+            <!-- NO RESULT -->
             <div class="card">
 
                 <h3>
                     Cost-Complexity Pruning
                 </h3>
+
 
                 <p>
                     No result is available yet.
@@ -282,7 +518,9 @@
 
             </div>
 
+
             {% endif %}
+
 
         </section>
 

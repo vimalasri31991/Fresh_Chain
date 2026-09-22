@@ -25,117 +25,271 @@
 <div class="app-layout">
 
 
-    <aside class="sidebar">
+<!-- SIDEBAR -->
+<aside class="sidebar">
 
-        <div class="brand">
+    <!-- BRAND -->
+    <div class="brand">
+        <div class="brand-icon">🍃</div>
 
-            <div class="brand-icon">
-                🍃
-            </div>
+        <div>
+            <h2>FruitSense</h2>
+            <p>Quality Analytics</p>
+        </div>
+    </div>
 
-            <div>
-                <h2>FruitSense</h2>
-                <p>Quality Analytics</p>
-            </div>
+
+    <!-- SECTION TITLE -->
+    <div class="sidebar-section-title">
+        ANALYTICS
+    </div>
+
+
+    <!-- DASHBOARD -->
+    <a
+        href="{{ url_for('index') }}"
+        class="nav-item{% if active == 'dashboard' %} active{% endif %}"
+    >
+
+        <span class="nav-icon">⌂</span>
+        <span>Dashboard</span>
+
+    </a>
+
+
+    <!-- DATA LOADING -->
+    <a
+        href="{{ url_for('data_loading') }}"
+        class="nav-item{% if active == 'data-loading' %} active{% endif %}"
+    >
+
+        <span class="nav-icon">▣</span>
+        <span>Data Loading</span>
+
+    </a>
+
+
+    <!-- EXPLORATORY ANALYSIS -->
+    <a
+        href="{{ url_for('eda') }}"
+        class="nav-item{% if active == 'eda' %} active{% endif %}"
+    >
+
+        <span class="nav-icon">◒</span>
+        <span>Exploratory Analysis</span>
+
+    </a>
+
+
+    <!-- PREPROCESSING -->
+    <a
+        href="{{ url_for('preprocessing') }}"
+        class="nav-item{% if active == 'preprocessing' %} active{% endif %}"
+    >
+
+        <span class="nav-icon">⚙</span>
+        <span>Preprocessing</span>
+
+    </a>
+
+
+    <!-- =========================================
+         REGRESSION DROPDOWN
+         ========================================= -->
+
+    <details
+        class="nav-dropdown"
+        {% if active in ['linear-regression', 'logistic-regression', 'regularisation'] %}open{% endif %}
+    >
+
+        <summary class="dropdown-toggle">
+
+            <span class="dropdown-left">
+
+                <span class="nav-icon">📈</span>
+
+                <span>Regression</span>
+
+            </span>
+
+            <span class="dropdown-arrow">
+                ▾
+            </span>
+
+        </summary>
+
+
+        <div class="dropdown-content">
+
+
+            <!-- LINEAR REGRESSION -->
+            <a
+                href="{{ url_for('linear_regression') }}"
+                class="nav-subitem{% if active == 'linear-regression' %} active{% endif %}"
+            >
+
+                <span class="sub-icon">📈</span>
+                <span>Linear Regression</span>
+
+            </a>
+
+
+            <!-- LOGISTIC REGRESSION -->
+            <a
+                href="{{ url_for('logistic_regression') }}"
+                class="nav-subitem{% if active == 'logistic-regression' %} active{% endif %}"
+            >
+
+                <span class="sub-icon">🎯</span>
+                <span>Logistic Regression</span>
+
+            </a>
+
+
+            <!-- REGULARISATION -->
+            <a
+                href="{{ url_for('regularisation') }}"
+                class="nav-subitem{% if active == 'regularisation' %} active{% endif %}"
+            >
+
+                <span class="sub-icon">λ</span>
+                <span>Regularisation</span>
+
+            </a>
 
         </div>
 
-
-        <div class="sidebar-section-title">
-            ANALYTICS
-        </div>
+    </details>
 
 
-        <a href="{{ url_for('index') }}" class="nav-item">
-            <span class="nav-icon">⌂</span>
-            Dashboard
-        </a>
+    <!-- =========================================
+         TREE & ENSEMBLE DROPDOWN
+         ========================================= -->
+
+    <details
+        class="nav-dropdown"
+        {% if active in ['decision-tree', 'random-forest', 'cost-complexity', 'ada-boost', 'gradient-boost'] %}open{% endif %}
+    >
+
+        <summary class="dropdown-toggle">
+
+            <span class="dropdown-left">
+
+                <span class="nav-icon">🌳</span>
+
+                <span>Tree &amp; Ensemble</span>
+
+            </span>
+
+            <span class="dropdown-arrow">
+                ▾
+            </span>
+
+        </summary>
 
 
-        <a href="{{ url_for('data_loading') }}" class="nav-item">
-            <span class="nav-icon">▣</span>
-            Data Loading
-        </a>
+        <div class="dropdown-content">
 
 
-        <a href="{{ url_for('eda') }}" class="nav-item">
-            <span class="nav-icon">◒</span>
-            Exploratory Analysis
-        </a>
+            <!-- DECISION TREE -->
+            <a
+                href="{{ url_for('decision_tree') }}"
+                class="nav-subitem{% if active == 'decision-tree' %} active{% endif %}"
+            >
+
+                <span class="sub-icon">🌳</span>
+                <span>Decision Tree</span>
+
+            </a>
 
 
-        <a href="{{ url_for('preprocessing') }}" class="nav-item">
-            <span class="nav-icon">⚙</span>
-            Preprocessing
-        </a>
+            <!-- RANDOM FOREST -->
+            <a
+                href="{{ url_for('random_forest') }}"
+                class="nav-subitem{% if active == 'random-forest' %} active{% endif %}"
+            >
+
+                <span class="sub-icon">🌲</span>
+                <span>Random Forest</span>
+
+            </a>
 
 
-        <a
-            href="{{ url_for('regularisation') }}"
-            class="nav-item active"
-        >
-            <span class="nav-icon">λ</span>
-            Regularisation
-        </a>
+            <!-- COST COMPLEXITY -->
+            <a
+                href="{{ url_for('cost_complexity') }}"
+                class="nav-subitem{% if active == 'cost-complexity' %} active{% endif %}"
+            >
+
+                <span class="sub-icon">✂</span>
+                <span>Cost-Complexity</span>
+
+            </a>
 
 
-        <a href="{{ url_for('decision_tree') }}" class="nav-item">
-            <span class="nav-icon">🌳</span>
-            Decision Tree
-        </a>
+            <!-- ADABOOST -->
+            <a
+                href="{{ url_for('ada_boost') }}"
+                class="nav-subitem{% if active == 'ada-boost' %} active{% endif %}"
+            >
+
+                <span class="sub-icon">⚡</span>
+                <span>AdaBoost</span>
+
+            </a>
 
 
-        <a href="{{ url_for('random_forest') }}" class="nav-item">
-            <span class="nav-icon">🌲</span>
-            Random Forest
-        </a>
+            <!-- GRADIENT BOOST -->
+            <a
+                href="{{ url_for('gradient_boost') }}"
+                class="nav-subitem{% if active == 'gradient-boost' %} active{% endif %}"
+            >
 
+                <span class="sub-icon">↗</span>
+                <span>Gradient Boost</span>
 
-        <a href="{{ url_for('cost_complexity') }}" class="nav-item">
-            <span class="nav-icon">✂</span>
-            Cost-Complexity
-        </a>
-
-
-        <a href="{{ url_for('ada_boost') }}" class="nav-item">
-            <span class="nav-icon">⚡</span>
-            AdaBoost
-        </a>
-
-
-        <a href="{{ url_for('gradient_boost') }}" class="nav-item">
-            <span class="nav-icon">↗</span>
-            Gradient Boost
-        </a>
-
-
-        <a href="{{ url_for('linear_regression') }}" class="nav-item">
-            <span class="nav-icon">📈</span>
-            Linear Regression
-        </a>
-
-
-        <a href="{{ url_for('logistic_regression') }}" class="nav-item">
-            <span class="nav-icon">🎯</span>
-            Logistic Regression
-        </a>
-
-
-        <div class="sidebar-status">
-
-            <div class="status-dot"></div>
-
-            <div>
-
-                <strong>Project Status</strong>
-
-                <small>Classification active</small>
-
-            </div>
+            </a>
 
         </div>
 
-    </aside>
+    </details>
+
+
+    <!-- =========================================
+         K-MEANS
+         ========================================= -->
+
+    <a
+        href="{{ url_for('kmeans') }}"
+        class="nav-item{% if active == 'kmeans' %} active{% endif %}"
+    >
+
+        <span class="nav-icon">●</span>
+        <span>K-Means Clustering</span>
+
+    </a>
+
+
+    <!-- SIDEBAR STATUS -->
+    <div class="sidebar-status">
+
+        <div class="status-dot"></div>
+
+        <div>
+
+            <strong>Project Status</strong>
+
+            <small>
+                Analytics active
+            </small>
+
+        </div>
+
+    </div>
+
+</aside>
+
+
 
 
     <main class="main-content">
@@ -274,9 +428,11 @@
 
                             <tr>
                                 <td>Accuracy</td>
+
                                 <td>
                                     {{ "%.4f"|format(result.l1.accuracy) }}
                                 </td>
+
                                 <td>
                                     {{ "%.4f"|format(result.l2.accuracy) }}
                                 </td>
@@ -285,9 +441,11 @@
 
                             <tr>
                                 <td>Precision</td>
+
                                 <td>
                                     {{ "%.4f"|format(result.l1.precision) }}
                                 </td>
+
                                 <td>
                                     {{ "%.4f"|format(result.l2.precision) }}
                                 </td>
@@ -296,9 +454,11 @@
 
                             <tr>
                                 <td>Recall</td>
+
                                 <td>
                                     {{ "%.4f"|format(result.l1.recall) }}
                                 </td>
+
                                 <td>
                                     {{ "%.4f"|format(result.l2.recall) }}
                                 </td>
@@ -307,9 +467,11 @@
 
                             <tr>
                                 <td>F1 Score</td>
+
                                 <td>
                                     {{ "%.4f"|format(result.l1.f1) }}
                                 </td>
+
                                 <td>
                                     {{ "%.4f"|format(result.l2.f1) }}
                                 </td>
