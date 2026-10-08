@@ -1406,3 +1406,333 @@ tbody tr:hover td {
     }
 
 }
+
+/* ============================================================
+   VISUAL COMPONENTS (added)
+   Bars, chips, code blocks, confusion heat-map, comparison footer.
+   They reuse the existing pastel palette - nothing above changed.
+   ============================================================ */
+
+.stack {
+    display: grid;
+    gap: 20px;
+}
+
+.two-col {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 20px;
+}
+
+.three-col {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 20px;
+}
+
+.card-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 6px;
+}
+
+.card-head h3 {
+    margin: 0;
+}
+
+/* ---------- chips ---------- */
+
+.chip-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin: 14px 0 4px;
+}
+
+.chip {
+    display: inline-flex;
+    flex-direction: column;
+    gap: 2px;
+    padding: 9px 14px;
+    border: 1px solid #f0ebe4;
+    border-radius: 14px;
+    background: #fdfcfa;
+}
+
+.chip small {
+    color: #948da7;
+    font-size: 9.5px;
+    font-weight: 700;
+    letter-spacing: 0.6px;
+    text-transform: uppercase;
+}
+
+.chip b {
+    color: #33303e;
+    font-size: 13px;
+    font-weight: 700;
+}
+
+.chip.purple { background: #f6f2fb; border-color: #ece2f7; }
+.chip.green  { background: #eef7f1; border-color: #dcefe3; }
+.chip.pink   { background: #fbeef3; border-color: #f6dbe6; }
+.chip.amber  { background: #fdf4e6; border-color: #f6e5c8; }
+
+.chip.purple b { color: #7c58c9; }
+.chip.green b  { color: #3f8a5f; }
+.chip.pink b   { color: #c1477e; }
+.chip.amber b  { color: #b07a2f; }
+
+/* ---------- horizontal bars ---------- */
+
+.bar-list {
+    display: grid;
+    gap: 14px;
+    margin-top: 16px;
+}
+
+.bar-row {
+    display: grid;
+    grid-template-columns: 130px minmax(0, 1fr) 76px;
+    align-items: center;
+    gap: 12px;
+    font-size: 12px;
+    color: #5c5570;
+}
+
+.bar-row .bar-label {
+    font-weight: 600;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.bar-row .bar-value {
+    text-align: right;
+    font-weight: 700;
+    color: #33303e;
+}
+
+.bar-track {
+    height: 12px;
+    border-radius: 999px;
+    background: #f4f0eb;
+    overflow: hidden;
+}
+
+.bar-fill {
+    height: 100%;
+    min-width: 2px;
+    border-radius: 999px;
+    background: linear-gradient(90deg, #b9a0ea, #7c58c9);
+}
+
+.bar-fill.pink   { background: linear-gradient(90deg, #f0a9c4, #c1477e); }
+.bar-fill.green  { background: linear-gradient(90deg, #a8d9b9, #4c9a6c); }
+.bar-fill.amber  { background: linear-gradient(90deg, #f3d29c, #c68a3d); }
+.bar-fill.grey   { background: linear-gradient(90deg, #ddd8e6, #b3abc4); }
+
+/* ---------- before / after pair ---------- */
+
+.ba-list {
+    display: grid;
+    gap: 18px;
+    margin-top: 16px;
+}
+
+.ba-item .ba-title {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 7px;
+    color: #33303e;
+    font-size: 12.5px;
+    font-weight: 700;
+}
+
+.ba-item .ba-title span {
+    font-size: 11px;
+    font-weight: 700;
+}
+
+.ba-line {
+    display: grid;
+    grid-template-columns: 52px minmax(0, 1fr) 62px;
+    align-items: center;
+    gap: 10px;
+    margin-top: 5px;
+    color: #948da7;
+    font-size: 10.5px;
+    font-weight: 700;
+}
+
+.ba-line em {
+    color: #33303e;
+    font-style: normal;
+    text-align: right;
+}
+
+.delta-up   { color: #3f8a5f; }
+.delta-down { color: #c1477e; }
+.delta-flat { color: #948da7; }
+
+/* ---------- confusion matrix heat-map ---------- */
+
+.cm-grid {
+    display: grid;
+    grid-template-columns: 78px repeat(2, minmax(0, 1fr));
+    gap: 8px;
+    margin-top: 16px;
+    font-size: 11px;
+    text-align: center;
+}
+
+.cm-grid .cm-head {
+    align-self: center;
+    color: #948da7;
+    font-weight: 800;
+    letter-spacing: 0.4px;
+}
+
+.cm-cell {
+    padding: 20px 8px;
+    border-radius: 14px;
+    background: #f6f2fb;
+    color: #33303e;
+}
+
+.cm-cell strong {
+    display: block;
+    font-size: 22px;
+    font-weight: 800;
+}
+
+.cm-cell small {
+    color: #7d7690;
+    font-size: 10px;
+    font-weight: 600;
+}
+
+.cm-cell.ok  { background: #e3f2e8; }
+.cm-cell.bad { background: #fbe4ec; }
+
+/* ---------- code ---------- */
+
+.code-block {
+    margin: 14px 0 0;
+    padding: 18px 20px;
+    overflow-x: auto;
+    border-radius: 16px;
+    background: #2f2b3d;
+    color: #efeaf8;
+    font-family: Consolas, "Courier New", monospace;
+    font-size: 12px;
+    line-height: 1.7;
+    white-space: pre;
+    tab-size: 4;
+}
+
+.code-block .c { color: #9c93b4; }
+
+/* ---------- tasks (EDA) ---------- */
+
+.task-card {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.task-card.wide {
+    grid-column: 1 / -1;
+}
+
+.task-card .task-title {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.task-card .task-title h3 {
+    margin: 0;
+}
+
+.task-card .task-badge {
+    margin-left: auto;
+    padding: 4px 10px;
+    border-radius: 999px;
+    background: #f3e6da;
+    color: #b3703f;
+    font-size: 9px;
+    font-weight: 800;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+}
+
+.task-image {
+    display: block;
+    width: 100%;
+    margin-top: 12px;
+    padding: 10px;
+    border: 1px solid #f2ede6;
+    border-radius: 16px;
+    background: #fdfcfa;
+}
+
+/* ---------- comparison footer ---------- */
+
+.compare-footer {
+    margin-top: 28px;
+}
+
+.cmp-table td,
+.cmp-table th {
+    white-space: nowrap;
+}
+
+.cmp-table tr.current td {
+    background: #f6f2fb;
+    color: #33303e;
+    font-weight: 700;
+}
+
+.cmp-bar {
+    min-width: 150px;
+}
+
+.family-pill {
+    display: inline-block;
+    padding: 3px 10px;
+    border-radius: 999px;
+    font-size: 9.5px;
+    font-weight: 800;
+    letter-spacing: 0.4px;
+}
+
+.family-pill.Regression { background: #f6e3ec; color: #c1477e; }
+.family-pill.Tree       { background: #e3f2e8; color: #3f8a5f; }
+.family-pill.Ensemble   { background: #ece2f7; color: #7c58c9; }
+.family-pill.Clustering { background: #faeddc; color: #b07a2f; }
+
+.now-tag {
+    display: inline-block;
+    margin-left: 8px;
+    padding: 2px 8px;
+    border-radius: 999px;
+    background: #7c58c9;
+    color: #ffffff;
+    font-size: 9px;
+    font-weight: 800;
+    letter-spacing: 0.5px;
+}
+
+@media (max-width: 900px) {
+    .two-col,
+    .three-col {
+        grid-template-columns: 1fr;
+    }
+
+    .bar-row {
+        grid-template-columns: 90px minmax(0, 1fr) 62px;
+    }
+}

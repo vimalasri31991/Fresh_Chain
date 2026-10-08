@@ -1,577 +1,198 @@
-<!DOCTYPE html>
-<html lang="en">
-
-<head>
-
-    <meta charset="UTF-8">
-
-    <meta
-        name="viewport"
-        content="width=device-width, initial-scale=1.0"
-    >
-
-    <title>FruitSense | Regularisation</title>
-
-    <link
-        rel="stylesheet"
-        href="{{ url_for('static', filename='style.css') }}"
-    >
-
-</head>
-
-
-<body>
-
-<div class="app-layout">
-
-
-<!-- SIDEBAR -->
-<aside class="sidebar">
-
-    <!-- BRAND -->
-    <div class="brand">
-        <div class="brand-icon">🍃</div>
-
-        <div>
-            <h2>FruitSense</h2>
-            <p>Quality Analytics</p>
-        </div>
-    </div>
-
-
-    <!-- SECTION TITLE -->
-    <div class="sidebar-section-title">
-        ANALYTICS
-    </div>
-
-
-    <!-- DASHBOARD -->
-    <a
-        href="{{ url_for('index') }}"
-        class="nav-item{% if active == 'dashboard' %} active{% endif %}"
-    >
-
-        <span class="nav-icon">⌂</span>
-        <span>Dashboard</span>
-
-    </a>
-
-
-    <!-- DATA LOADING -->
-    <a
-        href="{{ url_for('data_loading') }}"
-        class="nav-item{% if active == 'data-loading' %} active{% endif %}"
-    >
-
-        <span class="nav-icon">▣</span>
-        <span>Data Loading</span>
-
-    </a>
-
-
-    <!-- EXPLORATORY ANALYSIS -->
-    <a
-        href="{{ url_for('eda') }}"
-        class="nav-item{% if active == 'eda' %} active{% endif %}"
-    >
-
-        <span class="nav-icon">◒</span>
-        <span>Exploratory Analysis</span>
-
-    </a>
-
-
-    <!-- PREPROCESSING -->
-    <a
-        href="{{ url_for('preprocessing') }}"
-        class="nav-item{% if active == 'preprocessing' %} active{% endif %}"
-    >
-
-        <span class="nav-icon">⚙</span>
-        <span>Preprocessing</span>
-
-    </a>
-
-
-    <!-- =========================================
-         REGRESSION DROPDOWN
-         ========================================= -->
-
-    <details
-        class="nav-dropdown"
-        {% if active in ['linear-regression', 'logistic-regression', 'regularisation'] %}open{% endif %}
-    >
-
-        <summary class="dropdown-toggle">
-
-            <span class="dropdown-left">
-
-                <span class="nav-icon">📈</span>
-
-                <span>Regression</span>
-
-            </span>
-
-            <span class="dropdown-arrow">
-                ▾
-            </span>
-
-        </summary>
-
-
-        <div class="dropdown-content">
-
-
-            <!-- LINEAR REGRESSION -->
-            <a
-                href="{{ url_for('linear_regression') }}"
-                class="nav-subitem{% if active == 'linear-regression' %} active{% endif %}"
-            >
-
-                <span class="sub-icon">📈</span>
-                <span>Linear Regression</span>
-
-            </a>
-
-
-            <!-- LOGISTIC REGRESSION -->
-            <a
-                href="{{ url_for('logistic_regression') }}"
-                class="nav-subitem{% if active == 'logistic-regression' %} active{% endif %}"
-            >
-
-                <span class="sub-icon">🎯</span>
-                <span>Logistic Regression</span>
-
-            </a>
-
-
-            <!-- REGULARISATION -->
-            <a
-                href="{{ url_for('regularisation') }}"
-                class="nav-subitem{% if active == 'regularisation' %} active{% endif %}"
-            >
-
-                <span class="sub-icon">λ</span>
-                <span>Regularisation</span>
-
-            </a>
-
-        </div>
-
-    </details>
-
-
-    <!-- =========================================
-         TREE & ENSEMBLE DROPDOWN
-         ========================================= -->
-
-    <details
-        class="nav-dropdown"
-        {% if active in ['decision-tree', 'random-forest', 'cost-complexity', 'ada-boost', 'gradient-boost'] %}open{% endif %}
-    >
-
-        <summary class="dropdown-toggle">
-
-            <span class="dropdown-left">
-
-                <span class="nav-icon">🌳</span>
-
-                <span>Tree &amp; Ensemble</span>
-
-            </span>
-
-            <span class="dropdown-arrow">
-                ▾
-            </span>
-
-        </summary>
-
-
-        <div class="dropdown-content">
-
-
-            <!-- DECISION TREE -->
-            <a
-                href="{{ url_for('decision_tree') }}"
-                class="nav-subitem{% if active == 'decision-tree' %} active{% endif %}"
-            >
-
-                <span class="sub-icon">🌳</span>
-                <span>Decision Tree</span>
-
-            </a>
-
-
-            <!-- RANDOM FOREST -->
-            <a
-                href="{{ url_for('random_forest') }}"
-                class="nav-subitem{% if active == 'random-forest' %} active{% endif %}"
-            >
-
-                <span class="sub-icon">🌲</span>
-                <span>Random Forest</span>
-
-            </a>
-
-
-            <!-- COST COMPLEXITY -->
-            <a
-                href="{{ url_for('cost_complexity') }}"
-                class="nav-subitem{% if active == 'cost-complexity' %} active{% endif %}"
-            >
-
-                <span class="sub-icon">✂</span>
-                <span>Cost-Complexity</span>
-
-            </a>
-
-
-            <!-- ADABOOST -->
-            <a
-                href="{{ url_for('ada_boost') }}"
-                class="nav-subitem{% if active == 'ada-boost' %} active{% endif %}"
-            >
-
-                <span class="sub-icon">⚡</span>
-                <span>AdaBoost</span>
-
-            </a>
-
-
-            <!-- GRADIENT BOOST -->
-            <a
-                href="{{ url_for('gradient_boost') }}"
-                class="nav-subitem{% if active == 'gradient-boost' %} active{% endif %}"
-            >
-
-                <span class="sub-icon">↗</span>
-                <span>Gradient Boost</span>
-
-            </a>
-
-        </div>
-
-    </details>
-
-
-    <!-- =========================================
-         K-MEANS
-         ========================================= -->
-
-    <a
-        href="{{ url_for('kmeans') }}"
-        class="nav-item{% if active == 'kmeans' %} active{% endif %}"
-    >
-
-        <span class="nav-icon">●</span>
-        <span>K-Means Clustering</span>
-
-    </a>
-
-
-    <!-- SIDEBAR STATUS -->
-    <div class="sidebar-status">
-
-        <div class="status-dot"></div>
-
-        <div>
-
-            <strong>Project Status</strong>
-
-            <small>
-                Analytics active
-            </small>
-
-        </div>
-
-    </div>
-
-</aside>
-
-
-
-
-    <main class="main-content">
-
-        <header class="page-header">
-
-            <div>
-
-                <div class="eyebrow">
-                    MODULE 05 • CLASSIFICATION
-                </div>
-
-                <h1>
-                    Regularisation
-                </h1>
-
-                <p>
-                    Compare L1 and L2 regularisation for
-                    fruit quality classification.
-                </p>
-
-            </div>
-
-            <div class="system-status">
-
-                <span></span>
-
-                Model Active
-
-            </div>
-
-        </header>
-
-
-        {% if error %}
-
-        <div class="error-box">
-            {{ error }}
-        </div>
-
-        {% endif %}
-
-
-        {% if result %}
-
-
-        <div class="stats-grid">
-
-            <div class="stat-card">
-
-                <span>
-                    L1 Accuracy
-                </span>
-
-                <strong>
-                    {{ "%.2f"|format(result.l1.accuracy * 100) }}%
-                </strong>
-
-            </div>
-
-
-            <div class="stat-card">
-
-                <span>
-                    L2 Accuracy
-                </span>
-
-                <strong>
-                    {{ "%.2f"|format(result.l2.accuracy * 100) }}%
-                </strong>
-
-            </div>
-
-
-            <div class="stat-card">
-
-                <span>
-                    Training Rows
-                </span>
-
-                <strong>
-                    {{ result.train_rows }}
-                </strong>
-
-            </div>
-
-
-            <div class="stat-card">
-
-                <span>
-                    Testing Rows
-                </span>
-
-                <strong>
-                    {{ result.test_rows }}
-                </strong>
-
-            </div>
-
-        </div>
-
-
-        <section class="content-section">
-
-            <div class="card">
-
-                <h3>
-                    L1 vs L2 Regularisation
-                </h3>
-
-                <div class="table-wrapper">
-
-                    <table>
-
-                        <thead>
-
-                            <tr>
-
-                                <th>
-                                    Metric
-                                </th>
-
-                                <th>
-                                    L1
-                                </th>
-
-                                <th>
-                                    L2
-                                </th>
-
-                            </tr>
-
-                        </thead>
-
-                        <tbody>
-
-                            <tr>
-                                <td>Accuracy</td>
-
-                                <td>
-                                    {{ "%.4f"|format(result.l1.accuracy) }}
-                                </td>
-
-                                <td>
-                                    {{ "%.4f"|format(result.l2.accuracy) }}
-                                </td>
-                            </tr>
-
-
-                            <tr>
-                                <td>Precision</td>
-
-                                <td>
-                                    {{ "%.4f"|format(result.l1.precision) }}
-                                </td>
-
-                                <td>
-                                    {{ "%.4f"|format(result.l2.precision) }}
-                                </td>
-                            </tr>
-
-
-                            <tr>
-                                <td>Recall</td>
-
-                                <td>
-                                    {{ "%.4f"|format(result.l1.recall) }}
-                                </td>
-
-                                <td>
-                                    {{ "%.4f"|format(result.l2.recall) }}
-                                </td>
-                            </tr>
-
-
-                            <tr>
-                                <td>F1 Score</td>
-
-                                <td>
-                                    {{ "%.4f"|format(result.l1.f1) }}
-                                </td>
-
-                                <td>
-                                    {{ "%.4f"|format(result.l2.f1) }}
-                                </td>
-                            </tr>
-
-                        </tbody>
-
-                    </table>
-
-                </div>
-
-            </div>
-
-        </section>
-
-
-        <section class="content-section">
-
-            <div class="card">
-
-                <h3>
-                    L1 Confusion Matrix
-                </h3>
-
-                <div class="table-wrapper">
-
-                    <table>
-
-                        <tr>
-                            <th></th>
-                            <th>Predicted BAD</th>
-                            <th>Predicted Good</th>
-                        </tr>
-
-                        <tr>
-                            <th>Actual BAD</th>
-                            <td>{{ result.l1.confusion_matrix[0][0] }}</td>
-                            <td>{{ result.l1.confusion_matrix[0][1] }}</td>
-                        </tr>
-
-                        <tr>
-                            <th>Actual Good</th>
-                            <td>{{ result.l1.confusion_matrix[1][0] }}</td>
-                            <td>{{ result.l1.confusion_matrix[1][1] }}</td>
-                        </tr>
-
-                    </table>
-
-                </div>
-
-            </div>
-
-        </section>
-
-
-        <section class="content-section">
-
-            <div class="card">
-
-                <h3>
-                    L2 Confusion Matrix
-                </h3>
-
-                <div class="table-wrapper">
-
-                    <table>
-
-                        <tr>
-                            <th></th>
-                            <th>Predicted BAD</th>
-                            <th>Predicted Good</th>
-                        </tr>
-
-                        <tr>
-                            <th>Actual BAD</th>
-                            <td>{{ result.l2.confusion_matrix[0][0] }}</td>
-                            <td>{{ result.l2.confusion_matrix[0][1] }}</td>
-                        </tr>
-
-                        <tr>
-                            <th>Actual Good</th>
-                            <td>{{ result.l2.confusion_matrix[1][0] }}</td>
-                            <td>{{ result.l2.confusion_matrix[1][1] }}</td>
-                        </tr>
-
-                    </table>
-
-                </div>
-
-            </div>
-
-        </section>
-
-
-        {% endif %}
-
-    </main>
-
+{% extends "base.html" %}
+{% from "_macros.html" import stat, bar, confusion, chip %}
+
+{% block title %}Regularisation{% endblock %}
+{% block eyebrow %}MODULE 07 • REGULARISATION{% endblock %}
+{% block heading %}Regularisation{% endblock %}
+{% block subtitle %}L1 (Lasso) and L2 (Ridge) penalties applied to both Linear and Logistic Regression.{% endblock %}
+
+
+{% macro coef_bars(coefficients) %}
+{% set mx = coefficients.values()|map('abs')|max or 1 %}
+<div class="bar-list">
+    {% for name, value in coefficients.items() %}
+        {{ bar(name, (value|abs) / mx * 100, 'green' if value > 0 else 'pink', '%+.2f'|format(value)) }}
+    {% endfor %}
 </div>
+{% endmacro %}
 
-</body>
 
-</html>
+{% block content %}
+
+{% if result %}
+
+{% set lin = result.linear %}
+{% set log = result.logistic %}
+
+<!-- ============ MODELS CHOSEN ============ -->
+<section class="content-section first-section">
+
+    <div class="section-heading">
+        <div>
+            <div class="eyebrow">MODEL SELECTION</div>
+            <h2>Models Regularised</h2>
+        </div>
+    </div>
+
+    <div class="two-col">
+
+        <div class="card">
+            <div class="card-head">
+                <h3>📈 Linear Regression</h3>
+                <span class="chart-number">REGRESSION</span>
+            </div>
+            <div class="chip-row">
+                {{ chip('Target', lin.target, 'purple') }}
+                {{ chip('Metric', 'R² score', 'green') }}
+                {{ chip('L1 name', 'Lasso', 'pink') }}
+                {{ chip('L2 name', 'Ridge', 'amber') }}
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-head">
+                <h3>🎯 Logistic Regression</h3>
+                <span class="chart-number">CLASSIFICATION</span>
+            </div>
+            <div class="chip-row">
+                {{ chip('Target', 'Class (BAD / Good)', 'purple') }}
+                {{ chip('Metric', 'Accuracy', 'green') }}
+                {{ chip('L1 penalty', 'Lasso-type', 'pink') }}
+                {{ chip('L2 penalty', 'Ridge-type', 'amber') }}
+            </div>
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- ============ LINEAR REGRESSION ============ -->
+<section class="content-section">
+
+    <div class="section-heading">
+        <div>
+            <div class="eyebrow">LINEAR REGRESSION</div>
+            <h2>Linear Regression — L1 &amp; L2 Regularisation</h2>
+        </div>
+    </div>
+
+    <div class="stats-grid">
+        {{ stat('Baseline R²', '%.4f'|format(lin.baseline.r2)) }}
+        {{ stat('L1 (Lasso) R²', '%.4f'|format(lin.l1.r2)) }}
+        {{ stat('L2 (Ridge) R²', '%.4f'|format(lin.l2.r2)) }}
+        {{ stat('Alpha (strength)', lin.alpha) }}
+    </div>
+
+</section>
+
+<section class="content-section">
+
+    <div class="three-col">
+
+        {% for tag, title, m in [
+            ('LINEAR REGRESSION • BASELINE', 'No Regularisation (OLS)', lin.baseline),
+            ('LINEAR REGRESSION • L1', 'L1 Regularisation (Lasso)', lin.l1),
+            ('LINEAR REGRESSION • L2', 'L2 Regularisation (Ridge)', lin.l2)
+        ] %}
+        <div class="card">
+            <div class="eyebrow">{{ tag }}</div>
+            <h3 style="margin-top: 12px;">{{ title }}</h3>
+
+            <div class="bar-list">
+                {{ bar('R² score', m.r2 * 100, '', '%.2f'|format(m.r2 * 100) ~ '%') }}
+            </div>
+
+            <div class="chip-row">
+                {{ chip('RMSE', '%.2f'|format(m.rmse), 'purple') }}
+                {{ chip('MAE', '%.2f'|format(m.mae), 'green') }}
+                {{ chip('Zeroed coef.', m.zeroed, 'pink') }}
+            </div>
+
+            {{ coef_bars(m.coefficients) }}
+        </div>
+        {% endfor %}
+
+    </div>
+
+</section>
+
+
+<!-- ============ LOGISTIC REGRESSION ============ -->
+<section class="content-section">
+
+    <div class="section-heading">
+        <div>
+            <div class="eyebrow">LOGISTIC REGRESSION</div>
+            <h2>Logistic Regression — L1 &amp; L2 Regularisation</h2>
+        </div>
+    </div>
+
+    <div class="stats-grid">
+        {{ stat('Baseline Accuracy', '%.2f'|format(log.baseline.accuracy * 100) ~ '%') }}
+        {{ stat('L1 Accuracy', '%.2f'|format(log.l1.accuracy * 100) ~ '%') }}
+        {{ stat('L2 Accuracy', '%.2f'|format(log.l2.accuracy * 100) ~ '%') }}
+        {{ stat('C (inverse strength)', log.C) }}
+    </div>
+
+</section>
+
+<section class="content-section">
+
+    <div class="three-col">
+
+        {% for tag, title, m in [
+            ('LOGISTIC REGRESSION • BASELINE', 'No Regularisation (very large C)', log.baseline),
+            ('LOGISTIC REGRESSION • L1', 'L1 Regularisation', log.l1),
+            ('LOGISTIC REGRESSION • L2', 'L2 Regularisation', log.l2)
+        ] %}
+        <div class="card">
+            <div class="eyebrow">{{ tag }}</div>
+            <h3 style="margin-top: 12px;">{{ title }}</h3>
+
+            <div class="bar-list">
+                {{ bar('Accuracy',  m.accuracy  * 100) }}
+                {{ bar('Precision', m.precision * 100) }}
+                {{ bar('Recall',    m.recall    * 100) }}
+                {{ bar('F1 Score',  m.f1        * 100) }}
+            </div>
+
+            {{ confusion(m.confusion_matrix) }}
+
+            <div class="chip-row">
+                {{ chip('Zeroed coef.', m.zeroed, 'pink') }}
+            </div>
+        </div>
+        {% endfor %}
+
+    </div>
+
+</section>
+
+<section class="content-section">
+
+    <div class="two-col">
+
+        <div class="card">
+            <div class="card-head">
+                <h3>L1 Coefficients (Logistic)</h3>
+                <span class="chart-number">SPARSE</span>
+            </div>
+            {{ coef_bars(log.l1.coefficients) }}
+        </div>
+
+        <div class="card">
+            <div class="card-head">
+                <h3>L2 Coefficients (Logistic)</h3>
+                <span class="chart-number">SHRUNK</span>
+            </div>
+            {{ coef_bars(log.l2.coefficients) }}
+        </div>
+
+    </div>
+
+</section>
+
+{% endif %}
+
+{% endblock %}

@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>
+        FruitSense | {{ page_title }}
+    </title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='style.css') }}">
+
+    <style>
+
+        .cluster-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+            gap: 20px;
+            margin: 20px 0 24px;
+        }
+
+        .cluster-card {
+            padding: 22px 20px;
+            border: 1px solid #ece2f7;
+            border-radius: 24px;
+            background: #f6f2fb;
+            text-align: left;
+        }
+
+        .cluster-card span {
+            display: block;
+            margin-bottom: 10px;
+            color: #948da7;
+            font-size: 10.5px;
+            font-weight: 700;
+            letter-spacing: 0.6px;
+            text-transform: uppercase;
+        }
+
+        .cluster-card strong {
+            color: #7c58c9;
+            font-size: 28px;
+            font-weight: 800;
+        }
+
+        .cluster-card:nth-child(4n+2) { background: #fbeef3; border-color: #f6dbe6; }
+        .cluster-card:nth-child(4n+2) strong { color: #c1477e; }
+
+        .cluster-card:nth-child(4n+3) { background: #eef7f1; border-color: #dcefe3; }
+        .cluster-card:nth-child(4n+3) strong { color: #3f8a5f; }
+
+        .cluster-card:nth-child(4n+4) { background: #fdf4e6; border-color: #f6e5c8; }
+        .cluster-card:nth-child(4n+4) strong { color: #b07a2f; }
+
+        .cluster-section-card { margin-bottom: 20px; }
+
+        .feature-list {
+
+            display: flex;
+
+            flex-wrap: wrap;
+
+            gap: 10px;
+
+            margin-top: 15px;
+
+        }
+
+
+        .feature-item {
+
+            background: #f1f5f9;
+
+            padding: 9px 13px;
+
+            border-radius: 8px;
+
+        }
+
+
+        .cluster-table {
+
+            width: 100%;
+
+            border-collapse: collapse;
+
+            margin-top: 20px;
+
+        }
+
+
+        .cluster-table th,
+        .cluster-table td {
+
+            padding: 12px;
+
+            border-bottom:
+                1px solid #e5e7eb;
+
+            text-align: left;
+
+        }
+
+
+        @media (max-width: 900px) {
+
+            .cluster-grid {
+
+                grid-template-columns:
+                    1fr 1fr;
+
+            }
+
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+<div class="app-layout">
+
+
+    <!-- SIDEBAR -->
+
+    {% include "_sidebar.html" %}
+
+
+    <!-- MAIN CONTENT -->
+
+    <main class="main-content">
+
+
+        <header class="page-header">
+
+            <div>
+
+                <div class="eyebrow">
+                    MODULE {% if active == 'hierarchical' %}17{% else %}18{% endif %} • CLUSTERING
+                </div>
+
+                <h1>
+                    {{ page_title }}
+                </h1>
+
+                <p>
+                    {{ description }}
+                </p>
+
+            </div>
+
+
+            <div class="system-status">
+
+                <span></span>
+
+                Model Active
+
+            </div>
+
+        </header>
+
+
+        {% if error %}
+
+        <div class="error-box">
+            {{ error }}
+        </div>
+
+        {% endif %}
+
+
+        {% if result %}
+
+
+        <section class="content-section">
+
+
+            <div class="section-heading">
+
+                <div>
+
+                    <div class="eyebrow">
+                        UNSUPERVISED LEARNING
+                    </div>
+
+                    <h2>
+                        Clustering Results
+                    </h2>
+
+                    <p>
+                        Results obtained from the
+                        {{ result.method }} algorithm.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <!-- SUMMARY -->
+
+            <div class="cluster-grid">
+
+
+                <div class="cluster-card">
+
+                    <span>
+                        Total Rows
+                    </span>
+
+                    <strong>
+                        {{ result.total_rows }}
+                    </strong>
+
+                </div>
+
+
+                {% if result.n_clusters is defined %}
+
+                <div class="cluster-card">
+
+                    <span>
+                        Number of Clusters
+                    </span>
+
+                    <strong>
+                        {{ result.n_clusters }}
+                    </strong>
+
+                </div>
+
+                {% endif %}
+
+
+                {% if result.cluster_count is defined %}
+
+                <div class="cluster-card">
+
+                    <span>
+                        Detected Clusters
+                    </span>
+
+                    <strong>
+                        {{ result.cluster_count }}
+                    </strong>
+
+                </div>
+
+                {% endif %}
+
+
+                {% if result.noise_count is defined %}
+
+                <div class="cluster-card">
+
+                    <span>
+                        Noise Points
+                    </span>
+
+                    <strong>
+                        {{ result.noise_count }}
+                    </strong>
+
+                </div>
+
+                {% endif %}
+
+
+                <div class="cluster-card">
+
+                    <span>
+                        Silhouette Score
+                    </span>
+
+                    <strong>
+                        {{ result.silhouette_score }}
+                    </strong>
+
+                </div>
+
+
+                <div class="cluster-card">
+
+                    <span>
+                        Davies-Bouldin Score
+                    </span>
+
+                    <strong>
+                        {{ result.davies_bouldin_score }}
+                    </strong>
+
+                </div>
+
+            </div>
+
+
+            <!-- PARAMETERS -->
+
+            <div class="card cluster-section-card">
+
+                <h3>
+                    Model Parameters
+                </h3>
+
+
+                {% if result.algorithm is defined %}
+
+                <p>
+                    <strong>
+                        Algorithm:
+                    </strong>
+
+                    {{ result.algorithm }}
+                </p>
+
+                {% endif %}
+
+
+                {% if result.linkage is defined %}
+
+                <p>
+                    <strong>
+                        Linkage:
+                    </strong>
+
+                    {{ result.linkage }}
+                </p>
+
+                {% endif %}
+
+
+                {% if result.eps is defined %}
+
+                <p>
+                    <strong>
+                        Epsilon:
+                    </strong>
+
+                    {{ result.eps }}
+                </p>
+
+                {% endif %}
+
+
+                {% if result.min_samples is defined %}
+
+                <p>
+                    <strong>
+                        Minimum Samples:
+                    </strong>
+
+                    {{ result.min_samples }}
+                </p>
+
+                {% endif %}
+
+            </div>
+
+
+            <!-- FEATURES -->
+
+            <div class="card cluster-section-card">
+
+                <h3>
+                    Features Used
+                </h3>
+
+
+                <div class="feature-list">
+
+                    {% for feature in result.features %}
+
+                    <span class="feature-item">
+                        {{ feature }}
+                    </span>
+
+                    {% endfor %}
+
+                </div>
+
+            </div>
+
+
+            <!-- CLUSTER DISTRIBUTION -->
+
+            <div class="card cluster-section-card">
+
+                <h3>
+                    Cluster Distribution
+                </h3>
+
+
+                <table class="cluster-table">
+
+                    <thead>
+
+                        <tr>
+
+                            <th>
+                                Cluster
+                            </th>
+
+                            <th>
+                                Number of Records
+                            </th>
+
+                        </tr>
+
+                    </thead>
+
+
+                    <tbody>
+
+                        {% for cluster, count in result.clusters.items() %}
+
+                        <tr>
+
+                            <td>
+                                {% if cluster == '-1' %}
+                                    Noise
+                                {% else %}
+                                    Cluster {{ cluster }}
+                                {% endif %}
+                            </td>
+
+                            <td>
+                                {{ count }}
+                            </td>
+
+                        </tr>
+
+                        {% endfor %}
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+
+            <!-- PERFORMANCE -->
+
+            <div class="card cluster-section-card">
+
+                <h3>
+                    Clustering Performance
+                </h3>
+
+                <p>
+                    <strong>
+                        Silhouette Score:
+                    </strong>
+
+                    {{ result.silhouette_score }}
+                </p>
+
+                <p>
+                    <strong>
+                        Davies-Bouldin Score:
+                    </strong>
+
+                    {{ result.davies_bouldin_score }}
+                </p>
+
+            </div>
+
+
+        </section>
+
+
+        {% endif %}
+
+
+        {% include "_comparison.html" %}
+
+    </main>
+
+</div>
+
+</body>
+
+</html>

@@ -1,0 +1,107 @@
+{# Footer shown on every model page: all models finished so far,
+   with before / after scores and the current model highlighted. #}
+
+{% set cmp = model_comparison() if model_comparison is defined else None %}
+
+{% if cmp and cmp.rows %}
+
+<section class="content-section compare-footer">
+
+    <div class="section-heading">
+        <div>
+            <div class="eyebrow">MODEL COMPARISON</div>
+            <h2>Before vs After {{ cmp.current_title }}</h2>
+        </div>
+    </div>
+
+    {# ---------- summary cards ---------- #}
+    {% if cmp.summary %}
+    <div class="stats-grid" style="margin-bottom: 20px;">
+
+        <div class="stat-card">
+            <span>Models Completed</span>
+            <strong>{{ cmp.summary.models_done }} / {{ cmp.summary.models_total }}</strong>
+        </div>
+
+        <div class="stat-card">
+            <span>Best Before ({{ cmp.summary.metric }})</span>
+            <strong>
+                {% if cmp.summary.best_before is not none %}{{ '%.2f'|format(cmp.summary.best_before) }}%{% else %}—{% endif %}
+            </strong>
+        </div>
+
+        <div class="stat-card">
+            <span>{{ cmp.current_title }}</span>
+            <strong>{{ '%.2f'|format(cmp.summary.this_model) }}%</strong>
+        </div>
+
+        <div class="stat-card">
+            <span>Change</span>
+            <strong class="{{ 'delta-up' if cmp.summary.delta is not none and cmp.summary.delta > 0 else ('delta-down' if cmp.summary.delta is not none and cmp.summary.delta < 0 else 'delta-flat') }}">
+                {% if cmp.summary.delta is not none %}{{ '%+.2f'|format(cmp.summary.delta) }} pts{% else %}First model{% endif %}
+            </strong>
+        </div>
+
+    </div>
+    {% endif %}
+
+    {# ---------- comparison table ---------- #}
+    <div class="card">
+
+        <div class="card-head">
+            <h3>All Models Up To {{ cmp.current_title }}</h3>
+            <span class="chart-number">{{ cmp.rows|length }} ROWS</span>
+        </div>
+
+        <div class="table-wrapper">
+            <table class="cmp-table">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Model</th>
+                        <th>Type</th>
+                        <th>Metric</th>
+                        <th>Before</th>
+                        <th>After</th>
+                        <th>Change</th>
+                        <th>Score</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for row in cmp.rows %}
+                    <tr class="{{ 'current' if row.is_current else '' }}">
+                        <td>{{ loop.index }}</td>
+                        <td>
+                            {{ row.label }}
+                            {% if row.is_current %}<span class="now-tag">NOW</span>{% endif %}
+                        </td>
+                        <td><span class="family-pill {{ row.family }}">{{ row.family }}</span></td>
+                        <td>{{ row.metric }}</td>
+                        <td>{% if row.before is not none %}{{ '%.2f'|format(row.before) }}%{% else %}—{% endif %}</td>
+                        <td>{{ '%.2f'|format(row.after) }}%</td>
+                        <td class="{{ 'delta-up' if row.change is not none and row.change > 0 else ('delta-down' if row.change is not none and row.change < 0 else 'delta-flat') }}">
+                            {% if row.change is not none %}{{ '%+.2f'|format(row.change) }}{% else %}—{% endif %}
+                        </td>
+                        <td class="cmp-bar">
+                            <div class="bar-track">
+                                <div class="bar-fill {{ 'amber' if row.family == 'Clustering' else ('green' if row.family == 'Tree' else ('pink' if row.family == 'Regression' else '')) }}"
+                                     style="width: {{ row.bar }}%;"></div>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <div class="chip-row">
+            <span class="chip purple"><small>Before</small><b>score before tuning / scaling / pruning</b></span>
+            <span class="chip green"><small>After</small><b>final score on the 20% test data</b></span>
+            <span class="chip amber"><small>Metric</small><b>R² · Accuracy · Silhouette</b></span>
+        </div>
+
+    </div>
+
+</section>
+
+{% endif %}

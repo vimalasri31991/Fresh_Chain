@@ -1,0 +1,133 @@
+{% extends "base.html" %}
+{% from "_macros.html" import stat, bar, chip, code_card %}
+
+{% block title %}Pruning{% endblock %}
+{% block eyebrow %}MODULE 14 • TREE PRUNING{% endblock %}
+{% block heading %}Decision Tree Pruning{% endblock %}
+{% block subtitle %}Fully grown, pre-pruned, post-pruned and cost-complexity trees compared side by side.{% endblock %}
+{% block status %}System Active{% endblock %}
+
+
+{% macro pruning_section(anchor, number, title, tag, m, color) %}
+<section class="content-section" id="{{ anchor }}">
+
+    <div class="section-heading">
+        <div>
+            <div class="eyebrow">{{ tag }}</div>
+            <h2>{{ number }}. {{ title }}</h2>
+        </div>
+    </div>
+
+    <div class="two-col">
+
+        <div class="card">
+            <div class="card-head">
+                <h3>Test Performance</h3>
+                <span class="chart-number">{{ '%.2f'|format(m.accuracy) }}% ACC</span>
+            </div>
+
+            <div class="bar-list">
+                {{ bar('Accuracy',  m.accuracy,  color) }}
+                {{ bar('Precision', m.precision, color) }}
+                {{ bar('Recall',    m.recall,    color) }}
+                {{ bar('F1 Score',  m.f1,        color) }}
+            </div>
+
+            <div class="chip-row">
+                {{ chip('Depth', m.depth, 'purple') }}
+                {{ chip('Leaves', m.leaves, 'green') }}
+                {% for key, value in m.params.items() %}
+                    {{ chip(key|replace('_', ' '), value, 'amber') }}
+                {% endfor %}
+            </div>
+        </div>
+
+        {% for snippet in code_snippets.get('pruning-' ~ anchor, []) %}
+            {{ code_card(snippet) }}
+        {% endfor %}
+
+    </div>
+
+</section>
+{% endmacro %}
+
+
+{% block content %}
+
+{% if result %}
+
+{% set fg = result.fully_grown %}
+{% set pre = result.pre_pruning %}
+{% set post = result.post_pruning %}
+{% set cc = result.cost_complexity %}
+
+<!-- ============ OVERVIEW ============ -->
+<section class="content-section first-section">
+
+    <div class="stats-grid">
+        {{ stat('Fully Grown', '%.2f'|format(fg.accuracy) ~ '%') }}
+        {{ stat('Pre-Pruning', '%.2f'|format(pre.accuracy) ~ '%') }}
+        {{ stat('Post-Pruning', '%.2f'|format(post.accuracy) ~ '%') }}
+        {{ stat('Cost-Complexity', '%.2f'|format(cc.accuracy) ~ '%') }}
+    </div>
+
+</section>
+
+<section class="content-section">
+
+    <div class="two-col">
+
+        <div class="card">
+            <div class="card-head">
+                <h3>Accuracy by Pruning Method</h3>
+                <span class="chart-number">TEST SET</span>
+            </div>
+            <div class="bar-list">
+                {{ bar('Fully Grown',     fg.accuracy) }}
+                {{ bar('Pre-Pruning',     pre.accuracy, 'amber') }}
+                {{ bar('Post-Pruning',    post.accuracy, 'pink') }}
+                {{ bar('Cost-Complexity', cc.accuracy, 'green') }}
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-head">
+                <h3>Tree Size (Leaves)</h3>
+                <span class="chart-number">SIMPLER IS BETTER</span>
+            </div>
+            {% set biggest = [fg.leaves, pre.leaves, post.leaves, cc.leaves]|max %}
+            <div class="bar-list">
+                {{ bar('Fully Grown',     fg.leaves   / biggest * 100, '',      fg.leaves ~ ' leaves') }}
+                {{ bar('Pre-Pruning',     pre.leaves  / biggest * 100, 'amber', pre.leaves ~ ' leaves') }}
+                {{ bar('Post-Pruning',    post.leaves / biggest * 100, 'pink',  post.leaves ~ ' leaves') }}
+                {{ bar('Cost-Complexity', cc.leaves   / biggest * 100, 'green', cc.leaves ~ ' leaves') }}
+            </div>
+        </div>
+
+    </div>
+
+</section>
+
+<!-- ============ THE FOUR METHODS ============ -->
+{{ pruning_section('fully-grown',     1, 'Fully Grown Tree',        'NO PRUNING',        fg,   '') }}
+{{ pruning_section('pre-pruning',     2, 'Pre-Pruning',             'STOP WHILE GROWING', pre,  'amber') }}
+{{ pruning_section('post-pruning',    3, 'Post-Pruning',            'PRUNE AFTER GROWING', post, 'pink') }}
+{{ pruning_section('cost-complexity', 4, 'Cost-Complexity Pruning', 'CCP ALPHA',          cc,   'green') }}
+
+{% if result.chart %}
+<section class="content-section">
+    <div class="card">
+        <div class="card-head">
+            <h3>Cost-Complexity Pruning Path</h3>
+            <a href="{{ url_for('cost_complexity') }}" class="btn secondary"
+               style="padding: 8px 16px; font-size: 11px;">Open detailed page</a>
+        </div>
+        <img src="{{ url_for('static', filename=result.chart) }}"
+             class="task-image" alt="Cost-complexity pruning path">
+    </div>
+</section>
+{% endif %}
+
+{% endif %}
+
+{% endblock %}

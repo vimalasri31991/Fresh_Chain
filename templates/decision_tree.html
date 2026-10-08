@@ -1,597 +1,206 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-
     <meta charset="UTF-8">
-
-    <meta
-        name="viewport"
-        content="width=device-width, initial-scale=1.0"
-    >
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <title>FruitSense | Decision Tree</title>
 
-    <link
-        rel="stylesheet"
-        href="{{ url_for('static', filename='style.css') }}"
-    >
-
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='style.css') }}">
 </head>
-
 
 <body>
 
 <div class="app-layout">
 
+    {% include "_sidebar.html" %}
 
-    <!-- ========================= -->
-    <!-- SIDEBAR -->
-    <!-- ========================= -->
-
-    <aside class="sidebar">
-
-
-        <!-- BRAND -->
-
-        <div class="brand">
-
-            <div class="brand-icon">🍃</div>
-
-            <div>
-                <h2>FruitSense</h2>
-                <p>Quality Analytics</p>
-            </div>
-
-        </div>
-
-
-        <!-- SECTION TITLE -->
-
-        <div class="sidebar-section-title">
-            ANALYTICS
-        </div>
-
-
-        <!-- DASHBOARD -->
-
-        <a
-            href="{{ url_for('index') }}"
-            class="nav-item{% if active == 'dashboard' %} active{% endif %}"
-        >
-
-            <span class="nav-icon">⌂</span>
-            <span>Dashboard</span>
-
-        </a>
-
-
-        <!-- DATA LOADING -->
-
-        <a
-            href="{{ url_for('data_loading') }}"
-            class="nav-item{% if active == 'data-loading' %} active{% endif %}"
-        >
-
-            <span class="nav-icon">▣</span>
-            <span>Data Loading</span>
-
-        </a>
-
-
-        <!-- EXPLORATORY ANALYSIS -->
-
-        <a
-            href="{{ url_for('eda') }}"
-            class="nav-item{% if active == 'eda' %} active{% endif %}"
-        >
-
-            <span class="nav-icon">◒</span>
-            <span>Exploratory Analysis</span>
-
-        </a>
-
-
-        <!-- PREPROCESSING -->
-
-        <a
-            href="{{ url_for('preprocessing') }}"
-            class="nav-item{% if active == 'preprocessing' %} active{% endif %}"
-        >
-
-            <span class="nav-icon">⚙</span>
-            <span>Preprocessing</span>
-
-        </a>
-
-
-        <!-- ========================= -->
-        <!-- REGRESSION DROPDOWN -->
-        <!-- ========================= -->
-
-        <details
-            class="nav-dropdown"
-            {% if active in [
-                'linear-regression',
-                'logistic-regression',
-                'regularisation'
-            ] %}open{% endif %}
-        >
-
-            <summary class="dropdown-toggle">
-
-                <span class="dropdown-left">
-
-                    <span class="nav-icon">📈</span>
-
-                    <span>Regression</span>
-
-                </span>
-
-                <span class="dropdown-arrow">
-                    ▾
-                </span>
-
-            </summary>
-
-
-            <div class="dropdown-content">
-
-
-                <!-- LINEAR REGRESSION -->
-
-                <a
-                    href="{{ url_for('linear_regression') }}"
-                    class="nav-subitem{% if active == 'linear-regression' %} active{% endif %}"
-                >
-
-                    <span class="sub-icon">📈</span>
-
-                    <span>
-                        Linear Regression
-                    </span>
-
-                </a>
-
-
-                <!-- LOGISTIC REGRESSION -->
-
-                <a
-                    href="{{ url_for('logistic_regression') }}"
-                    class="nav-subitem{% if active == 'logistic-regression' %} active{% endif %}"
-                >
-
-                    <span class="sub-icon">🎯</span>
-
-                    <span>
-                        Logistic Regression
-                    </span>
-
-                </a>
-
-
-                <!-- REGULARISATION -->
-
-                <a
-                    href="{{ url_for('regularisation') }}"
-                    class="nav-subitem{% if active == 'regularisation' %} active{% endif %}"
-                >
-
-                    <span class="sub-icon">λ</span>
-
-                    <span>
-                        Regularisation
-                    </span>
-
-                </a>
-
-
-            </div>
-
-        </details>
-
-
-        <!-- ========================= -->
-        <!-- TREE & ENSEMBLE DROPDOWN -->
-        <!-- ========================= -->
-
-        <details
-            class="nav-dropdown"
-            {% if active in [
-                'decision-tree',
-                'random-forest',
-                'cost-complexity',
-                'ada-boost',
-                'gradient-boost'
-            ] %}open{% endif %}
-        >
-
-            <summary class="dropdown-toggle">
-
-                <span class="dropdown-left">
-
-                    <span class="nav-icon">🌳</span>
-
-                    <span>
-                        Tree &amp; Ensemble
-                    </span>
-
-                </span>
-
-                <span class="dropdown-arrow">
-                    ▾
-                </span>
-
-            </summary>
-
-
-            <div class="dropdown-content">
-
-
-                <!-- DECISION TREE -->
-
-                <a
-                    href="{{ url_for('decision_tree') }}"
-                    class="nav-subitem{% if active == 'decision-tree' %} active{% endif %}"
-                >
-
-                    <span class="sub-icon">🌳</span>
-
-                    <span>
-                        Decision Tree
-                    </span>
-
-                </a>
-
-
-                <!-- RANDOM FOREST -->
-
-                <a
-                    href="{{ url_for('random_forest') }}"
-                    class="nav-subitem{% if active == 'random-forest' %} active{% endif %}"
-                >
-
-                    <span class="sub-icon">🌲</span>
-
-                    <span>
-                        Random Forest
-                    </span>
-
-                </a>
-
-
-                <!-- COST COMPLEXITY -->
-
-                <a
-                    href="{{ url_for('cost_complexity') }}"
-                    class="nav-subitem{% if active == 'cost-complexity' %} active{% endif %}"
-                >
-
-                    <span class="sub-icon">✂</span>
-
-                    <span>
-                        Cost-Complexity
-                    </span>
-
-                </a>
-
-
-                <!-- ADABOOST -->
-
-                <a
-                    href="{{ url_for('ada_boost') }}"
-                    class="nav-subitem{% if active == 'ada-boost' %} active{% endif %}"
-                >
-
-                    <span class="sub-icon">⚡</span>
-
-                    <span>
-                        AdaBoost
-                    </span>
-
-                </a>
-
-
-                <!-- GRADIENT BOOST -->
-
-                <a
-                    href="{{ url_for('gradient_boost') }}"
-                    class="nav-subitem{% if active == 'gradient-boost' %} active{% endif %}"
-                >
-
-                    <span class="sub-icon">↗</span>
-
-                    <span>
-                        Gradient Boost
-                    </span>
-
-                </a>
-
-
-            </div>
-
-        </details>
-
-
-        <!-- ========================= -->
-        <!-- K-MEANS -->
-        <!-- ========================= -->
-
-        <a
-            href="{{ url_for('kmeans') }}"
-            class="nav-item{% if active == 'kmeans' %} active{% endif %}"
-        >
-
-            <span class="nav-icon">●</span>
-
-            <span>
-                K-Means Clustering
-            </span>
-
-        </a>
-
-
-        <!-- ========================= -->
-        <!-- SIDEBAR STATUS -->
-        <!-- ========================= -->
-
-        <div class="sidebar-status">
-
-            <div class="status-dot"></div>
-
-            <div>
-
-                <strong>
-                    Project Status
-                </strong>
-
-                <small>
-                    Analytics active
-                </small>
-
-            </div>
-
-        </div>
-
-
-    </aside>
-
-
-    <!-- ========================= -->
-    <!-- MAIN CONTENT -->
-    <!-- ========================= -->
 
     <main class="main-content">
-
-
-        <!-- PAGE HEADER -->
 
         <header class="page-header">
 
             <div>
-
                 <div class="eyebrow">
-                    MODULE 06 • CLASSIFICATION
+                    MODULE 08 • DECISION TREE
                 </div>
 
-
-                <h1>
-                    Decision Tree
-                </h1>
-
+                <h1>Decision Tree</h1>
 
                 <p>
                     Classify fruit quality using a decision tree
-                    trained on the preprocessed dataset.
+                    before and after model improvement.
                 </p>
-
             </div>
 
-
             <div class="system-status">
-
                 <span></span>
-
                 Model Active
-
             </div>
 
         </header>
 
 
-        <!-- ERROR MESSAGE -->
-
         {% if error %}
-
         <div class="error-box">
-
             {{ error }}
-
         </div>
-
         {% endif %}
 
-
-        <!-- ========================= -->
-        <!-- MODEL RESULT -->
-        <!-- ========================= -->
 
         {% if result %}
 
-
-        <!-- STATISTICS -->
-
-        <div class="stats-grid">
-
-
-            <!-- TRAINING ACCURACY -->
-
-            <div class="stat-card">
-
-                <span>
-                    Training Accuracy
-                </span>
-
-                <strong>
-                    {{ "%.2f"|format(result.train_accuracy * 100) }}%
-                </strong>
-
-            </div>
-
-
-            <!-- TESTING ACCURACY -->
-
-            <div class="stat-card">
-
-                <span>
-                    Testing Accuracy
-                </span>
-
-                <strong>
-                    {{ "%.2f"|format(result.test_accuracy * 100) }}%
-                </strong>
-
-            </div>
-
-
-            <!-- TREE DEPTH -->
-
-            <div class="stat-card">
-
-                <span>
-                    Tree Depth
-                </span>
-
-                <strong>
-                    {{ result.tree_depth }}
-                </strong>
-
-            </div>
-
-
-            <!-- LEAF NODES -->
-
-            <div class="stat-card">
-
-                <span>
-                    Leaf Nodes
-                </span>
-
-                <strong>
-                    {{ result.leaf_count }}
-                </strong>
-
-            </div>
-
-
-        </div>
-
-
-        <!-- ========================= -->
-        <!-- CLASSIFICATION METRICS -->
-        <!-- ========================= -->
-
         <section class="content-section">
+
+            <div class="section-heading">
+                <div>
+                    <div class="eyebrow">
+                        DECISION TREE MODEL
+                    </div>
+
+                    <h2>Model Performance</h2>
+
+                    <p>
+                        Comparison of the original decision tree
+                        with the improved model.
+                    </p>
+                </div>
+            </div>
+
+
+            <div class="stats-grid">
+
+                <div class="stat-card">
+                    <span>Before Accuracy</span>
+                    <strong>
+                        {{ "%.2f"|format(result.before_accuracy * 100) }}%
+                    </strong>
+                </div>
+
+                <div class="stat-card">
+                    <span>After Accuracy</span>
+                    <strong>
+                        {{ "%.2f"|format(result.after_accuracy * 100) }}%
+                    </strong>
+                </div>
+
+                <div class="stat-card">
+                    <span>After Tree Depth</span>
+                    <strong>
+                        {{ result.after_depth }}
+                    </strong>
+                </div>
+
+                <div class="stat-card">
+                    <span>After Leaf Count</span>
+                    <strong>
+                        {{ result.after_leaves }}
+                    </strong>
+                </div>
+
+            </div>
+
 
             <div class="card">
 
-                <h3>
-                    Classification Metrics
-                </h3>
+                <h3>Before vs After Model Improvement</h3>
 
+                <div style="overflow-x:auto; margin-top:20px;">
 
-                <div class="table-wrapper">
-
-                    <table>
-
+                    <table style="width:100%; border-collapse:collapse;">
 
                         <thead>
-
                             <tr>
-
-                                <th>
+                                <th style="padding:12px; text-align:left;">
                                     Metric
                                 </th>
 
-                                <th>
-                                    Value
+                                <th style="padding:12px; text-align:center;">
+                                    Before
                                 </th>
 
+                                <th style="padding:12px; text-align:center;">
+                                    After
+                                </th>
                             </tr>
-
                         </thead>
-
 
                         <tbody>
 
+                            <tr>
+                                <td style="padding:12px;">
+                                    Accuracy
+                                </td>
+                                <td style="padding:12px; text-align:center;">
+                                    {{ "%.2f"|format(result.before_accuracy * 100) }}%
+                                </td>
+                                <td style="padding:12px; text-align:center;">
+                                    {{ "%.2f"|format(result.after_accuracy * 100) }}%
+                                </td>
+                            </tr>
 
                             <tr>
-
-                                <td>
+                                <td style="padding:12px;">
                                     Precision
                                 </td>
-
-                                <td>
-                                    {{ "%.4f"|format(result.precision) }}
+                                <td style="padding:12px; text-align:center;">
+                                    {{ "%.4f"|format(result.before_precision) }}
                                 </td>
-
+                                <td style="padding:12px; text-align:center;">
+                                    {{ "%.4f"|format(result.after_precision) }}
+                                </td>
                             </tr>
 
-
                             <tr>
-
-                                <td>
+                                <td style="padding:12px;">
                                     Recall
                                 </td>
-
-                                <td>
-                                    {{ "%.4f"|format(result.recall) }}
+                                <td style="padding:12px; text-align:center;">
+                                    {{ "%.4f"|format(result.before_recall) }}
                                 </td>
-
+                                <td style="padding:12px; text-align:center;">
+                                    {{ "%.4f"|format(result.after_recall) }}
+                                </td>
                             </tr>
 
-
                             <tr>
-
-                                <td>
+                                <td style="padding:12px;">
                                     F1 Score
                                 </td>
-
-                                <td>
-                                    {{ "%.4f"|format(result.f1) }}
+                                <td style="padding:12px; text-align:center;">
+                                    {{ "%.4f"|format(result.before_f1) }}
                                 </td>
-
+                                <td style="padding:12px; text-align:center;">
+                                    {{ "%.4f"|format(result.after_f1) }}
+                                </td>
                             </tr>
-
 
                             <tr>
-
-                                <td>
-                                    Training Rows
+                                <td style="padding:12px;">
+                                    Tree Depth
                                 </td>
-
-                                <td>
-                                    {{ result.train_rows }}
+                                <td style="padding:12px; text-align:center;">
+                                    {{ result.before_depth }}
                                 </td>
-
+                                <td style="padding:12px; text-align:center;">
+                                    {{ result.after_depth }}
+                                </td>
                             </tr>
-
 
                             <tr>
-
-                                <td>
-                                    Testing Rows
+                                <td style="padding:12px;">
+                                    Leaf Count
                                 </td>
-
-                                <td>
-                                    {{ result.test_rows }}
+                                <td style="padding:12px; text-align:center;">
+                                    {{ result.before_leaves }}
                                 </td>
-
+                                <td style="padding:12px; text-align:center;">
+                                    {{ result.after_leaves }}
+                                </td>
                             </tr>
-
 
                         </tbody>
-
 
                     </table>
 
@@ -599,85 +208,95 @@
 
             </div>
 
-        </section>
-
-
-        <!-- ========================= -->
-        <!-- CONFUSION MATRIX -->
-        <!-- ========================= -->
-
-        <section class="content-section">
 
             <div class="card">
 
-                <h3>
-                    Confusion Matrix
-                </h3>
+                <h3>Dataset Information</h3>
+
+                <div style="
+                    display:flex;
+                    justify-content:space-between;
+                    padding:12px 0;
+                    border-bottom:1px solid #e5e7eb;
+                ">
+                    <strong>Training Rows</strong>
+                    <span>{{ result.train_rows }}</span>
+                </div>
+
+                <div style="
+                    display:flex;
+                    justify-content:space-between;
+                    padding:12px 0;
+                ">
+                    <strong>Testing Rows</strong>
+                    <span>{{ result.test_rows }}</span>
+                </div>
+
+            </div>
 
 
-                <div class="table-wrapper">
+            <div class="card">
 
-                    <table>
+                <h3>Features Used</h3>
 
+                <div style="margin-top:15px;">
 
-                        <thead>
+                    {% for feature in result.features %}
 
-                            <tr>
+                    <span style="
+                        display:inline-block;
+                        padding:8px 12px;
+                        margin:5px;
+                        border-radius:8px;
+                        background:#f1f5f9;
+                    ">
+                        {{ feature }}
+                    </span>
 
-                                <th></th>
+                    {% endfor %}
 
-                                <th>
-                                    Predicted BAD
-                                </th>
+                </div>
 
-                                <th>
-                                    Predicted Good
-                                </th>
-
-                            </tr>
-
-                        </thead>
-
-
-                        <tbody>
+            </div>
 
 
-                            <tr>
+            <div class="card">
 
-                                <th>
-                                    Actual BAD
-                                </th>
+                <h3>Confusion Matrix</h3>
 
-                                <td>
-                                    {{ result.confusion_matrix[0][0] }}
-                                </td>
+                <div style="overflow-x:auto; margin-top:20px;">
 
-                                <td>
-                                    {{ result.confusion_matrix[0][1] }}
-                                </td>
+                    <table style="
+                        margin:auto;
+                        border-collapse:collapse;
+                        min-width:300px;
+                    ">
 
-                            </tr>
+                        <tr>
+                            <th style="padding:12px;"></th>
+                            <th style="padding:12px;">Predicted BAD</th>
+                            <th style="padding:12px;">Predicted Good</th>
+                        </tr>
 
+                        <tr>
+                            <th style="padding:12px;">Actual BAD</th>
+                            <td style="padding:12px; text-align:center;">
+                                {{ result.confusion_matrix[0][0] }}
+                            </td>
+                            <td style="padding:12px; text-align:center;">
+                                {{ result.confusion_matrix[0][1] }}
+                            </td>
+                        </tr>
 
-                            <tr>
-
-                                <th>
-                                    Actual Good
-                                </th>
-
-                                <td>
-                                    {{ result.confusion_matrix[1][0] }}
-                                </td>
-
-                                <td>
-                                    {{ result.confusion_matrix[1][1] }}
-                                </td>
-
-                            </tr>
-
-
-                        </tbody>
-
+                        <tr>
+                            <th style="padding:12px;">Actual Good</th>
+                            <td style="padding:12px; text-align:center;">
+                                {{ result.confusion_matrix[1][0] }}
+                            </td>
+                            <td style="padding:12px; text-align:center;">
+                                {{ result.confusion_matrix[1][1] }}
+                            </td>
+                        </tr>
 
                     </table>
 
@@ -685,18 +304,29 @@
 
             </div>
 
-        </section>
 
+            <div class="card">
+
+                <h3>Model Improvement</h3>
+
+                <p>
+                    The table above reports the actual measured
+                    performance before and after the decision-tree
+                    improvement. No improvement value is fabricated;
+                    all values come from the model result.
+                </p>
+
+            </div>
+
+        </section>
 
         {% endif %}
 
+        {% include "_comparison.html" %}
 
     </main>
 
-
 </div>
 
-
 </body>
-
 </html>

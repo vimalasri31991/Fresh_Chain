@@ -1,3 +1,4 @@
+{% from "_macros.html" import bar, chip %}
 <!DOCTYPE html>
 <html lang="en">
 
@@ -27,255 +28,12 @@
 
     <!-- SIDEBAR -->
 
-    <aside class="sidebar">
+    {% include "_sidebar.html" %}
 
-        <!-- BRAND -->
 
-        <div class="brand">
-
-            <div class="brand-icon">🍃</div>
-
-            <div>
-                <h2>FruitSense</h2>
-                <p>Quality Analytics</p>
-            </div>
-
-        </div>
-
-
-        <!-- SECTION TITLE -->
-
-        <div class="sidebar-section-title">
-            ANALYTICS
-        </div>
-
-
-        <!-- DASHBOARD -->
-
-        <a
-            href="{{ url_for('index') }}"
-            class="nav-item{% if active == 'dashboard' %} active{% endif %}"
-        >
-            <span class="nav-icon">⌂</span>
-            <span>Dashboard</span>
-        </a>
-
-
-        <!-- DATA LOADING -->
-
-        <a
-            href="{{ url_for('data_loading') }}"
-            class="nav-item{% if active == 'data-loading' %} active{% endif %}"
-        >
-            <span class="nav-icon">▣</span>
-            <span>Data Loading</span>
-        </a>
-
-
-        <!-- EXPLORATORY ANALYSIS -->
-
-        <a
-            href="{{ url_for('eda') }}"
-            class="nav-item{% if active == 'eda' %} active{% endif %}"
-        >
-            <span class="nav-icon">◒</span>
-            <span>Exploratory Analysis</span>
-        </a>
-
-
-        <!-- PREPROCESSING -->
-
-        <a
-            href="{{ url_for('preprocessing') }}"
-            class="nav-item{% if active == 'preprocessing' %} active{% endif %}"
-        >
-            <span class="nav-icon">⚙</span>
-            <span>Preprocessing</span>
-        </a>
-
-
-        <!-- =========================================
-             REGRESSION DROPDOWN
-             ========================================= -->
-
-        <details
-            class="nav-dropdown"
-            {% if active in ['linear-regression', 'logistic-regression', 'regularisation'] %}open{% endif %}
-        >
-
-            <summary class="dropdown-toggle">
-
-                <span class="dropdown-left">
-
-                    <span class="nav-icon">📈</span>
-
-                    <span>Regression</span>
-
-                </span>
-
-                <span class="dropdown-arrow">
-                    ▾
-                </span>
-
-            </summary>
-
-
-            <div class="dropdown-content">
-
-                <!-- LINEAR REGRESSION -->
-
-                <a
-                    href="{{ url_for('linear_regression') }}"
-                    class="nav-subitem{% if active == 'linear-regression' %} active{% endif %}"
-                >
-                    <span class="sub-icon">📈</span>
-                    <span>Linear Regression</span>
-                </a>
-
-
-                <!-- LOGISTIC REGRESSION -->
-
-                <a
-                    href="{{ url_for('logistic_regression') }}"
-                    class="nav-subitem{% if active == 'logistic-regression' %} active{% endif %}"
-                >
-                    <span class="sub-icon">🎯</span>
-                    <span>Logistic Regression</span>
-                </a>
-
-
-                <!-- REGULARISATION -->
-
-                <a
-                    href="{{ url_for('regularisation') }}"
-                    class="nav-subitem{% if active == 'regularisation' %} active{% endif %}"
-                >
-                    <span class="sub-icon">λ</span>
-                    <span>Regularisation</span>
-                </a>
-
-            </div>
-
-        </details>
-
-
-        <!-- =========================================
-             TREE & ENSEMBLE DROPDOWN
-             ========================================= -->
-
-        <details
-            class="nav-dropdown"
-            {% if active in ['decision-tree', 'random-forest', 'cost-complexity', 'ada-boost', 'gradient-boost'] %}open{% endif %}
-        >
-
-            <summary class="dropdown-toggle">
-
-                <span class="dropdown-left">
-
-                    <span class="nav-icon">🌳</span>
-
-                    <span>Tree &amp; Ensemble</span>
-
-                </span>
-
-                <span class="dropdown-arrow">
-                    ▾
-                </span>
-
-            </summary>
-
-
-            <div class="dropdown-content">
-
-                <!-- DECISION TREE -->
-
-                <a
-                    href="{{ url_for('decision_tree') }}"
-                    class="nav-subitem{% if active == 'decision-tree' %} active{% endif %}"
-                >
-                    <span class="sub-icon">🌳</span>
-                    <span>Decision Tree</span>
-                </a>
-
-
-                <!-- RANDOM FOREST -->
-
-                <a
-                    href="{{ url_for('random_forest') }}"
-                    class="nav-subitem{% if active == 'random-forest' %} active{% endif %}"
-                >
-                    <span class="sub-icon">🌲</span>
-                    <span>Random Forest</span>
-                </a>
-
-
-                <!-- COST COMPLEXITY -->
-
-                <a
-                    href="{{ url_for('cost_complexity') }}"
-                    class="nav-subitem{% if active == 'cost-complexity' %} active{% endif %}"
-                >
-                    <span class="sub-icon">✂</span>
-                    <span>Cost-Complexity</span>
-                </a>
-
-
-                <!-- ADABOOST -->
-
-                <a
-                    href="{{ url_for('ada_boost') }}"
-                    class="nav-subitem{% if active == 'ada-boost' %} active{% endif %}"
-                >
-                    <span class="sub-icon">⚡</span>
-                    <span>AdaBoost</span>
-                </a>
-
-
-                <!-- GRADIENT BOOST -->
-
-                <a
-                    href="{{ url_for('gradient_boost') }}"
-                    class="nav-subitem{% if active == 'gradient-boost' %} active{% endif %}"
-                >
-                    <span class="sub-icon">↗</span>
-                    <span>Gradient Boost</span>
-                </a>
-
-            </div>
-
-        </details>
-
-
-        <!-- =========================================
-             K-MEANS
-             ========================================= -->
-
-        <a
-            href="{{ url_for('kmeans') }}"
-            class="nav-item{% if active == 'kmeans' %} active{% endif %}"
-        >
-            <span class="nav-icon">●</span>
-            <span>K-Means Clustering</span>
-        </a>
-
-
-        <!-- SIDEBAR STATUS -->
-
-        <div class="sidebar-status">
-
-            <div class="status-dot"></div>
-
-            <div>
-                <strong>Project Status</strong>
-                <small>Analytics active</small>
-            </div>
-
-        </div>
-
-    </aside>
-
-
-    <!-- MAIN CONTENT -->
+    <!-- =========================================
+         MAIN CONTENT
+         ========================================= -->
 
     <main class="main-content">
 
@@ -291,14 +49,18 @@
                 </div>
 
                 <h1>
+
                     Fruit Quality
                     <br>
                     Intelligence
+
                 </h1>
 
                 <p>
+
                     Analyze environmental conditions and
                     predict fruit quality using machine learning.
+
                 </p>
 
             </div>
@@ -328,22 +90,21 @@
         {% endif %}
 
 
-        <!-- DATA LOADING VIEW -->
+        <!-- =========================================
+             DATA SET VIEW
+             ========================================= -->
 
         {% if active == "data-loading" and summary %}
 
         <section class="content-section">
 
+
             <div class="section-heading">
 
                 <div>
 
-                    <div class="eyebrow">
-                        DATASET
-                    </div>
-
                     <h2>
-                        Data Loading
+                        Data Set
                     </h2>
 
                     <p>
@@ -356,6 +117,7 @@
 
 
             <div class="stats-grid">
+
 
                 <div class="stat-card">
 
@@ -423,11 +185,38 @@
                     {% for column in summary.column_names %}
 
                     <span class="tag">
+
                         {{ column }}
+
                     </span>
 
                     {% endfor %}
 
+                </div>
+
+            </div>
+
+
+            <div class="card">
+
+                <div class="card-head">
+                    <h3>Column Profile</h3>
+                    <span class="chart-number">{{ summary.columns }} COLUMNS</span>
+                </div>
+
+                <div class="chip-row">
+                    {{ chip('Missing values', summary.missing_total, 'green') }}
+                    {{ chip('Duplicate rows', summary.duplicate_rows, 'pink') }}
+                    {{ chip('Unique rows', summary.rows - summary.duplicate_rows, 'purple') }}
+                </div>
+
+                <div class="bar-list">
+                    {% for col in summary.summary %}
+                        {{ bar(col.column ~ ' (' ~ col.dtype ~ ')',
+                               col.unique / summary.rows * 100,
+                               '',
+                               col.unique ~ ' unique') }}
+                    {% endfor %}
                 </div>
 
             </div>
@@ -470,7 +259,9 @@
                                 {% for column in summary.column_names %}
 
                                 <td>
+
                                     {{ row[column] }}
+
                                 </td>
 
                                 {% endfor %}
@@ -493,11 +284,15 @@
         {% else %}
 
 
-        <!-- DASHBOARD -->
+        <!-- =========================================
+             DASHBOARD HERO
+             ========================================= -->
 
         <section class="hero-card">
 
+
             <div class="hero-content">
+
 
                 <div class="eyebrow light">
                     FRESHCHAIN ANALYTICS PLATFORM
@@ -530,11 +325,14 @@
 
                 <div class="hero-buttons">
 
+
                     <a
                         href="{{ url_for('data_loading') }}"
                         class="btn primary"
                     >
+
                         Load Dataset
+
                     </a>
 
 
@@ -542,7 +340,9 @@
                         href="{{ url_for('eda') }}"
                         class="btn secondary"
                     >
+
                         Explore Data
+
                     </a>
 
                 </div>
@@ -561,10 +361,14 @@
         </section>
 
 
-        <!-- FEATURE CARDS -->
+        <!-- =========================================
+             FEATURE CARDS
+             ========================================= -->
 
         <section class="feature-grid">
 
+
+            <!-- EDA -->
 
             <a
                 href="{{ url_for('eda') }}"
@@ -595,6 +399,8 @@
             </a>
 
 
+            <!-- PREPROCESSING -->
+
             <a
                 href="{{ url_for('preprocessing') }}"
                 class="feature-card"
@@ -623,6 +429,8 @@
 
             </a>
 
+
+            <!-- LOGISTIC REGRESSION -->
 
             <a
                 href="{{ url_for('logistic_regression') }}"
@@ -653,30 +461,30 @@
             </a>
 
 
-            <!-- K-MEANS FEATURE CARD -->
+            <!-- TREE ENSEMBLE -->
 
             <a
-                href="{{ url_for('kmeans') }}"
+                href="{{ url_for('random_forest') }}"
                 class="feature-card"
             >
 
                 <div class="feature-icon">
-                    ●
+                    🌳
                 </div>
 
 
                 <div>
 
                     <small>
-                        CLUSTERING
+                        ENSEMBLE
                     </small>
 
                     <h3>
-                        K-Means Clustering
+                        Random Forest
                     </h3>
 
                     <p>
-                        Discover natural groups in the dataset
+                        Ensemble-based quality classification
                     </p>
 
                 </div>
@@ -687,7 +495,9 @@
         </section>
 
 
-        <!-- PROJECT OVERVIEW -->
+        <!-- =========================================
+             PROJECT WORKFLOW
+             ========================================= -->
 
         <section class="content-section">
 
@@ -712,6 +522,8 @@
             <div class="workflow-grid">
 
 
+                <!-- 01 -->
+
                 <div class="workflow-card">
 
                     <span>
@@ -719,7 +531,7 @@
                     </span>
 
                     <h3>
-                        Data Loading
+                        Data Set
                     </h3>
 
                     <p>
@@ -728,6 +540,8 @@
 
                 </div>
 
+
+                <!-- 02 -->
 
                 <div class="workflow-card">
 
@@ -746,6 +560,8 @@
                 </div>
 
 
+                <!-- 03 -->
+
                 <div class="workflow-card">
 
                     <span>
@@ -762,6 +578,8 @@
 
                 </div>
 
+
+                <!-- 04 -->
 
                 <div class="workflow-card">
 
@@ -780,7 +598,7 @@
                 </div>
 
 
-                <!-- K-MEANS WORKFLOW -->
+                <!-- 05 -->
 
                 <div class="workflow-card">
 
@@ -789,11 +607,30 @@
                     </span>
 
                     <h3>
-                        K-Means
+                        Trees &amp; Ensemble
                     </h3>
 
                     <p>
-                        Calculate K and group similar data points into clusters.
+                        Apply decision trees and ensemble boosting models.
+                    </p>
+
+                </div>
+
+
+                <!-- 06 -->
+
+                <div class="workflow-card">
+
+                    <span>
+                        06
+                    </span>
+
+                    <h3>
+                        Clustering
+                    </h3>
+
+                    <p>
+                        Apply K-Means, Hierarchical and DBSCAN clustering.
                     </p>
 
                 </div>

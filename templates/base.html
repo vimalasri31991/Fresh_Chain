@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>FruitSense | {% block title %}{% endblock %}</title>
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+<body>
+
+<div class="app-layout">
+
+    {% include "_sidebar.html" %}
+
+    <main class="main-content">
+
+        <header class="page-header">
+            <div>
+                <div class="eyebrow">{% block eyebrow %}{% endblock %}</div>
+                <h1>{% block heading %}{% endblock %}</h1>
+                <p>{% block subtitle %}{% endblock %}</p>
+            </div>
+
+            <div class="system-status">
+                <span></span>
+                {% block status %}Model Active{% endblock %}
+            </div>
+        </header>
+
+        {% if error %}
+        <div class="error-box">{{ error }}</div>
+        {% endif %}
+
+        {% block content %}{% endblock %}
+
+        {% block footer %}
+            {% include "_comparison.html" %}
+        {% endblock %}
+
+    </main>
+
+</div>
+
+</body>
+</html>

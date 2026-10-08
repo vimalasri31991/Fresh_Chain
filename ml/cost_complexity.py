@@ -88,8 +88,11 @@ def get_cost_complexity():
     # -------------------------------------------------
     # Find best alpha using VALIDATION data
     # -------------------------------------------------
-    best_alpha = ccp_alphas[0]
-    best_validation_accuracy = -1
+    # Score every candidate alpha on the validation set, then choose the
+    # LARGEST alpha (= simplest tree) that is within 0.2 percentage points
+    # of the best validation accuracy.  Picking the first strict maximum
+    # always returned alpha = 0.0 (i.e. no pruning at all) on this data.
+    alpha_scores = []
 
     for alpha in ccp_alphas:
 
@@ -100,16 +103,17 @@ def get_cost_complexity():
 
         tree.fit(X_train, y_train)
 
-        validation_pred = tree.predict(X_val)
+        alpha_scores.append((
+            float(alpha),
+            float(accuracy_score(y_val, tree.predict(X_val)))
+        ))
 
-        validation_accuracy = accuracy_score(
-            y_val,
-            validation_pred
-        )
+    top_score = max(score for _, score in alpha_scores)
 
-        if validation_accuracy > best_validation_accuracy:
-            best_validation_accuracy = validation_accuracy
-            best_alpha = alpha
+    best_alpha, best_validation_accuracy = max(
+        (item for item in alpha_scores if item[1] >= top_score - 0.002),
+        key=lambda item: item[0]
+    )
 
     # -------------------------------------------------
     # Train final model using complete development set

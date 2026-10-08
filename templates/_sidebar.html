@@ -1,0 +1,212 @@
+{# Shared sidebar - the ONLY place the navigation lives.
+   Every page includes it, so the menu can never drift again. #}
+
+<aside class="sidebar">
+
+    <!-- BRAND -->
+    <div class="brand">
+        <div class="brand-icon">🍃</div>
+        <div>
+            <h2>FruitSense</h2>
+            <p>Quality Analytics</p>
+        </div>
+    </div>
+
+    <div class="sidebar-section-title">ANALYTICS</div>
+
+    <!-- DASHBOARD -->
+    <a href="{{ url_for('index') }}"
+       class="nav-item{% if active == 'dashboard' %} active{% endif %}">
+        <span class="nav-icon">⌂</span>
+        <span>Dashboard</span>
+    </a>
+
+    <!-- DATA SET -->
+    <a href="{{ url_for('data_loading') }}"
+       class="nav-item{% if active == 'data-loading' %} active{% endif %}">
+        <span class="nav-icon">▣</span>
+        <span>Data Set</span>
+    </a>
+
+    <!-- EXPLORATORY ANALYSIS -->
+    <a href="{{ url_for('eda') }}"
+       class="nav-item{% if active == 'eda' %} active{% endif %}">
+        <span class="nav-icon">◒</span>
+        <span>Exploratory Analysis</span>
+    </a>
+
+    <!-- PREPROCESSING -->
+    <a href="{{ url_for('preprocessing') }}"
+       class="nav-item{% if active == 'preprocessing' %} active{% endif %}">
+        <span class="nav-icon">⚙</span>
+        <span>Preprocessing</span>
+    </a>
+
+    <!-- REGRESSION -->
+    <details class="nav-dropdown"
+        {% if active in ['linear-regression', 'logistic-regression', 'regularisation'] %}open{% endif %}>
+
+        <summary class="dropdown-toggle">
+            <span class="dropdown-left">
+                <span class="nav-icon">📈</span>
+                <span>Regression</span>
+            </span>
+            <span class="dropdown-arrow">▾</span>
+        </summary>
+
+        <div class="dropdown-content">
+
+            <a href="{{ url_for('linear_regression') }}"
+               class="nav-subitem{% if active == 'linear-regression' %} active{% endif %}">
+                <span class="sub-icon">📈</span>
+                <span>Linear Regression</span>
+            </a>
+
+            <a href="{{ url_for('logistic_regression') }}"
+               class="nav-subitem{% if active == 'logistic-regression' %} active{% endif %}">
+                <span class="sub-icon">🎯</span>
+                <span>Logistic Regression</span>
+            </a>
+
+            <a href="{{ url_for('regularisation') }}"
+               class="nav-subitem{% if active == 'regularisation' %} active{% endif %}">
+                <span class="sub-icon">λ</span>
+                <span>Regularisation</span>
+            </a>
+
+        </div>
+    </details>
+
+    <!-- TREES & ENSEMBLE -->
+    <details class="nav-dropdown"
+        {% if active in ['decision-tree', 'random-forest', 'ada-boost', 'gradient-boost',
+                         'xg-boost', 'lightgbm', 'pruning', 'cost-complexity'] %}open{% endif %}>
+
+        <summary class="dropdown-toggle">
+            <span class="dropdown-left">
+                <span class="nav-icon">🌳</span>
+                <span>Trees &amp; Ensemble</span>
+            </span>
+            <span class="dropdown-arrow">▾</span>
+        </summary>
+
+        <div class="dropdown-content">
+
+            <a href="{{ url_for('decision_tree') }}"
+               class="nav-subitem{% if active == 'decision-tree' %} active{% endif %}">
+                <span class="sub-icon">🌳</span>
+                <span>Decision Tree</span>
+            </a>
+
+            <a href="{{ url_for('random_forest') }}"
+               class="nav-subitem{% if active == 'random-forest' %} active{% endif %}">
+                <span class="sub-icon">🌲</span>
+                <span>Random Forest</span>
+            </a>
+
+            <a href="{{ url_for('ada_boost') }}"
+               class="nav-subitem{% if active == 'ada-boost' %} active{% endif %}">
+                <span class="sub-icon">⚡</span>
+                <span>AdaBoost</span>
+            </a>
+
+            <a href="{{ url_for('gradient_boost') }}"
+               class="nav-subitem{% if active == 'gradient-boost' %} active{% endif %}">
+                <span class="sub-icon">↗</span>
+                <span>Gradient Boost</span>
+            </a>
+
+            <a href="{{ url_for('xg_boost') }}"
+               class="nav-subitem{% if active == 'xg-boost' %} active{% endif %}">
+                <span class="sub-icon">🚀</span>
+                <span>XGBoost</span>
+            </a>
+
+            <a href="{{ url_for('lightgbm') }}"
+               class="nav-subitem{% if active == 'lightgbm' %} active{% endif %}">
+                <span class="sub-icon">💡</span>
+                <span>LightGBM</span>
+            </a>
+
+            <!-- PRUNING -->
+            <details class="nav-dropdown"
+                {% if active in ['pruning', 'cost-complexity'] %}open{% endif %}>
+
+                <summary class="dropdown-toggle">
+                    <span class="dropdown-left">
+                        <span class="sub-icon">✂</span>
+                        <span>Pruning</span>
+                    </span>
+                    <span class="dropdown-arrow">▾</span>
+                </summary>
+
+                <div class="dropdown-content">
+
+                    <a href="{{ url_for('pruning') }}#fully-grown" class="nav-subitem">
+                        <span>Fully Grown</span>
+                    </a>
+
+                    <a href="{{ url_for('pruning') }}#pre-pruning" class="nav-subitem">
+                        <span>Pre-Pruning</span>
+                    </a>
+
+                    <a href="{{ url_for('pruning') }}#post-pruning" class="nav-subitem">
+                        <span>Post-Pruning</span>
+                    </a>
+
+                    <a href="{{ url_for('cost_complexity') }}"
+                       class="nav-subitem{% if active == 'cost-complexity' %} active{% endif %}">
+                        <span>Cost-Complexity</span>
+                    </a>
+
+                </div>
+            </details>
+
+        </div>
+    </details>
+
+    <!-- CLUSTERING -->
+    <details class="nav-dropdown"
+        {% if active in ['kmeans', 'hierarchical', 'dbscan'] %}open{% endif %}>
+
+        <summary class="dropdown-toggle">
+            <span class="dropdown-left">
+                <span class="nav-icon">●</span>
+                <span>Clustering</span>
+            </span>
+            <span class="dropdown-arrow">▾</span>
+        </summary>
+
+        <div class="dropdown-content">
+
+            <a href="{{ url_for('kmeans') }}"
+               class="nav-subitem{% if active == 'kmeans' %} active{% endif %}">
+                <span class="sub-icon">●</span>
+                <span>K-Means</span>
+            </a>
+
+            <a href="{{ url_for('hierarchical') }}"
+               class="nav-subitem{% if active == 'hierarchical' %} active{% endif %}">
+                <span class="sub-icon">↗</span>
+                <span>Hierarchical</span>
+            </a>
+
+            <a href="{{ url_for('dbscan') }}"
+               class="nav-subitem{% if active == 'dbscan' %} active{% endif %}">
+                <span class="sub-icon">◉</span>
+                <span>DBSCAN</span>
+            </a>
+
+        </div>
+    </details>
+
+    <!-- STATUS -->
+    <div class="sidebar-status">
+        <div class="status-dot"></div>
+        <div>
+            <strong>Project Status</strong>
+            <small>Analytics active</small>
+        </div>
+    </div>
+
+</aside>
