@@ -633,6 +633,118 @@ def dbscan():
 
 
 # ============================================================
+# ANOMALY DETECTION
+# ============================================================
+
+@app.route("/anomaly-detection")
+def anomaly_detection():
+
+    try:
+
+        result = get_result("anomaly-detection")
+
+        return render_template(
+            "anomaly_detection.html",
+            active="anomaly-detection",
+            result=result,
+            error=None
+        )
+
+    except Exception as e:
+
+        return render_template(
+            "anomaly_detection.html",
+            active="anomaly-detection",
+            result=None,
+            error=str(e)
+        )
+
+
+# ============================================================
+# PCA
+# ============================================================
+
+@app.route("/pca")
+def pca():
+
+    try:
+
+        result = get_result("pca")
+
+        return render_template(
+            "pca.html",
+            active="pca",
+            result=result,
+            error=None
+        )
+
+    except Exception as e:
+
+        return render_template(
+            "pca.html",
+            active="pca",
+            result=None,
+            error=str(e)
+        )
+
+
+# ============================================================
+# T-SNE
+# ============================================================
+
+@app.route("/tsne")
+def tsne():
+
+    try:
+
+        result = get_result("tsne")
+
+        return render_template(
+            "tsne.html",
+            active="tsne",
+            result=result,
+            error=None
+        )
+
+    except Exception as e:
+
+        return render_template(
+            "tsne.html",
+            active="tsne",
+            result=None,
+            error=str(e)
+        )
+
+
+# ============================================================
+# UMAP
+# ============================================================
+
+@app.route("/umap")
+def umap():
+
+    try:
+
+        result = get_result("umap")
+
+        return render_template(
+            "umap.html",
+            active="umap",
+            result=result,
+            error=None
+        )
+
+    except Exception as e:
+
+        return render_template(
+            "umap.html",
+            active="umap",
+            result=None,
+            error=str(e)
+        )
+
+
+# ============================================================
 # RUN APPLICATION
 # ============================================================
 

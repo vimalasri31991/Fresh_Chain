@@ -223,4 +223,134 @@ best_alpha = max(a for a, s in zip(path.ccp_alphas, scores)
 model = DecisionTreeClassifier(random_state=42, ccp_alpha=best_alpha)
 model.fit(X_train, y_train)"""),
     ],
+
+    # ---------------- HIERARCHICAL CLUSTERING ----------------
+    "hierarchical": [
+        _model("SciPy Dendrogram & Cophenetic Correlation", "Dendrogram", """
+from scipy.cluster.hierarchy import dendrogram, linkage, cophenet
+from scipy.spatial.distance import pdist
+
+Z_ward = linkage(X_sample, method="ward")
+coph_corr, _ = cophenet(Z_ward, pdist(X_sample))
+cut_height_k2 = (Z_ward[-1, 2] + Z_ward[-2, 2]) / 2.0
+
+dendrogram(
+    Z_ward,
+    truncate_mode="lastp",
+    p=30,
+    color_threshold=cut_height_k2,
+    show_contracted=True
+)"""),
+        _model("Agglomerative Clustering (Ward Linkage)", "Clustering", """
+from sklearn.cluster import AgglomerativeClustering
+from sklearn.metrics import silhouette_score, davies_bouldin_score
+
+model = AgglomerativeClustering(n_clusters=2, linkage="ward")
+labels = model.fit_predict(X_scaled)
+
+silhouette = silhouette_score(X_scaled, labels)
+davies_bouldin = davies_bouldin_score(X_scaled, labels)"""),
+    ],
+
+    # ---------------- DBSCAN ----------------
+    "dbscan": [
+        _model("DBSCAN Density Clustering & Noise Detection", "DBSCAN", """
+from sklearn.cluster import DBSCAN
+from sklearn.neighbors import NearestNeighbors
+
+# 1) k-distance curve for selecting epsilon
+nn = NearestNeighbors(n_neighbors=5).fit(X_scaled)
+k_distances = np.sort(nn.kneighbors(X_scaled)[0][:, -1])
+
+# 2) Fit DBSCAN and separate core clusters from noise (-1)
+model = DBSCAN(eps=0.8, min_samples=5)
+labels = model.fit_predict(X_scaled)
+noise_count = int((labels == -1).sum())"""),
+    ],
+
+    # ---------------- ANOMALY DETECTION ----------------
+    "anomaly-detection": [
+        _model("Isolation Forest · Anomaly Detection", "Primary Model", """
+from sklearn.ensemble import IsolationForest
+
+iso_model = IsolationForest(
+    n_estimators=200,
+    max_samples="auto",
+    contamination=0.05,
+    random_state=42,
+    n_jobs=-1
+)
+iso_pred = iso_model.fit_predict(X_scaled)          # 1 = Normal, -1 = Anomaly
+iso_scores = iso_model.decision_function(X_scaled)  # negative = Outlier"""),
+        _model("LOF, One-Class SVM & Multi-Model Consensus", "Ensemble Consensus", """
+from sklearn.neighbors import LocalOutlierFactor
+from sklearn.svm import OneClassSVM
+from sklearn.covariance import EllipticEnvelope
+
+lof_pred = LocalOutlierFactor(n_neighbors=20, contamination=0.05).fit_predict(X_scaled)
+ocsvm_pred = OneClassSVM(kernel="rbf", nu=0.05, gamma="scale").fit(X_train).predict(X_scaled)
+elliptic_pred = EllipticEnvelope(contamination=0.05, random_state=42).fit_predict(X_scaled)
+
+# Flag consensus anomalies detected by >= 2 independent detectors
+votes = (iso_pred == -1).astype(int) + (lof_pred == -1).astype(int) + \\
+        (ocsvm_pred == -1).astype(int) + (elliptic_pred == -1).astype(int)"""),
+    ],
+
+    # ---------------- PCA ----------------
+    "pca": [
+        _model("Principal Component Analysis & Explained Variance", "Eigen Decomposition", """
+from sklearn.decomposition import PCA
+from sklearn.preprocessing import StandardScaler
+
+X_scaled = StandardScaler().fit_transform(df[FEATURES])
+
+pca_full = PCA(n_components=4, random_state=42)
+X_pca = pca_full.fit_transform(X_scaled)
+
+explained_pct = pca_full.explained_variance_ratio_ * 100
+cumulative_pct = np.cumsum(explained_pct)
+loadings = pd.DataFrame(pca_full.components_.T, index=FEATURES, columns=["PC1", "PC2", "PC3", "PC4"])"""),
+        _model("2D Dimensionality Reduction & Reconstruction Error", "Projection", """
+pca_2d = PCA(n_components=2, random_state=42)
+X_pca_2d = pca_2d.fit_transform(X_scaled)
+
+X_reconstructed = pca_2d.inverse_transform(X_pca_2d)
+recon_mse = mean_squared_error(X_scaled, X_reconstructed)"""),
+    ],
+
+    # ---------------- T-SNE ----------------
+    "tsne": [
+        _model("t-SNE Non-Linear Manifold Embedding", "Manifold Learning", """
+from sklearn.manifold import TSNE, trustworthiness
+
+tsne = TSNE(
+    n_components=2,
+    perplexity=30,
+    learning_rate="auto",
+    init="pca",
+    max_iter=750,
+    random_state=42
+)
+X_tsne = tsne.fit_transform(X_scaled)
+
+kl_div = tsne.kl_divergence_
+trust_score = trustworthiness(X_scaled, X_tsne, n_neighbors=10)"""),
+    ],
+
+    # ---------------- UMAP ----------------
+    "umap": [
+        _model("UMAP Fuzzy Simplicial Set Projection", "Topological Embedding", """
+import umap
+from sklearn.manifold import trustworthiness
+
+reducer = umap.UMAP(
+    n_components=2,
+    n_neighbors=15,
+    min_dist=0.10,
+    metric="euclidean",
+    random_state=42
+)
+X_umap = reducer.fit_transform(X_scaled)
+trust_score = trustworthiness(X_scaled, X_umap, n_neighbors=10)"""),
+    ],
 }

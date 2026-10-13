@@ -200,6 +200,48 @@
         </div>
     </details>
 
+    <!-- ANOMALY DETECTION -->
+    <a href="{{ url_for('anomaly_detection') }}"
+       class="nav-item{% if active == 'anomaly-detection' %} active{% endif %}">
+        <span class="nav-icon">⚠</span>
+        <span>Anomaly Detection</span>
+    </a>
+
+    <!-- DIMENSIONALITY REDUCTION -->
+    <details class="nav-dropdown"
+        {% if active in ['pca', 'tsne', 'umap'] %}open{% endif %}>
+
+        <summary class="dropdown-toggle">
+            <span class="dropdown-left">
+                <span class="nav-icon">◈</span>
+                <span>Dim. Reduction</span>
+            </span>
+            <span class="dropdown-arrow">▾</span>
+        </summary>
+
+        <div class="dropdown-content">
+
+            <a href="{{ url_for('pca') }}"
+               class="nav-subitem{% if active == 'pca' %} active{% endif %}">
+                <span class="sub-icon">◈</span>
+                <span>PCA</span>
+            </a>
+
+            <a href="{{ url_for('tsne') }}"
+               class="nav-subitem{% if active == 'tsne' %} active{% endif %}">
+                <span class="sub-icon">✦</span>
+                <span>t-SNE</span>
+            </a>
+
+            <a href="{{ url_for('umap') }}"
+               class="nav-subitem{% if active == 'umap' %} active{% endif %}">
+                <span class="sub-icon">❖</span>
+                <span>UMAP</span>
+            </a>
+
+        </div>
+    </details>
+
     <!-- STATUS -->
     <div class="sidebar-status">
         <div class="status-dot"></div>

@@ -1,3 +1,4 @@
+{% from "_macros.html" import chip, bar, code_card %}
 <!DOCTYPE html>
 <html lang="en">
 
@@ -60,62 +61,35 @@
         .cluster-section-card { margin-bottom: 20px; }
 
         .feature-list {
-
             display: flex;
-
             flex-wrap: wrap;
-
             gap: 10px;
-
             margin-top: 15px;
-
         }
-
 
         .feature-item {
-
             background: #f1f5f9;
-
             padding: 9px 13px;
-
             border-radius: 8px;
-
         }
-
 
         .cluster-table {
-
             width: 100%;
-
             border-collapse: collapse;
-
             margin-top: 20px;
-
         }
-
 
         .cluster-table th,
         .cluster-table td {
-
             padding: 12px;
-
-            border-bottom:
-                1px solid #e5e7eb;
-
+            border-bottom: 1px solid #e5e7eb;
             text-align: left;
-
         }
 
-
         @media (max-width: 900px) {
-
             .cluster-grid {
-
-                grid-template-columns:
-                    1fr 1fr;
-
+                grid-template-columns: 1fr 1fr;
             }
-
         }
 
     </style>
@@ -300,7 +274,151 @@
 
                 </div>
 
+
+                {% if result.cophenetic_corr is defined %}
+
+                <div class="cluster-card">
+
+                    <span>
+                        Cophenetic Correlation
+                    </span>
+
+                    <strong>
+                        {{ result.cophenetic_corr }}
+                    </strong>
+
+                </div>
+
+                {% endif %}
+
             </div>
+
+
+            <!-- DENDROGRAMS (HIERARCHICAL CLUSTERING) -->
+            {% if result.dendrogram_chart is defined %}
+
+            <div class="card cluster-section-card">
+
+                <div class="card-head">
+                    <h3>Hierarchical Clustering Dendrogram (Ward Linkage)</h3>
+                    <span class="chart-number">DENDROGRAM</span>
+                </div>
+
+                <p>
+                    The dendrogram illustrates how individual records and sub-clusters merge bottom-up
+                    based on Ward's minimum variance criterion. Horizontal dashed lines mark the Euclidean
+                    distance cut thresholds for <strong>K = 2</strong> and <strong>K = 3</strong> clusters.
+                </p>
+
+                <div class="chip-row">
+                    {{ chip('Linkage Method', result.linkage, 'purple') }}
+                    {{ chip('K=2 Cut Height', result.cut_height_k2, 'pink') }}
+                    {{ chip('K=3 Cut Height', result.cut_height_k3, 'green') }}
+                    {{ chip('Cophenetic Correlation', result.cophenetic_corr, 'amber') }}
+                </div>
+
+                <img src="{{ url_for('static', filename=result.dendrogram_chart) }}"
+                     class="task-image"
+                     alt="Hierarchical Clustering Ward Dendrogram">
+
+            </div>
+
+            {% endif %}
+
+
+            {% if result.linkages_chart is defined %}
+
+            <div class="card cluster-section-card">
+
+                <div class="card-head">
+                    <h3>Dendrogram Comparison Across Linkage Criteria</h3>
+                    <span class="chart-number">4 LINKAGES</span>
+                </div>
+
+                <p>
+                    Comparing <strong>Ward</strong>, <strong>Complete</strong>, <strong>Average (UPGMA)</strong>,
+                    and <strong>Single</strong> linkage dendrograms side by side, along with each tree's
+                    cophenetic correlation coefficient ($r$).
+                </p>
+
+                <img src="{{ url_for('static', filename=result.linkages_chart) }}"
+                     class="task-image"
+                     alt="Dendrogram Linkage Comparison">
+
+                {% if result.linkage_comparison is defined %}
+                <div class="table-wrapper">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Linkage Criterion</th>
+                                <th>Silhouette Score</th>
+                                <th>Davies-Bouldin Index</th>
+                                <th>Cophenetic Correlation</th>
+                                <th>Cluster 0 Size</th>
+                                <th>Cluster 1 Size</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for row in result.linkage_comparison %}
+                            <tr>
+                                <td><strong>{{ row.linkage }}</strong></td>
+                                <td>{{ row.silhouette }}</td>
+                                <td>{{ row.davies_bouldin }}</td>
+                                <td>{{ row.cophenetic_corr }}</td>
+                                <td>{{ row.cluster_0 }}</td>
+                                <td>{{ row.cluster_1 }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% endif %}
+
+            </div>
+
+            {% endif %}
+
+
+            {% if result.clusters_chart is defined %}
+
+            <div class="card cluster-section-card">
+
+                <div class="card-head">
+                    <h3>Agglomerative Cluster Projection</h3>
+                    <span class="chart-number">2D PROJECTION</span>
+                </div>
+
+                <img src="{{ url_for('static', filename=result.clusters_chart) }}"
+                     class="task-image"
+                     alt="Hierarchical Cluster Projection">
+
+            </div>
+
+            {% endif %}
+
+
+            {% if result.dbscan_chart is defined %}
+
+            <div class="card cluster-section-card">
+
+                <div class="card-head">
+                    <h3>DBSCAN k-Distance Elbow &amp; Density Clusters</h3>
+                    <span class="chart-number">DENSITY GRAPH</span>
+                </div>
+
+                <p>
+                    Left: Sorted 5-nearest-neighbor distance curve showing the knee at
+                    <strong>eps = {{ result.eps }}</strong>. Right: Discovered density clusters and
+                    isolated noise points (<code>-1</code>) projected onto the first two principal components.
+                </p>
+
+                <img src="{{ url_for('static', filename=result.dbscan_chart) }}"
+                     class="task-image"
+                     alt="DBSCAN Clusters and Noise Chart">
+
+            </div>
+
+            {% endif %}
 
 
             <!-- PARAMETERS -->
@@ -447,6 +565,49 @@
             </div>
 
 
+            {% if result.cluster_profiles is defined %}
+
+            <div class="card cluster-section-card">
+
+                <div class="card-head">
+                    <h3>Cluster Environmental Profile (Feature Means)</h3>
+                    <span class="chart-number">CENTROIDS</span>
+                </div>
+
+                <div class="table-wrapper">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Cluster</th>
+                                <th>Records</th>
+                                <th>Share</th>
+                                <th>Mean Temp</th>
+                                <th>Mean Humid (%)</th>
+                                <th>Mean Light (Fux)</th>
+                                <th>Mean CO2 (pmm)</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for p in result.cluster_profiles %}
+                            <tr>
+                                <td><strong>{{ p.cluster }}</strong></td>
+                                <td>{{ p.count }}</td>
+                                <td>{{ p.share }}%</td>
+                                <td>{{ p.temp }}</td>
+                                <td>{{ p.humid }}</td>
+                                <td>{{ p.light }}</td>
+                                <td>{{ p.co2 }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+
+            </div>
+
+            {% endif %}
+
+
             <!-- PERFORMANCE -->
 
             <div class="card cluster-section-card">
@@ -475,6 +636,24 @@
 
 
         </section>
+
+        <!-- CODE SNIPPETS -->
+        {% set snippets = code_snippets.get(active, []) %}
+        {% if snippets %}
+        <section class="content-section">
+            <div class="section-heading">
+                <div>
+                    <div class="eyebrow">CODE</div>
+                    <h2>{{ page_title }} Code</h2>
+                </div>
+            </div>
+            <div class="stack">
+                {% for snippet in snippets %}
+                    {{ code_card(snippet) }}
+                {% endfor %}
+            </div>
+        </section>
+        {% endif %}
 
 
         {% endif %}

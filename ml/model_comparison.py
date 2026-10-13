@@ -31,6 +31,10 @@ PAGE_ORDER = [
     "kmeans",
     "hierarchical",
     "dbscan",
+    "anomaly-detection",
+    "pca",
+    "tsne",
+    "umap",
 ]
 
 PAGE_TITLES = {
@@ -48,6 +52,10 @@ PAGE_TITLES = {
     "kmeans": "K-Means",
     "hierarchical": "Hierarchical",
     "dbscan": "DBSCAN",
+    "anomaly-detection": "Anomaly Detection",
+    "pca": "PCA",
+    "tsne": "t-SNE",
+    "umap": "UMAP",
 }
 
 # Flask endpoint name -> page key
@@ -66,6 +74,10 @@ ENDPOINT_TO_PAGE = {
     "kmeans": "kmeans",
     "hierarchical": "hierarchical",
     "dbscan": "dbscan",
+    "anomaly_detection": "anomaly-detection",
+    "pca": "pca",
+    "tsne": "tsne",
+    "umap": "umap",
 }
 
 
@@ -131,6 +143,22 @@ def _loader(page):
     if page == "dbscan":
         from ml.dbscan_clustering import get_dbscan_clustering
         return get_dbscan_clustering
+
+    if page == "anomaly-detection":
+        from ml.anomaly_detection import get_anomaly_detection
+        return get_anomaly_detection
+
+    if page == "pca":
+        from ml.pca_analysis import get_pca_analysis
+        return get_pca_analysis
+
+    if page == "tsne":
+        from ml.tsne_analysis import get_tsne_analysis
+        return get_tsne_analysis
+
+    if page == "umap":
+        from ml.umap_analysis import get_umap_analysis
+        return get_umap_analysis
 
     raise KeyError(page)
 
@@ -256,6 +284,22 @@ def _rows_for(page):
     if page in ("hierarchical", "dbscan"):
         return [row(PAGE_TITLES[page], "Clustering", "Silhouette",
                     None, r["silhouette_score"] * 100)]
+
+    if page == "anomaly-detection":
+        return [row("Isolation Forest (5% Out.)", "Clustering", "Inlier Purity",
+                    90.0, r["inlier_purity"])]
+
+    if page == "pca":
+        return [row("PCA (2D Projection)", "Clustering", "Explained Var.",
+                    r["pc1_variance"], r["variance_2d"])]
+
+    if page == "tsne":
+        return [row("t-SNE (Perplexity=30)", "Clustering", "Trustworthiness",
+                    r["before_trustworthiness_pct"], r["trustworthiness_pct"])]
+
+    if page == "umap":
+        return [row("UMAP (n=15, d=0.1)", "Clustering", "Trustworthiness",
+                    r["before_trustworthiness_pct"], r["trustworthiness_pct"])]
 
     return []
 
