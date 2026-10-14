@@ -1,0 +1,210 @@
+{% extends "base.html" %}
+{% from "_macros.html" import stat, bar, chip, code_card %}
+
+{% block title %}UMAP{% endblock %}
+{% block eyebrow %}MODULE 22 • DIMENSIONALITY REDUCTION{% endblock %}
+{% block heading %}UMAP Manifold Projection{% endblock %}
+{% block subtitle %}Uniform Manifold Approximation and Projection constructs a high-dimensional fuzzy simplicial graph and optimizes a low-dimensional layout preserving both local and global structure.{% endblock %}
+
+
+{% block content %}
+
+{% if result %}
+
+<!-- ============ KEY METRICS ============ -->
+<section class="content-section first-section">
+
+    <div class="section-heading">
+        <div>
+            <div class="eyebrow">TOPOLOGICAL MANIFOLD LEARNING</div>
+            <h2>UMAP Overview</h2>
+        </div>
+    </div>
+
+    <div class="stats-grid">
+        {{ stat('Trustworthiness', '%.2f'|format(result.trustworthiness_pct) ~ '%') }}
+        {{ stat('n_neighbors', result.n_neighbors) }}
+        {{ stat('min_dist', result.min_dist) }}
+        {{ stat('2D Silhouette', result.silhouette_score) }}
+    </div>
+
+</section>
+
+
+<!-- ============ 2D UMAP PROJECTION & PARAMETER GRID ============ -->
+<section class="content-section">
+
+    <div class="section-heading">
+        <div>
+            <div class="eyebrow">RIEMANNIAN FUZZY SIMPLICIAL SET</div>
+            <h2>2D UMAP Embedding &amp; Hyperparameter Sensitivity</h2>
+        </div>
+    </div>
+
+    <div class="stack">
+
+        <div class="card">
+            <div class="card-head">
+                <h3>2D UMAP Projection by Quality Class &amp; Fruit Category</h3>
+                <span class="chart-number">UMAP 2D</span>
+            </div>
+
+            <p>
+                UMAP models the manifold with a fuzzy topological structure controlled by
+                <code>n_neighbors = {{ result.n_neighbors }}</code> (size of local neighborhood) and
+                <code>min_dist = {{ result.min_dist }}</code> (minimum packing distance between embedded points).
+            </p>
+
+            <div class="chip-row">
+                {{ chip('n_neighbors', result.n_neighbors, 'purple') }}
+                {{ chip('min_dist', result.min_dist, 'green') }}
+                {{ chip('Distance Metric', result.metric|capitalize, 'pink') }}
+                {{ chip('Sample Embedded', result.sample_rows, 'amber') }}
+            </div>
+
+            <img src="{{ url_for('static', filename=result.scatter_chart) }}"
+                 class="task-image"
+                 alt="2D UMAP Scatter Plot">
+        </div>
+
+        <div class="card">
+            <div class="card-head">
+                <h3>UMAP Sensitivity to n_neighbors and min_dist</h3>
+                <span class="chart-number">PARAMETER TUNING</span>
+            </div>
+
+            <p>
+                Small <code>n_neighbors</code> values emphasize fine-grained local clusters, while larger
+                <code>n_neighbors</code> values preserve global topological continuity across the entire dataset.
+            </p>
+
+            <img src="{{ url_for('static', filename=result.neighbors_chart) }}"
+                 class="task-image"
+                 alt="UMAP Parameter Comparison">
+        </div>
+
+        <div class="card">
+            <div class="card-head">
+                <h3>Fuzzy Simplicial k-NN Connectivity Graph &amp; Trustworthiness Benchmark</h3>
+                <span class="chart-number">GRAPH TOPOLOGY</span>
+            </div>
+
+            <p>
+                Left: Topological k-nearest-neighbor edges connecting points on the UMAP manifold.
+                Right: Local structure preservation (Trustworthiness %) comparing linear PCA against UMAP configurations.
+            </p>
+
+            <img src="{{ url_for('static', filename=result.connectivity_chart) }}"
+                 class="task-image"
+                 alt="UMAP Connectivity Graph">
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- ============ CONFIGURATION TABLE & COORDINATES PREVIEW ============ -->
+<section class="content-section">
+
+    <div class="two-col">
+
+        <div class="card">
+            <div class="card-head">
+                <h3>UMAP Hyperparameter Comparison</h3>
+                <span class="chart-number">3 CONFIGURATIONS</span>
+            </div>
+
+            <div class="table-wrapper">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Configuration</th>
+                            <th>n_neighbors</th>
+                            <th>min_dist</th>
+                            <th>Trustworthiness</th>
+                            <th>Silhouette</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for cfg in result.config_comparison %}
+                        <tr class="{{ 'current' if cfg.n_neighbors == result.n_neighbors else '' }}">
+                            <td>
+                                <strong>{{ cfg.label }}</strong>
+                                {% if cfg.n_neighbors == result.n_neighbors %}
+                                    <span class="now-tag">SELECTED</span>
+                                {% endif %}
+                            </td>
+                            <td>{{ cfg.n_neighbors }}</td>
+                            <td>{{ cfg.min_dist }}</td>
+                            <td><strong>{{ cfg.trustworthiness_pct }}%</strong></td>
+                            <td>{{ cfg.silhouette }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-head">
+                <h3>2D UMAP Coordinates Preview</h3>
+                <span class="chart-number">EMBEDDED POINTS</span>
+            </div>
+
+            <div class="table-wrapper">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Fruit</th>
+                            <th>Quality Class</th>
+                            <th>UMAP Dim 1</th>
+                            <th>UMAP Dim 2</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for r in result.preview_rows %}
+                        <tr>
+                            <td>{{ r.id }}</td>
+                            <td>{{ r.fruit }}</td>
+                            <td>
+                                <span class="family-pill {{ 'Regression' if r.quality_class == 'BAD' else 'Tree' }}">
+                                    {{ r.quality_class }}
+                                </span>
+                            </td>
+                            <td>{{ r.umap_1 }}</td>
+                            <td>{{ r.umap_2 }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- ============ CODE ============ -->
+{% set snippets = code_snippets.get(active, []) %}
+{% if snippets %}
+<section class="content-section">
+    <div class="section-heading">
+        <div>
+            <div class="eyebrow">CODE</div>
+            <h2>UMAP Implementation Code</h2>
+        </div>
+    </div>
+    <div class="stack">
+        {% for snippet in snippets %}
+            {{ code_card(snippet) }}
+        {% endfor %}
+    </div>
+</section>
+{% endif %}
+
+{% endif %}
+
+{% endblock %}

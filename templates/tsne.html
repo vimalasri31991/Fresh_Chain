@@ -1,0 +1,205 @@
+{% extends "base.html" %}
+{% from "_macros.html" import stat, bar, chip, code_card %}
+
+{% block title %}t-SNE{% endblock %}
+{% block eyebrow %}MODULE 21 • DIMENSIONALITY REDUCTION{% endblock %}
+{% block heading %}t-SNE Manifold Embedding{% endblock %}
+{% block subtitle %}Non-linear dimensionality reduction using t-Distributed Stochastic Neighbor Embedding to preserve local neighborhood probabilities in 2D space.{% endblock %}
+
+
+{% block content %}
+
+{% if result %}
+
+<!-- ============ KEY METRICS ============ -->
+<section class="content-section first-section">
+
+    <div class="section-heading">
+        <div>
+            <div class="eyebrow">STOCHASTIC NEIGHBOR EMBEDDING</div>
+            <h2>t-SNE Performance Summary</h2>
+        </div>
+    </div>
+
+    <div class="stats-grid">
+        {{ stat('Trustworthiness', '%.2f'|format(result.trustworthiness_pct) ~ '%') }}
+        {{ stat('KL Divergence', '%.4f'|format(result.kl_divergence)) }}
+        {{ stat('Optimal Perplexity', result.perplexity) }}
+        {{ stat('Embedded Sample', result.sample_rows) }}
+    </div>
+
+</section>
+
+
+<!-- ============ 2D EMBEDDING & PERPLEXITY SENSITIVITY ============ -->
+<section class="content-section">
+
+    <div class="section-heading">
+        <div>
+            <div class="eyebrow">MANIFOLD VISUALIZATION</div>
+            <h2>2D t-SNE Projection &amp; Perplexity Sensitivity</h2>
+        </div>
+    </div>
+
+    <div class="stack">
+
+        <div class="card">
+            <div class="card-head">
+                <h3>2D t-SNE Manifold by Quality Class &amp; Fruit Type</h3>
+                <span class="chart-number">PERPLEXITY {{ result.perplexity }}</span>
+            </div>
+
+            <p>
+                t-SNE converts pairwise Euclidean distances between environmental sensor readings into conditional
+                probabilities and minimizes the Kullback-Leibler (KL) divergence using a heavy-tailed Student-t
+                distribution in the 2D embedding space.
+            </p>
+
+            <div class="chip-row">
+                {{ chip('Dimensions', '2D (t-SNE 1, t-SNE 2)', 'purple') }}
+                {{ chip('Perplexity', result.perplexity, 'green') }}
+                {{ chip('Initialisation', result.init|upper, 'pink') }}
+                {{ chip('Learning Rate', result.learning_rate, 'amber') }}
+            </div>
+
+            <img src="{{ url_for('static', filename=result.scatter_chart) }}"
+                 class="task-image"
+                 alt="2D t-SNE Scatter Plot">
+        </div>
+
+        <div class="card">
+            <div class="card-head">
+                <h3>Effect of Perplexity (10 vs 30 vs 50) on Manifold Structure</h3>
+                <span class="chart-number">PERPLEXITY TUNING</span>
+            </div>
+
+            <p>
+                Perplexity controls the effective number of local neighbors each point attends to. Lower perplexity
+                focuses on tight micro-clusters, whereas higher perplexity captures broader global relationships.
+            </p>
+
+            <img src="{{ url_for('static', filename=result.perplexity_chart) }}"
+                 class="task-image"
+                 alt="t-SNE Perplexity Comparison">
+        </div>
+
+        <div class="card">
+            <div class="card-head">
+                <h3>Manifold Density Contours &amp; Trustworthiness Score</h3>
+                <span class="chart-number">TOPOLOGY DENSITY</span>
+            </div>
+
+            <img src="{{ url_for('static', filename=result.density_chart) }}"
+                 class="task-image"
+                 alt="t-SNE Density Contours">
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- ============ PERPLEXITY BENCHMARK TABLE & EMBEDDING PREVIEW ============ -->
+<section class="content-section">
+
+    <div class="two-col">
+
+        <div class="card">
+            <div class="card-head">
+                <h3>Perplexity Evaluation Table</h3>
+                <span class="chart-number">KL &amp; TRUSTWORTHINESS</span>
+            </div>
+
+            <div class="table-wrapper">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Perplexity</th>
+                            <th>KL Divergence</th>
+                            <th>Trustworthiness</th>
+                            <th>2D Silhouette</th>
+                            <th>Iterations</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for row in result.perplexity_comparison %}
+                        <tr class="{{ 'current' if row.perplexity == result.perplexity else '' }}">
+                            <td>
+                                <strong>Perplexity = {{ row.perplexity }}</strong>
+                                {% if row.perplexity == result.perplexity %}
+                                    <span class="now-tag">OPTIMAL</span>
+                                {% endif %}
+                            </td>
+                            <td>{{ row.kl_divergence }}</td>
+                            <td><strong>{{ row.trustworthiness_pct }}%</strong></td>
+                            <td>{{ row.silhouette }}</td>
+                            <td>{{ row.iterations }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-head">
+                <h3>2D t-SNE Coordinates Preview</h3>
+                <span class="chart-number">EMBEDDED POINTS</span>
+            </div>
+
+            <div class="table-wrapper">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Fruit</th>
+                            <th>Quality Class</th>
+                            <th>t-SNE Dim 1</th>
+                            <th>t-SNE Dim 2</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for r in result.preview_rows %}
+                        <tr>
+                            <td>{{ r.id }}</td>
+                            <td>{{ r.fruit }}</td>
+                            <td>
+                                <span class="family-pill {{ 'Regression' if r.quality_class == 'BAD' else 'Tree' }}">
+                                    {{ r.quality_class }}
+                                </span>
+                            </td>
+                            <td>{{ r.tsne_1 }}</td>
+                            <td>{{ r.tsne_2 }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- ============ CODE ============ -->
+{% set snippets = code_snippets.get(active, []) %}
+{% if snippets %}
+<section class="content-section">
+    <div class="section-heading">
+        <div>
+            <div class="eyebrow">CODE</div>
+            <h2>t-SNE Implementation Code</h2>
+        </div>
+    </div>
+    <div class="stack">
+        {% for snippet in snippets %}
+            {{ code_card(snippet) }}
+        {% endfor %}
+    </div>
+</section>
+{% endif %}
+
+{% endif %}
+
+{% endblock %}

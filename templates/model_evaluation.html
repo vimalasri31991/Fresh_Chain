@@ -1,0 +1,1020 @@
+{% extends "base.html" %}
+{% from "_macros.html" import stat, bar, chip %}
+
+{% block title %}Model Evaluation, Selection &amp; Calibration{% endblock %}
+{% block eyebrow %}MODULE 21 • VALIDATION &amp; MODEL SELECTION{% endblock %}
+{% block heading %}Model Evaluation, Selection, and Calibration{% endblock %}
+{% block subtitle %}Leakage-free partition discipline, nested cross-validation, imbalance-aware metrics, calibrated probability estimates, diagnostic curves, and statistical hypothesis testing.{% endblock %}
+
+{% block content %}
+
+{% if result %}
+
+<!-- ============ SCOPED NAVIGATION PILL STYLES ============ -->
+<style>
+.eval-nav-bar {
+    display: flex !important;
+    flex-wrap: wrap !important;
+    align-items: center !important;
+    gap: 10px !important;
+    padding: 14px 20px !important;
+    margin-bottom: 32px !important;
+    background: #ffffff !important;
+    border: 1px solid #ede8f5 !important;
+    border-radius: 20px !important;
+    box-shadow: 0 4px 18px rgba(60, 40, 90, 0.04) !important;
+}
+
+.eval-nav-bar a.eval-pill,
+.eval-nav-bar a.eval-pill:link,
+.eval-nav-bar a.eval-pill:visited {
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 8px !important;
+    padding: 8px 16px !important;
+    border-radius: 999px !important;
+    background: #f6f2fb !important;
+    color: #6c47b8 !important;
+    font-size: 11.5px !important;
+    font-weight: 700 !important;
+    text-decoration: none !important;
+    border: 1px solid #ece2f7 !important;
+    box-shadow: 0 1px 3px rgba(60, 40, 90, 0.03) !important;
+    transition: all 0.2s ease !important;
+    white-space: nowrap !important;
+}
+
+.eval-nav-bar a.eval-pill:hover {
+    background: #7c58c9 !important;
+    color: #ffffff !important;
+    border-color: #7c58c9 !important;
+    transform: translateY(-2px) !important;
+    box-shadow: 0 4px 12px rgba(124, 88, 201, 0.25) !important;
+    text-decoration: none !important;
+}
+
+.eval-nav-bar a.eval-pill span {
+    font-size: 13px !important;
+}
+</style>
+
+<!-- ============ QUICK-JUMP STICKY NAVIGATION PILLS ============ -->
+<nav class="eval-nav-bar">
+    <a href="#split-discipline" class="eval-pill"><span>⚖</span> 1. Split Discipline</a>
+    <a href="#cross-validation" class="eval-pill"><span>🔄</span> 2. CV &amp; Nested CV</a>
+    <a href="#classification-metrics" class="eval-pill"><span>🎯</span> 3. Classification &amp; Imbalance</a>
+    <a href="#regression-metrics" class="eval-pill"><span>📈</span> 4. Regression &amp; Outliers</a>
+    <a href="#probability-calibration" class="eval-pill"><span>🎲</span> 5. Probability Calibration</a>
+    <a href="#hyperparameter-search" class="eval-pill"><span>🔍</span> 6. Hyperparameter Search</a>
+    <a href="#learning-curves" class="eval-pill"><span>📉</span> 7. Learning &amp; Validation Curves</a>
+    <a href="#significance-testing" class="eval-pill"><span>📊</span> 8. Statistical Significance</a>
+</nav>
+
+
+<!-- ============================================================
+     1. TRAIN / VALIDATION / TEST SPLIT DISCIPLINE
+     ============================================================ -->
+<section id="split-discipline" class="content-section first-section">
+
+    <div class="section-heading">
+        <div>
+            <div class="eyebrow">PARTITION DISCIPLINE &bull; THE LOCKBOX PRINCIPLE</div>
+            <h2>1. Train / Validation / Test Split Discipline</h2>
+        </div>
+        <span class="family-pill Evaluation">DISCIPLINE</span>
+    </div>
+
+    <!-- Stats Grid -->
+    <div class="stats-grid">
+        {{ stat('Total Records', result.split.total_samples) }}
+        {{ stat('Train Partition (70%)', result.split.train_samples ~ ' rows') }}
+        {{ stat('Validation (15%)', result.split.val_samples ~ ' rows') }}
+        {{ stat('Locked Test Set (15%)', result.split.test_samples ~ ' rows') }}
+    </div>
+
+    <!-- Main Visual Representation Card -->
+    <div class="card">
+        <div class="card-head">
+            <h3>Visualizing the 3-Way Split &amp; The Test Snooping Penalty</h3>
+            <span class="chart-number">PARTITION &amp; BIAS PLOT</span>
+        </div>
+
+        <p>
+            Left: Clean 70 / 15 / 15 isolation ensuring zero data contamination.
+            Right: Demonstrating the <strong>Optimistic Bias (+{{ result.split.optimistic_bias }} pts)</strong> that occurs when tuning hyperparameters directly against the test set instead of keeping it strictly locked out.
+        </p>
+
+        <div class="chip-row">
+            {{ chip('Tuning Strategy', 'Validation-Guided', 'purple') }}
+            {{ chip('Selected Max Depth', 'd = ' ~ result.split.best_val_depth, 'green') }}
+            {{ chip('Honest Test Accuracy', result.split.honest_test_acc ~ '%', 'green') }}
+            {{ chip('Snooped Test Accuracy', result.split.snooped_test_acc ~ '%', 'pink') }}
+            {{ chip('Optimistic Leakage Bias', '+' ~ result.split.optimistic_bias ~ ' pts', 'amber') }}
+        </div>
+
+        <img src="{{ url_for('static', filename=result.split.chart) }}"
+             class="task-image"
+             alt="Three-Way Split Discipline and Optimistic Bias">
+    </div>
+
+    <!-- Balanced Dual Detail Cards -->
+    <div class="two-col" style="margin-top: 20px;">
+
+        <div class="card">
+            <div class="card-head">
+                <h3>The Three-Way Split Architecture</h3>
+                <span class="chart-number">LOCKBOX RULES</span>
+            </div>
+
+            <div class="table-wrapper">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Partition</th>
+                            <th>Role &amp; Responsibilities</th>
+                            <th>Evaluation Frequency</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Train (70%)</strong></td>
+                            <td>Fit model weights, coefficients, split nodes</td>
+                            <td>Every training iteration</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Validation (15%)</strong></td>
+                            <td>Hyperparameter tuning, pruning, early stopping</td>
+                            <td>Multiple iterations per experiment</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Test (15%)</strong></td>
+                            <td><strong>Lockbox:</strong> Unbiased real-world risk estimate</td>
+                            <td><strong>Strictly once</strong> on final candidate</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="callout-card" style="margin-top: 14px;">
+                <h4>The Golden Rule of Testing:</h4>
+                <p>The test set must be held out from every modeling decision. If any step (feature selection, scaler fitting, threshold selection) consults test data, your reported metric is an optimistic illusion.</p>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-head">
+                <h3>Three Common Data Leakage Pitfalls</h3>
+                <span class="chart-number">PREVENTION</span>
+            </div>
+
+            <div class="callout-card" style="margin-top: 0;">
+                <h4>1. Preprocessing Leakage</h4>
+                <p>Fitting scalers or encoders on the entire dataset prior to splitting. Always fit exclusively on the training partition and call transform() on validation and test sets.</p>
+            </div>
+
+            <div class="callout-card">
+                <h4>2. Target Leakage</h4>
+                <p>Using features that inadvertently encode the target label (e.g. downstream warehouse quality inspection timestamps not available during cold storage transit).</p>
+            </div>
+
+            <div class="callout-card">
+                <h4>3. Hyperparameter Snooping</h4>
+                <p>Repeatedly testing configurations against the test set and selecting the best one. This snooping produced the <strong>+{{ result.split.optimistic_bias }} pts</strong> artificial bias shown above.</p>
+            </div>
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- ============================================================
+     2. K-FOLD, STRATIFIED K-FOLD & NESTED CV
+     ============================================================ -->
+<section id="cross-validation" class="content-section">
+
+    <div class="section-heading">
+        <div>
+            <div class="eyebrow">RESAMPLING &bull; UNBIASED HYPERPARAMETER EVALUATION</div>
+            <h2>2. k-Fold, Stratified k-Fold &amp; Nested Cross-Validation</h2>
+        </div>
+        <span class="family-pill Evaluation">VALIDATION</span>
+    </div>
+
+    <!-- Stats Grid -->
+    <div class="stats-grid">
+        {{ stat('Folds (k)', result.cv.n_folds) }}
+        {{ stat('Standard K-Fold Variance', 'σ = ' ~ result.cv.kf_var ~ '%') }}
+        {{ stat('Stratified Variance', 'σ = ' ~ result.cv.skf_var ~ '% (Zero)') }}
+        {{ stat('Selection Bias Eliminated', '+' ~ result.cv.selection_bias ~ ' pts') }}
+    </div>
+
+    <!-- Main Visual Representation Card -->
+    <div class="card">
+        <div class="card-head">
+            <h3>Stratification Stability &amp; Nested Cross-Validation</h3>
+            <span class="chart-number">RESAMPLING CHARTS</span>
+        </div>
+
+        <p>
+            Left: Class distribution across 5 folds — Standard K-Fold exhibits random class drift (&sigma;={{ result.cv.kf_var }}%), while Stratified K-Fold locks the exact class proportion into every fold (&sigma;={{ result.cv.skf_var }}%).
+            Right: Nested CV removes the <strong>+{{ result.cv.selection_bias }} pts selection bias</strong> inherent in standard GridSearch CV.
+        </p>
+
+        <div class="chip-row">
+            {{ chip('Outer Loop Folds', '5 Folds (Unbiased)', 'purple') }}
+            {{ chip('Inner Loop Folds', '3 Folds (Tuning)', 'blue') }}
+            {{ chip('Non-Nested Grid Score', result.cv.non_nested_score ~ '% (Biased)', 'pink') }}
+            {{ chip('Nested Unbiased Mean', result.cv.nested_mean ~ '% ± ' ~ result.cv.nested_std ~ '%', 'green') }}
+        </div>
+
+        <img src="{{ url_for('static', filename=result.cv.chart) }}"
+             class="task-image"
+             alt="Stratified and Nested Cross Validation">
+    </div>
+
+    <!-- Balanced Dual Detail Cards -->
+    <div class="two-col" style="margin-top: 20px;">
+
+        <div class="card">
+            <div class="card-head">
+                <h3>Why Nested Cross-Validation is Essential</h3>
+                <span class="chart-number">DOUBLE LOOP</span>
+            </div>
+
+            <p>
+                When you optimize hyperparameters on a standard k-fold cross-validation loop and report the winning score, that score is <strong>optimistically biased</strong> due to selection bias (the "Winner's Curse").
+            </p>
+
+            <div class="table-wrapper">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>CV Approach</th>
+                            <th>Outer Loop Role</th>
+                            <th>Inner Loop Role</th>
+                            <th>Reported Score</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Non-Nested CV</strong></td>
+                            <td><em>None</em> (Single loop)</td>
+                            <td>Tuning + Evaluation combined</td>
+                            <td>{{ result.cv.non_nested_score }}% <span class="tag" style="background:#fce8f0; color:#c1477e;">+{{ result.cv.selection_bias }} pts Bias</span></td>
+                        </tr>
+                        <tr>
+                            <td><strong>Nested CV</strong></td>
+                            <td>Unbiased Performance Estimation</td>
+                            <td>Hyperparameter Optimization</td>
+                            <td><strong>{{ result.cv.nested_mean }}%</strong> <span class="tag" style="background:#e8f7ee; color:#3f8a5f;">Unbiased</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="callout-card" style="margin-top: 14px;">
+                <h4>Nested Cross-Validation Execution Sequence:</h4>
+                <p>
+                    &bull; <strong>Outer Loop (k = 1 to 5):</strong> Splits data into 5 outer folds to measure unbiased generalization performance.<br>
+                    &bull; <strong>Inner Loop (Folds 1 to 3):</strong> Further splits each outer training set into 3 inner folds to select optimal hyperparameters (e.g. max depth, minimum split samples).<br>
+                    &bull; <strong>Model Fit &amp; Evaluation:</strong> Retrains the chosen model on the full outer training split and evaluates it on the untouched outer test fold.
+                </p>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-head">
+                <h3>Outer Fold Generalization Stability</h3>
+                <span class="chart-number">5-FOLD SCORES</span>
+            </div>
+
+            <div class="bar-list">
+                {% for sc in result.cv.outer_scores %}
+                    {{ bar('Outer Fold ' ~ loop.index ~ ' Accuracy', sc, 'purple', sc ~ '%') }}
+                {% endfor %}
+            </div>
+
+            <div class="callout-card" style="margin-top: 18px;">
+                <h4>Stratified Sampling Imperative:</h4>
+                <p>In quality classification, fruit spoilage is often rare. Standard K-Fold can accidentally create folds with almost zero positive cases. <strong>Stratified K-Fold</strong> guarantees each fold represents the true population frequency.</p>
+            </div>
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- ============================================================
+     3. CLASSIFICATION METRICS & CLASS-IMBALANCE IMPACT
+     ============================================================ -->
+<section id="classification-metrics" class="content-section">
+
+    <div class="section-heading">
+        <div>
+            <div class="eyebrow">PERFORMANCE MEASURES &bull; THE ACCURACY PARADOX</div>
+            <h2>3. Classification Metrics &amp; Class-Imbalance Impact</h2>
+        </div>
+        <span class="family-pill Evaluation">METRICS</span>
+    </div>
+
+    <!-- Stats Grid -->
+    <div class="stats-grid">
+        {{ stat('Balanced Accuracy', result.classification.accuracy ~ '%') }}
+        {{ stat('Balanced Precision', result.classification.precision ~ '%') }}
+        {{ stat('Balanced Recall', result.classification.recall ~ '%') }}
+        {{ stat('Balanced F1 Score', result.classification.f1_score ~ '%') }}
+    </div>
+
+    <!-- Main Visual Representation Card -->
+    <div class="card">
+        <div class="card-head">
+            <h3>Operating Characteristic &amp; Precision-Recall Curves</h3>
+            <span class="chart-number">ROC-AUC VS PR-AUC</span>
+        </div>
+
+        <p>
+            Left: ROC-AUC curves under balanced vs imbalanced distributions. Notice that ROC-AUC remains high ({{ result.classification.imb_roc_auc }}) because the massive number of True Negatives dilutes the False Positive Rate.
+            Right: <strong>PR-AUC exposes the truth</strong>, dropping from {{ result.classification.pr_auc }} to {{ result.classification.imb_pr_auc }} when false alarms impact rare fruit defects.
+        </p>
+
+        <div class="chip-row">
+            {{ chip('Balanced ROC-AUC', result.classification.roc_auc, 'purple') }}
+            {{ chip('Balanced PR-AUC', result.classification.pr_auc, 'green') }}
+            {{ chip('Imbalanced ROC-AUC', result.classification.imb_roc_auc ~ ' (Deceptive)', 'pink') }}
+            {{ chip('Imbalanced PR-AUC', result.classification.imb_pr_auc ~ ' (Sensitive)', 'amber') }}
+        </div>
+
+        <img src="{{ url_for('static', filename=result.classification.chart) }}"
+             class="task-image"
+             alt="Classification Metrics ROC PR Curve">
+    </div>
+
+    <!-- Balanced Dual Detail Cards -->
+    <div class="two-col" style="margin-top: 20px;">
+
+        <div class="card">
+            <div class="card-head">
+                <h3>When Accuracy Lies: The Accuracy Paradox</h3>
+                <span class="chart-number">IMBALANCE HAZARD</span>
+            </div>
+
+            <p>
+                In a warehouse containing 95% Good fruit and 5% Bad fruit, a naive classifier that simply outputs "Good" for everything achieves <strong>{{ result.classification.dummy_acc }}% accuracy</strong>, yet fails to save a single rotting consignment.
+            </p>
+
+            <div class="table-wrapper">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Classifier</th>
+                            <th>Accuracy</th>
+                            <th>Recall (Spoiled Caught)</th>
+                            <th>F1 Score</th>
+                            <th>Verdict</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Naive Majority Model</strong></td>
+                            <td><strong>{{ result.classification.dummy_acc }}%</strong></td>
+                            <td>0.00%</td>
+                            <td>0.00%</td>
+                            <td><span class="tag" style="background:#fce8f0; color:#c1477e;">Useless Trap</span></td>
+                        </tr>
+                        <tr>
+                            <td><strong>Trained Random Forest</strong></td>
+                            <td>{{ result.classification.imb_acc }}%</td>
+                            <td><strong>{{ result.classification.imb_rec }}%</strong></td>
+                            <td><strong>{{ result.classification.imb_f1 }}%</strong></td>
+                            <td><span class="tag" style="background:#e8f7ee; color:#3f8a5f;">Actionable</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="callout-card" style="margin-top: 14px;">
+                <h4>Metric Formulations:</h4>
+                <p>
+                    &bull; <strong>Precision = TP / (TP + FP)</strong> &bull; Avoids false discard alarms<br>
+                    &bull; <strong>Recall = TP / (TP + FN)</strong> &bull; Avoids shipping spoiled fruit<br>
+                    &bull; <strong>F1 Score = 2 &times; (Precision &times; Recall) / (Precision + Recall)</strong> &bull; Harmonic balance
+                </p>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-head">
+                <h3>Confusion Matrix Breakdown</h3>
+                <span class="chart-number">TEST SET EVALUATION</span>
+            </div>
+
+            <div class="table-wrapper">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Actual \ Predicted</th>
+                            <th>Predicted BAD</th>
+                            <th>Predicted Good</th>
+                            <th>Class Total</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Actual BAD</strong></td>
+                            <td style="background:#eef8f2; color:#3f8a5f; font-weight:700;">{{ result.classification.cm[0][0] }} (True Neg)</td>
+                            <td style="background:#fdf2f4; color:#c1477e; font-weight:700;">{{ result.classification.cm[0][1] }} (False Pos)</td>
+                            <td>{{ result.classification.cm[0][0] + result.classification.cm[0][1] }}</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Actual Good</strong></td>
+                            <td style="background:#fdf2f4; color:#c1477e; font-weight:700;">{{ result.classification.cm[1][0] }} (False Neg)</td>
+                            <td style="background:#eef8f2; color:#3f8a5f; font-weight:700;">{{ result.classification.cm[1][1] }} (True Pos)</td>
+                            <td>{{ result.classification.cm[1][0] + result.classification.cm[1][1] }}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="callout-card" style="margin-top: 14px;">
+                <h4>ROC-AUC vs PR-AUC Rule:</h4>
+                <p>Use <strong>ROC-AUC</strong> when you care equally about both classes. Use <strong>PR-AUC</strong> whenever the positive class is rare and false positives carry high operational cost.</p>
+            </div>
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- ============================================================
+     4. REGRESSION METRICS & OUTLIER SENSITIVITY
+     ============================================================ -->
+<section id="regression-metrics" class="content-section">
+
+    <div class="section-heading">
+        <div>
+            <div class="eyebrow">CONTINUOUS PREDICTION &bull; L1 VS L2 LOSS PENALTY</div>
+            <h2>4. Regression Metrics &amp; Outlier Sensitivity</h2>
+        </div>
+        <span class="family-pill Evaluation">REGRESSION</span>
+    </div>
+
+    <!-- Stats Grid -->
+    <div class="stats-grid">
+        {{ stat('Clean Baseline RMSE', result.regression.clean_rmse ~ ' pmm') }}
+        {{ stat('Clean Baseline MAE', result.regression.clean_mae ~ ' pmm') }}
+        {{ stat('RMSE Spike (+2% Outliers)', '+' ~ result.regression.rmse_surge ~ '%') }}
+        {{ stat('MAE Spike (+2% Outliers)', '+' ~ result.regression.mae_surge ~ '%') }}
+    </div>
+
+    <!-- Main Visual Representation Card -->
+    <div class="card">
+        <div class="card-head">
+            <h3>Outlier Sensitivity Stress Test &amp; Loss Penalty Shapes</h3>
+            <span class="chart-number">L1 VS L2 EXPERIMENT</span>
+        </div>
+
+        <p>
+            Left: Contaminating environmental CO2 telemetry with 0% to 5% sensor spikes (+500 pmm). Quadratic squaring (L2) causes RMSE to explode by <strong>+{{ result.regression.rmse_surge }}%</strong>, whereas linear penalty (L1) limits MAE growth to <strong>+{{ result.regression.mae_surge }}%</strong>.
+            Right: Geometric comparison of linear |error| versus quadratic (error)&sup2; penalty functions.
+        </p>
+
+        <div class="chip-row">
+            {{ chip('Clean R² Score', result.regression.clean_r2, 'green') }}
+            {{ chip('Clean MAPE', result.regression.clean_mape ~ '%', 'purple') }}
+            {{ chip('Contaminated RMSE', result.regression.outlier_rmse ~ ' pmm', 'pink') }}
+            {{ chip('Contaminated MAE', result.regression.outlier_mae ~ ' pmm', 'amber') }}
+        </div>
+
+        <img src="{{ url_for('static', filename=result.regression.chart) }}"
+             class="task-image"
+             alt="Regression Metrics Outlier Sensitivity">
+    </div>
+
+    <!-- Balanced Dual Detail Cards -->
+    <div class="two-col" style="margin-top: 20px;">
+
+        <div class="card">
+            <div class="card-head">
+                <h3>Regression Metric Suite Comparison</h3>
+                <span class="chart-number">FORMULAS</span>
+            </div>
+
+            <div class="table-wrapper">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Metric</th>
+                            <th>Mathematical Description</th>
+                            <th>Outlier Robustness</th>
+                            <th>Best Used When</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>RMSE</strong></td>
+                            <td>Square root of mean squared error</td>
+                            <td><span class="tag" style="background:#fce8f0; color:#c1477e;">Low (Squaring)</span></td>
+                            <td>Large errors carry disproportionate disaster</td>
+                        </tr>
+                        <tr>
+                            <td><strong>MAE</strong></td>
+                            <td>Mean of absolute errors</td>
+                            <td><span class="tag" style="background:#e8f7ee; color:#3f8a5f;">High (Linear)</span></td>
+                            <td>Noisy sensor bursts &amp; glitches exist</td>
+                        </tr>
+                        <tr>
+                            <td><strong>MAPE</strong></td>
+                            <td>Mean absolute percentage error</td>
+                            <td>Moderate</td>
+                            <td>Intuitive percentage accuracy for business</td>
+                        </tr>
+                        <tr>
+                            <td><strong>R² Score</strong></td>
+                            <td>Proportion of variance explained</td>
+                            <td>Moderate</td>
+                            <td>Benchmarking against baseline mean model</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="callout-card" style="margin-top: 14px;">
+                <h4>Regression Error Formulations:</h4>
+                <p>
+                    &bull; <strong>RMSE:</strong> &radic;( &Sigma; (Actual &minus; Predicted)&sup2; / n ) &bull; Quadratic penalty, highly sensitive to extreme spikes.<br>
+                    &bull; <strong>MAE:</strong> &Sigma; |Actual &minus; Predicted| / n &bull; Linear penalty, robust to sensor telemetry noise.<br>
+                    &bull; <strong>MAPE:</strong> (100% / n) &times; &Sigma; |(Actual &minus; Predicted) / Actual| = {{ result.regression.clean_mape }}%<br>
+                    &bull; <strong>R&sup2; Score:</strong> 1 &minus; (Residual Sum of Squares / Total Sum of Squares) = {{ result.regression.clean_r2 }}
+                </p>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-head">
+                <h3>Selecting Between RMSE and MAE</h3>
+                <span class="chart-number">DECISION GUIDE</span>
+            </div>
+
+            <div class="callout-card" style="margin-top: 0;">
+                <h4>Choose RMSE When:</h4>
+                <p>An error of 20 units is 4 times worse than an error of 10 units. For example, in fruit refrigeration, exceeding critical temperature thresholds by 5&deg;C causes immediate product spoilage, demanding high penalties on large deviations.</p>
+            </div>
+
+            <div class="callout-card">
+                <h4>Choose MAE When:</h4>
+                <p>Sensor hardware occasionally transmits noise bursts or telemetry drops. MAE evaluates the median expectation and prevents sporadic outlier spikes from distorting model selection.</p>
+            </div>
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- ============================================================
+     5. PROBABILITY CALIBRATION & RELIABILITY DIAGRAMS
+     ============================================================ -->
+<section id="probability-calibration" class="content-section">
+
+    <div class="section-heading">
+        <div>
+            <div class="eyebrow">UNCERTAINTY ESTIMATION &bull; POSTERIOR FIDELITY</div>
+            <h2>5. Probability Calibration &amp; Reliability Diagrams</h2>
+        </div>
+        <span class="family-pill Evaluation">CALIBRATION</span>
+    </div>
+
+    <!-- Stats Grid -->
+    <div class="stats-grid">
+        {{ stat('Uncalibrated Brier Score', result.calibration.brier_uncal) }}
+        {{ stat('Platt Scaling Brier Score', result.calibration.brier_platt) }}
+        {{ stat('Isotonic Brier Score', result.calibration.brier_iso) }}
+        {{ stat('Expected Calibration Error', result.calibration.ece_uncal ~ '% → ' ~ result.calibration.ece_iso ~ '%') }}
+    </div>
+
+    <!-- Main Visual Representation Card -->
+    <div class="card">
+        <div class="card-head">
+            <h3>Reliability Diagrams &amp; Predicted Probability Spread</h3>
+            <span class="chart-number">CALIBRATION CURVE</span>
+        </div>
+
+        <p>
+            Left: Reliability diagram plotting mean predicted probability against observed fraction of positives. Perfect calibration lies on the diagonal line (y = x).
+            Right: Predicted probability density distribution showing uncalibrated compression vs isotonic smoothing.
+        </p>
+
+        <div class="chip-row">
+            {{ chip('Uncalibrated ECE', result.calibration.ece_uncal ~ '%', 'pink') }}
+            {{ chip('Platt Sigmoid ECE', result.calibration.ece_platt ~ '%', 'amber') }}
+            {{ chip('Isotonic ECE', result.calibration.ece_iso ~ '%', 'green') }}
+            {{ chip('Brier Improvement', '0.0612 → 0.0435', 'purple') }}
+        </div>
+
+        <img src="{{ url_for('static', filename=result.calibration.chart) }}"
+             class="task-image"
+             alt="Probability Calibration Curves">
+    </div>
+
+    <!-- Balanced Dual Detail Cards -->
+    <div class="two-col" style="margin-top: 20px;">
+
+        <div class="card">
+            <div class="card-head">
+                <h3>Why 0.70 Must Mean "70% Likely"</h3>
+                <span class="chart-number">DECISION THEORY</span>
+            </div>
+
+            <p>
+                In supply chain logistics, decisions require computing expected financial loss:
+                Loss = P(Spoiled) &times; Cost(Spoilage) &minus; [1 &minus; P(Spoiled)] &times; Cost(Inspection).
+                If a model predicts 0.70 but the true empirical frequency is only 45%, cost-optimal thresholding breaks down.
+            </p>
+
+            <div class="callout-card" style="margin-top: 14px;">
+                <h4>Calibration Formulations:</h4>
+                <p>
+                    &bull; <strong>Platt Scaling:</strong> P(Good | score) = 1 / [1 + exp(A &times; score + B)] &bull; Fits a parametric sigmoid on model margin scores.<br>
+                    &bull; <strong>Isotonic Regression:</strong> Fits a non-parametric monotonic step function without assuming a fixed sigmoid curve.<br>
+                    &bull; <strong>Brier Score Loss:</strong> (1 / n) &times; &Sigma; (Predicted Probability &minus; Actual Label)&sup2; &bull; Lower score indicates sharper, more reliable calibration.
+                </p>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-head">
+                <h3>Platt Scaling vs Isotonic Regression</h3>
+                <span class="chart-number">TECHNIQUE GUIDE</span>
+            </div>
+
+            <div class="table-wrapper">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Method</th>
+                            <th>Type</th>
+                            <th>Strengths</th>
+                            <th>Brier Score</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Uncalibrated RF</strong></td>
+                            <td>Raw output</td>
+                            <td>Good ranking, distorted probabilities</td>
+                            <td>{{ result.calibration.brier_uncal }}</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Platt Scaling</strong></td>
+                            <td>Parametric Sigmoid</td>
+                            <td>Effective on small validation sets; SVMs</td>
+                            <td>{{ result.calibration.brier_platt }}</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Isotonic Reg.</strong></td>
+                            <td>Non-parametric Step</td>
+                            <td><strong>Best overall</strong> when validation rows &gt; 1000</td>
+                            <td><strong>{{ result.calibration.brier_iso }}</strong></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- ============================================================
+     6. HYPERPARAMETER SEARCH
+     ============================================================ -->
+<section id="hyperparameter-search" class="content-section">
+
+    <div class="section-heading">
+        <div>
+            <div class="eyebrow">OPTIMISATION STRATEGIES &bull; BAYESIAN GAUSSIAN PROCESSES</div>
+            <h2>6. Hyperparameter Search: Grid, Random &amp; Bayesian Optimization</h2>
+        </div>
+        <span class="family-pill Evaluation">SEARCH</span>
+    </div>
+
+    <!-- Stats Grid -->
+    <div class="stats-grid">
+        {{ stat('Grid Search Evals', result.search.grid_evals) }}
+        {{ stat('Grid Search Best Acc', result.search.grid_best ~ '%') }}
+        {{ stat('Random Search Best Acc', result.search.rand_best ~ '%') }}
+        {{ stat('Next Bayesian Query Depth', 'd = ' ~ result.search.next_query_x) }}
+    </div>
+
+    <!-- Main Visual Representation Card -->
+    <div class="card">
+        <div class="card-head">
+            <h3>Search Trajectory in Parameter Space &amp; Gaussian Process Acquisition</h3>
+            <span class="chart-number">BAYESIAN PREVIEW</span>
+        </div>
+
+        <p>
+            Left: Visualizing the Bergstra-Bengio low effective dimensionality theorem. With 16 evaluations, Grid Search tests only 4 distinct depths, whereas Random Search explores 16 distinct depths.
+            Right: Gaussian Process surrogate model with &plusmn;2&sigma; uncertainty band and next query point chosen by the Upper Confidence Bound acquisition function.
+        </p>
+
+        <div class="chip-row">
+            {{ chip('Grid Search Evaluations', result.search.grid_evals, 'amber') }}
+            {{ chip('Random Search Evaluations', result.search.rand_evals, 'purple') }}
+            {{ chip('Random Score Advantage', '+0.83 pts over Grid', 'green') }}
+            {{ chip('GP Surrogate Max Expected', result.search.gp_max_mu ~ '%', 'purple') }}
+        </div>
+
+        <img src="{{ url_for('static', filename=result.search.chart) }}"
+             class="task-image"
+             alt="Hyperparameter Search Grid Random Bayesian">
+    </div>
+
+    <!-- Balanced Dual Detail Cards -->
+    <div class="two-col" style="margin-top: 20px;">
+
+        <div class="card">
+            <div class="card-head">
+                <h3>The Bergstra &amp; Bengio Theorem (2012)</h3>
+                <span class="chart-number">THEORETICAL PROOF</span>
+            </div>
+
+            <p>
+                In almost all real machine learning models, only a small subset of hyperparameters strongly influence the objective function (e.g. learning rate and tree depth).
+            </p>
+
+            <div class="callout-card" style="margin-top: 14px;">
+                <h4>Why Random Search Beats Grid Search:</h4>
+                <p>
+                    For a budget of 16 evaluations over two parameters where only one parameter is dominant:<br>
+                    &bull; <strong>Grid Search (4&times;4):</strong> Tests only 4 distinct values of the dominant parameter.<br>
+                    &bull; <strong>Random Search:</strong> Tests 16 distinct values of the dominant parameter, exploring the true response surface far more efficiently.
+                </p>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-head">
+                <h3>Bayesian Optimization Mechanics</h3>
+                <span class="chart-number">GP SURROGATE</span>
+            </div>
+
+            <div class="callout-card" style="margin-top: 0;">
+                <h4>1. Probabilistic Surrogate (Gaussian Process)</h4>
+                <p>Models the unknown black-box validation score with estimated mean &mu; and epistemic uncertainty band &plusmn;2&sigma; for every candidate hyperparameter.</p>
+            </div>
+
+            <div class="callout-card">
+                <h4>2. Acquisition Function (Upper Confidence Bound)</h4>
+                <p>Balances <strong>Exploitation</strong> (regions with high expected score) and <strong>Exploration</strong> (unexplored regions with high uncertainty). Next query point = depth <strong>{{ result.search.next_query_x }}</strong>.</p>
+            </div>
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- ============================================================
+     7. LEARNING CURVES & VALIDATION CURVES
+     ============================================================ -->
+<section id="learning-curves" class="content-section">
+
+    <div class="section-heading">
+        <div>
+            <div class="eyebrow">DIAGNOSTIC PLOTS &bull; BIAS VS VARIANCE TRADEOFF</div>
+            <h2>7. Learning Curves and Validation Curves</h2>
+        </div>
+        <span class="family-pill Evaluation">DIAGNOSTICS</span>
+    </div>
+
+    <!-- Stats Grid -->
+    <div class="stats-grid">
+        {{ stat('Final Training Score', result.curves.final_train_score ~ '%') }}
+        {{ stat('Final Validation Score', result.curves.final_val_score ~ '%') }}
+        {{ stat('Generalization Gap', result.curves.generalization_gap ~ '%') }}
+        {{ stat('Optimal Model Complexity', 'max_depth = ' ~ result.curves.optimal_depth) }}
+    </div>
+
+    <!-- Main Visual Representation Card -->
+    <div class="card">
+        <div class="card-head">
+            <h3>Sample Efficiency Learning Curve &amp; Complexity Validation Curve</h3>
+            <span class="chart-number">SINGLE-PLOT DIAGNOSTICS</span>
+        </div>
+
+        <p>
+            Left: Learning curve tracking convergence across sample size N, showing a healthy final generalization gap of {{ result.curves.generalization_gap }}%.
+            Right: Validation curve across Decision Tree complexity, clearly marking the Under-fitting zone (left), Optimal sweet spot (d = {{ result.curves.optimal_depth }}), and Over-fitting zone (right).
+        </p>
+
+        <div class="chip-row">
+            {{ chip('Training Score', result.curves.final_train_score ~ '%', 'purple') }}
+            {{ chip('Validation Score', result.curves.final_val_score ~ '%', 'green') }}
+            {{ chip('Data Scarcity Status', 'Sufficient Telemetry', 'green') }}
+            {{ chip('Optimal Max Depth', 'd = ' ~ result.curves.optimal_depth, 'purple') }}
+        </div>
+
+        <img src="{{ url_for('static', filename=result.curves.chart) }}"
+             class="task-image"
+             alt="Learning and Validation Curves">
+    </div>
+
+    <!-- Balanced Dual Detail Cards -->
+    <div class="two-col" style="margin-top: 20px;">
+
+        <div class="card">
+            <div class="card-head">
+                <h3>Diagnosing Bias, Variance &amp; Data Scarcity</h3>
+                <span class="chart-number">DIAGNOSTIC MATRIX</span>
+            </div>
+
+            <div class="table-wrapper">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Symptom</th>
+                            <th>Learning Curve Signature</th>
+                            <th>Engineering Solution</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>High Bias (Under-fitting)</strong></td>
+                            <td>Both Train and Val curves low and plateaued early</td>
+                            <td>Increase model capacity, add features. <em>More data will not help.</em></td>
+                        </tr>
+                        <tr>
+                            <td><strong>High Variance (Over-fitting)</strong></td>
+                            <td>High Train score, wide gap to Validation curve</td>
+                            <td>Add regularization, prune trees, or <strong>collect more training data</strong>.</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Data Scarcity</strong></td>
+                            <td>Validation curve still rising steeply at max N</td>
+                            <td><strong>Collect more samples</strong> — model is not yet saturated.</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-head">
+                <h3>Validation Curve Complexity Sweet Spot</h3>
+                <span class="chart-number">HYPERPARAMETER TUNING</span>
+            </div>
+
+            <p>
+                As model capacity increases (e.g. from max depth 1 to max depth 20):
+            </p>
+
+            <div class="callout-card" style="margin-top: 0;">
+                <h4>&bull; Under-fitting Regime (Depth 1&ndash;3):</h4>
+                <p>Model is too simple to capture multi-sensor interactions (temperature, humidity, CO2).</p>
+            </div>
+
+            <div class="callout-card">
+                <h4>&bull; Sweet Spot (Depth {{ result.curves.optimal_depth }}):</h4>
+                <p>Validation accuracy reaches peak generalization performance at <strong>{{ result.curves.optimal_val_score }}%</strong>.</p>
+            </div>
+
+            <div class="callout-card">
+                <h4>&bull; Over-fitting Regime (Depth &ge; 12):</h4>
+                <p>Training accuracy climbs toward 100%, but validation score drops as the model memorizes sensor noise.</p>
+            </div>
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- ============================================================
+     8. STATISTICAL SIGNIFICANCE FOR MODEL COMPARISON
+     ============================================================ -->
+<section id="significance-testing" class="content-section">
+
+    <div class="section-heading">
+        <div>
+            <div class="eyebrow">HYPOTHESIS TESTING &bull; RIGOROUS MODEL COMPARISON</div>
+            <h2>8. Statistical Significance for Model Comparison (Intro Level)</h2>
+        </div>
+        <span class="family-pill Evaluation">SIGNIFICANCE</span>
+    </div>
+
+    <!-- Stats Grid -->
+    <div class="stats-grid">
+        {{ stat("McNemar's Chi-Square", result.significance.chi2_stat) }}
+        {{ stat("McNemar's p-value", result.significance.p_val_mcnemar) }}
+        {{ stat('Mean Regression ΔMAE', result.significance.mean_diff ~ ' pmm') }}
+        {{ stat('Bootstrap 95% CI', '[' ~ result.significance.ci_lower ~ ', ' ~ result.significance.ci_upper ~ ']') }}
+    </div>
+
+    <!-- Main Visual Representation Card -->
+    <div class="card">
+        <div class="card-head">
+            <h3>Contingency Matrix Heatmap &amp; Paired Bootstrap Distribution</h3>
+            <span class="chart-number">SIGNIFICANCE CHARTS</span>
+        </div>
+
+        <p>
+            Left: McNemar's 2&times;2 contingency matrix isolating discordant predictions between Logistic Regression and Random Forest.
+            Right: Paired Bootstrap (B = 1000) distribution of &Delta;MAE comparing Linear Regression vs Random Forest. Because the 95% CI strictly excludes zero, the improvement is statistically significant.
+        </p>
+
+        <div class="chip-row">
+            {{ chip("Classifier p-value", result.significance.p_val_mcnemar, 'purple') }}
+            {{ chip("Classifier Verdict", "Statistically Significant (p < 0.05)", 'green') }}
+            {{ chip("Regression Mean ΔMAE", result.significance.mean_diff ~ ' pmm', 'purple') }}
+            {{ chip("Regression 95% CI", '[' ~ result.significance.ci_lower ~ ', ' ~ result.significance.ci_upper ~ ']', 'green') }}
+        </div>
+
+        <img src="{{ url_for('static', filename=result.significance.chart) }}"
+             class="task-image"
+             alt="Statistical Significance McNemar Bootstrap">
+    </div>
+
+    <!-- Balanced Dual Detail Cards -->
+    <div class="two-col" style="margin-top: 20px;">
+
+        <div class="card">
+            <div class="card-head">
+                <h3>McNemar's Test for Classifiers</h3>
+                <span class="chart-number">DISCORDANT PAIRS</span>
+            </div>
+
+            <p>
+                When comparing two classifiers evaluated on the exact same test records, independent two-sample tests are invalid due to paired dependencies. McNemar's test isolates discordant predictions:
+            </p>
+
+            <div class="table-wrapper">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Contingency Cell</th>
+                            <th>Description</th>
+                            <th>Count</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Agreement Cells (a, d)</strong></td>
+                            <td>Both models agreed (both correct or both wrong)</td>
+                            <td>{{ result.significance.n_a + result.significance.n_d }}</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Cell b</strong></td>
+                            <td>Logistic Regression correct, Random Forest wrong</td>
+                            <td>{{ result.significance.n_b }}</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Cell c</strong></td>
+                            <td>Logistic Regression wrong, Random Forest correct</td>
+                            <td>{{ result.significance.n_c }}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="callout-card" style="margin-top: 14px;">
+                <h4>Edwards Continuity-Corrected Chi-Square:</h4>
+                <p>
+                    &bull; <strong>Formula:</strong> &chi;&sup2; = (|b &minus; c| &minus; 1)&sup2; / (b + c) = <strong>{{ result.significance.chi2_stat }}</strong><br>
+                    &bull; <strong>Significance:</strong> p = {{ result.significance.p_val_mcnemar }} (p &lt; 0.001) &bull; The superiority of Random Forest is statistically significant and not random chance.
+                </p>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-head">
+                <h3>Paired Bootstrap for Regressors</h3>
+                <span class="chart-number">RESAMPLING METHOD</span>
+            </div>
+
+            <p>
+                For continuous models (predicting CO2 telemetry), the Paired Bootstrap evaluates the stability of the error difference &Delta; = MAE(Linear) &minus; MAE(Random Forest):
+            </p>
+
+            <div class="callout-card" style="margin-top: 0;">
+                <h4>1. Resampling Strategy</h4>
+                <p>Draw B = 1000 bootstrap replicates of test indices with replacement and evaluate &Delta; on each replicate.</p>
+            </div>
+
+            <div class="callout-card">
+                <h4>2. Empirical Confidence Interval</h4>
+                <p>The 95% Confidence Interval spans <strong>[{{ result.significance.ci_lower }}, {{ result.significance.ci_upper }}] pmm</strong>. Because zero lies completely outside this interval (p &lt; 0.001), the Random Forest regression model achieves a statistically verified improvement.</p>
+            </div>
+        </div>
+
+    </div>
+
+</section>
+
+{% endif %}
+
+{% endblock %}

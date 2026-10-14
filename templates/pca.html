@@ -1,0 +1,260 @@
+{% extends "base.html" %}
+{% from "_macros.html" import stat, bar, chip, code_card %}
+
+{% block title %}PCA{% endblock %}
+{% block eyebrow %}MODULE 20 • DIMENSIONALITY REDUCTION{% endblock %}
+{% block heading %}Principal Component Analysis (PCA){% endblock %}
+{% block subtitle %}Project correlated environmental sensor variables onto orthogonal principal axes that maximize explained variance.{% endblock %}
+
+
+{% block content %}
+
+{% if result %}
+
+<!-- ============ KEY METRICS ============ -->
+<section class="content-section first-section">
+
+    <div class="section-heading">
+        <div>
+            <div class="eyebrow">ORTHOGONAL VARIANCE DECOMPOSITION</div>
+            <h2>PCA Overview</h2>
+        </div>
+    </div>
+
+    <div class="stats-grid">
+        {{ stat('PC1 Variance', '%.2f'|format(result.pc1_variance) ~ '%') }}
+        {{ stat('2D Variance (PC1+PC2)', '%.2f'|format(result.variance_2d) ~ '%') }}
+        {{ stat('3D Variance (PC1–PC3)', '%.2f'|format(result.variance_3d) ~ '%') }}
+        {{ stat('2D Recon. MSE', '%.4f'|format(result.recon_mse_2d)) }}
+    </div>
+
+</section>
+
+
+<!-- ============ SCREE PLOT & EIGENVALUE TABLE ============ -->
+<section class="content-section">
+
+    <div class="two-col">
+
+        <div class="card">
+            <div class="card-head">
+                <h3>Explained Variance by Component</h3>
+                <span class="chart-number">4 COMPONENTS</span>
+            </div>
+
+            <div class="bar-list">
+                {% for comp in result.components_summary %}
+                    {{ bar(comp.component ~ ' (λ=' ~ comp.eigenvalue ~ ')',
+                           comp.variance_pct,
+                           'green' if loop.index <= 2 else 'amber',
+                           '%.2f'|format(comp.variance_pct) ~ '%') }}
+                {% endfor %}
+            </div>
+
+            <div class="chip-row" style="margin-top: 18px;">
+                {{ chip('Input Features', result.n_features, 'purple') }}
+                {{ chip('2D Cumulative', result.variance_2d ~ '%', 'green') }}
+                {{ chip('3D Cumulative', result.variance_3d ~ '%', 'pink') }}
+                {{ chip('3D Recon. MSE', result.recon_mse_3d, 'amber') }}
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-head">
+                <h3>Eigenvalues &amp; Cumulative Variance Table</h3>
+                <span class="chart-number">SPECTRAL SUMMARY</span>
+            </div>
+
+            <div class="table-wrapper">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Component</th>
+                            <th>Eigenvalue ($\lambda$)</th>
+                            <th>Singular Value</th>
+                            <th>Explained Variance</th>
+                            <th>Cumulative Variance</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for comp in result.components_summary %}
+                        <tr>
+                            <td><strong>{{ comp.component }}</strong></td>
+                            <td>{{ comp.eigenvalue }}</td>
+                            <td>{{ comp.singular_value }}</td>
+                            <td>{{ comp.variance_pct }}%</td>
+                            <td><strong>{{ comp.cumulative_pct }}%</strong></td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- ============ CHARTS: SCREE PLOT, 2D SCATTER, BIPLOT & LOADINGS ============ -->
+<section class="content-section">
+
+    <div class="section-heading">
+        <div>
+            <div class="eyebrow">VISUAL DIAGNOSTICS</div>
+            <h2>Scree Plot, 2D Projection &amp; Feature Loadings Biplot</h2>
+        </div>
+    </div>
+
+    <div class="stack">
+
+        <div class="card">
+            <div class="card-head">
+                <h3>PCA Scree Plot — Individual &amp; Cumulative Explained Variance</h3>
+                <span class="chart-number">SCREE PLOT</span>
+            </div>
+            <p>
+                Displays the proportion of total dataset variance captured by each orthogonal principal component
+                alongside the cumulative variance curve and 80% retention threshold.
+            </p>
+            <img src="{{ url_for('static', filename=result.scree_chart) }}"
+                 class="task-image"
+                 alt="PCA Scree Plot">
+        </div>
+
+        <div class="card">
+            <div class="card-head">
+                <h3>2D Principal Component Subspace (PC1 vs PC2)</h3>
+                <span class="chart-number">2D PROJECTION</span>
+            </div>
+            <p>
+                Projection of all {{ result.total_rows }} FreshChain records onto the top two principal axes,
+                colored by target quality class (<code>BAD</code> vs <code>Good</code>) and fruit type.
+            </p>
+            <img src="{{ url_for('static', filename=result.scatter_chart) }}"
+                 class="task-image"
+                 alt="PCA 2D Scatter Plot">
+        </div>
+
+        <div class="card">
+            <div class="card-head">
+                <h3>PCA Biplot &amp; Feature Loadings Matrix</h3>
+                <span class="chart-number">BIPLOT &amp; LOADINGS</span>
+            </div>
+            <p>
+                Left: Feature loading vectors showing the direction and magnitude of each environmental sensor
+                in the <code>PC1–PC2</code> plane. Right: Complete orthogonal loading matrix across all four components.
+            </p>
+            <img src="{{ url_for('static', filename=result.biplot_chart) }}"
+                 class="task-image"
+                 alt="PCA Biplot and Loadings Heatmap">
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- ============ LOADINGS TABLE & SAMPLE COORDINATES ============ -->
+<section class="content-section">
+
+    <div class="two-col">
+
+        <div class="card">
+            <div class="card-head">
+                <h3>Feature Loadings Breakdown</h3>
+                <span class="chart-number">EIGENVECTORS</span>
+            </div>
+
+            <div class="table-wrapper">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Feature</th>
+                            <th>PC1</th>
+                            <th>PC2</th>
+                            <th>PC3</th>
+                            <th>PC4</th>
+                            <th>Dominant Axis</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for row in result.loadings_rows %}
+                        <tr>
+                            <td><strong>{{ row.feature }}</strong></td>
+                            <td>{{ row.pc1 }}</td>
+                            <td>{{ row.pc2 }}</td>
+                            <td>{{ row.pc3 }}</td>
+                            <td>{{ row.pc4 }}</td>
+                            <td><span class="family-pill Ensemble">{{ row.dominant }}</span></td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-head">
+                <h3>Projected Coordinates Preview</h3>
+                <span class="chart-number">TRANSFORMED DATA</span>
+            </div>
+
+            <div class="table-wrapper">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Fruit</th>
+                            <th>Class</th>
+                            <th>PC1</th>
+                            <th>PC2</th>
+                            <th>PC3</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for r in result.preview_rows %}
+                        <tr>
+                            <td>{{ r.id }}</td>
+                            <td>{{ r.fruit }}</td>
+                            <td>
+                                <span class="family-pill {{ 'Regression' if r.quality_class == 'BAD' else 'Tree' }}">
+                                    {{ r.quality_class }}
+                                </span>
+                            </td>
+                            <td>{{ r.pc1 }}</td>
+                            <td>{{ r.pc2 }}</td>
+                            <td>{{ r.pc3 }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- ============ CODE ============ -->
+{% set snippets = code_snippets.get(active, []) %}
+{% if snippets %}
+<section class="content-section">
+    <div class="section-heading">
+        <div>
+            <div class="eyebrow">CODE</div>
+            <h2>PCA Implementation Code</h2>
+        </div>
+    </div>
+    <div class="stack">
+        {% for snippet in snippets %}
+            {{ code_card(snippet) }}
+        {% endfor %}
+    </div>
+</section>
+{% endif %}
+
+{% endif %}
+
+{% endblock %}

@@ -1,0 +1,119 @@
+{
+  "split": {
+    "total_samples": 8115,
+    "train_samples": 5680,
+    "val_samples": 1217,
+    "test_samples": 1218,
+    "best_val_depth": 8,
+    "best_val_score": 92.44,
+    "honest_test_acc": 91.87,
+    "snooped_depth": 12,
+    "snooped_test_acc": 93.19,
+    "optimistic_bias": 1.32,
+    "chart": "charts/eval_split_discipline.png"
+  },
+  "cv": {
+    "n_folds": 5,
+    "kf_var": 0.842,
+    "skf_var": 0.0,
+    "overall_pos_ratio": 48.61,
+    "non_nested_score": 94.15,
+    "nested_mean": 92.83,
+    "nested_std": 0.64,
+    "selection_bias": 1.32,
+    "outer_scores": [
+      93.1,
+      92.42,
+      93.35,
+      92.24,
+      93.04
+    ],
+    "chart": "charts/eval_cross_validation.png"
+  },
+  "classification": {
+    "accuracy": 94.67,
+    "precision": 94.32,
+    "recall": 94.73,
+    "f1_score": 94.52,
+    "roc_auc": 0.985,
+    "pr_auc": 0.984,
+    "cm": [
+      [
+        985,
+        56
+      ],
+      [
+        52,
+        936
+      ]
+    ],
+    "dummy_acc": 95.0,
+    "dummy_rec": 0.0,
+    "dummy_f1": 0.0,
+    "imb_acc": 97.41,
+    "imb_prec": 82.35,
+    "imb_rec": 63.64,
+    "imb_f1": 71.79,
+    "imb_roc_auc": 0.962,
+    "imb_pr_auc": 0.741,
+    "chart": "charts/eval_classification_metrics.png"
+  },
+  "regression": {
+    "clean_rmse": 14.285,
+    "clean_mae": 10.841,
+    "clean_mape": 2.84,
+    "clean_r2": 0.9382,
+    "outlier_rmse": 40.124,
+    "outlier_mae": 14.652,
+    "rmse_surge": 180.9,
+    "mae_surge": 35.2,
+    "chart": "charts/eval_regression_metrics.png"
+  },
+  "calibration": {
+    "brier_uncal": 0.0612,
+    "brier_platt": 0.0487,
+    "brier_iso": 0.0435,
+    "logloss_uncal": 0.2314,
+    "logloss_platt": 0.1752,
+    "logloss_iso": 0.1583,
+    "ece_uncal": 7.82,
+    "ece_platt": 3.14,
+    "ece_iso": 1.65,
+    "chart": "charts/eval_probability_calibration.png"
+  },
+  "search": {
+    "grid_evals": 16,
+    "grid_best": 93.75,
+    "rand_evals": 16,
+    "rand_best": 94.58,
+    "next_query_x": 8.4,
+    "gp_max_mu": 94.85,
+    "chart": "charts/eval_hyperparameter_search.png"
+  },
+  "curves": {
+    "final_train_score": 96.82,
+    "final_val_score": 93.91,
+    "generalization_gap": 2.91,
+    "is_scarcity": false,
+    "optimal_depth": 8,
+    "optimal_val_score": 93.45,
+    "chart": "charts/eval_learning_curves.png"
+  },
+  "significance": {
+    "acc_a": 86.42,
+    "acc_b": 94.67,
+    "n_a": 1712,
+    "n_b": 42,
+    "n_c": 209,
+    "n_d": 66,
+    "chi2_stat": 109.183,
+    "p_val_mcnemar": 1e-05,
+    "mcnemar_significant": true,
+    "mean_diff": 4.125,
+    "ci_lower": 3.421,
+    "ci_upper": 4.862,
+    "p_val_boot": 1e-05,
+    "boot_significant": true,
+    "chart": "charts/eval_significance_testing.png"
+  }
+}

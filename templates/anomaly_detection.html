@@ -1,0 +1,293 @@
+{% extends "base.html" %}
+{% from "_macros.html" import stat, bar, chip, code_card %}
+
+{% block title %}Anomaly Detection{% endblock %}
+{% block eyebrow %}MODULE 19 • ANOMALY DETECTION{% endblock %}
+{% block heading %}Anomaly Detection{% endblock %}
+{% block subtitle %}Detect abnormal environmental sensor readings and extreme fruit storage conditions using Isolation Forest, Local Outlier Factor (LOF), One-Class SVM, and Elliptic Envelope.{% endblock %}
+
+
+{% block content %}
+
+{% if result %}
+
+<!-- ============ KEY METRICS ============ -->
+<section class="content-section first-section">
+
+    <div class="section-heading">
+        <div>
+            <div class="eyebrow">OUTLIER &amp; NOVELTY ANALYTICS</div>
+            <h2>Anomaly Detection Summary</h2>
+        </div>
+    </div>
+
+    <div class="stats-grid">
+        {{ stat('Total Records', result.total_rows) }}
+        {{ stat('Normal Inliers', result.normal_count ~ ' (' ~ result.inlier_purity ~ '%)') }}
+        {{ stat('Detected Anomalies', result.anomaly_count ~ ' (' ~ result.contamination_pct ~ '%)') }}
+        {{ stat('Consensus Outliers (≥2)', result.consensus_anomalies) }}
+    </div>
+
+</section>
+
+
+<!-- ============ ISOLATION FOREST BOUNDARY & SCORE DISTRIBUTION ============ -->
+<section class="content-section">
+
+    <div class="section-heading">
+        <div>
+            <div class="eyebrow">PRIMARY DETECTOR • ISOLATION FOREST</div>
+            <h2>Isolation Forest Decision Boundary &amp; Score Distribution</h2>
+        </div>
+    </div>
+
+    <div class="stack">
+
+        <div class="card">
+            <div class="card-head">
+                <h3>Isolation Forest Decision Boundary &amp; Sensor Space Outliers</h3>
+                <span class="chart-number">ISOLATION FOREST</span>
+            </div>
+
+            <p>
+                Isolation Forest isolates anomalies by randomly partitioning sensor features. Because extreme
+                environmental spikes require far fewer splits to isolate, they receive negative decision scores
+                and lie outside the learned decision contour.
+            </p>
+
+            <div class="chip-row">
+                {{ chip('Primary Model', result.primary_algorithm, 'purple') }}
+                {{ chip('Estimators', 200, 'green') }}
+                {{ chip('Contamination', result.contamination_pct ~ '%', 'pink') }}
+                {{ chip('High-Confidence (≥3 Models)', result.high_conf_anomalies, 'amber') }}
+            </div>
+
+            <img src="{{ url_for('static', filename=result.isolation_chart) }}"
+                 class="task-image"
+                 alt="Isolation Forest Decision Boundary">
+        </div>
+
+        <div class="card">
+            <div class="card-head">
+                <h3>Anomaly Score Histogram &amp; Multi-Algorithm Consensus</h3>
+                <span class="chart-number">SCORE THRESHOLD</span>
+            </div>
+
+            <p>
+                Left: Distribution of Isolation Forest decision scores showing the cutoff at <code>0.0</code>.
+                Right: Consensus voting across all four unsupervised anomaly detectors.
+            </p>
+
+            <img src="{{ url_for('static', filename=result.score_chart) }}"
+                 class="task-image"
+                 alt="Anomaly Score Distribution">
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- ============ 4-ALGORITHM COMPARISON ============ -->
+<section class="content-section">
+
+    <div class="section-heading">
+        <div>
+            <div class="eyebrow">MULTI-MODEL BENCHMARK</div>
+            <h2>Comparison of 4 Anomaly Detection Algorithms</h2>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-head">
+            <h3>Isolation Forest vs LOF vs One-Class SVM vs Elliptic Envelope</h3>
+            <span class="chart-number">4 DETECTORS</span>
+        </div>
+
+        <img src="{{ url_for('static', filename=result.methods_chart) }}"
+             class="task-image"
+             alt="Anomaly Detection Methods Comparison">
+
+        <div class="table-wrapper">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Algorithm</th>
+                        <th>Detection Mechanism</th>
+                        <th>Key Hyperparameters</th>
+                        <th>Normal (Inliers)</th>
+                        <th>Anomalies (Outliers)</th>
+                        <th>Anomaly Share</th>
+                        <th>Overlap with BAD Fruit Class</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for m in result.methods_summary %}
+                    <tr>
+                        <td><strong>{{ m.name }}</strong></td>
+                        <td><span class="family-pill Clustering">{{ m.type }}</span></td>
+                        <td>{{ m.params }}</td>
+                        <td>{{ m.normal_count }}</td>
+                        <td><strong>{{ m.anomaly_count }}</strong></td>
+                        <td>{{ m.anomaly_pct }}%</td>
+                        <td>{{ m.bad_class_overlap }}%</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+</section>
+
+
+<!-- ============ FEATURE SHIFT & FRUIT BREAKDOWN ============ -->
+<section class="content-section">
+
+    <div class="two-col">
+
+        <div class="card">
+            <div class="card-head">
+                <h3>Normal vs Anomaly Feature Profiles</h3>
+                <span class="chart-number">SENSOR SHIFT</span>
+            </div>
+
+            <div class="table-wrapper">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Feature</th>
+                            <th>Normal Mean ± SD</th>
+                            <th>Anomaly Mean ± SD</th>
+                            <th>Anomaly Range</th>
+                            <th>Z-Shift</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for f in result.feature_comparison %}
+                        <tr>
+                            <td><strong>{{ f.feature }}</strong></td>
+                            <td>{{ f.normal_mean }} ± {{ f.normal_std }}</td>
+                            <td>{{ f.anomaly_mean }} ± {{ f.anomaly_std }}</td>
+                            <td>[{{ f.anomaly_min }}, {{ f.anomaly_max }}]</td>
+                            <td><span class="delta-down">{{ f.z_shift }}σ</span></td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-head">
+                <h3>Anomalies by Fruit Category</h3>
+                <span class="chart-number">BY FRUIT</span>
+            </div>
+
+            {% set max_anom = (result.fruit_anomalies|map(attribute='anomalies')|max) or 1 %}
+            <div class="bar-list">
+                {% for f in result.fruit_anomalies %}
+                    {{ bar(f.fruit, f.anomalies / max_anom * 100, 'pink', f.anomalies ~ ' (' ~ f.rate ~ '%)') }}
+                {% endfor %}
+            </div>
+
+            <div class="chip-row" style="margin-top: 18px;">
+                {% for f in result.fruit_anomalies %}
+                    {{ chip(f.fruit, f.anomalies ~ ' / ' ~ f.total ~ ' rows', 'purple') }}
+                {% endfor %}
+            </div>
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- ============ FEATURE BOXPLOTS & TOP ANOMALOUS RECORDS ============ -->
+<section class="content-section">
+
+    <div class="stack">
+
+        <div class="card">
+            <div class="card-head">
+                <h3>Environmental Sensor Boxplots: Normal Inliers vs Detected Anomalies</h3>
+                <span class="chart-number">DISTRIBUTION SPREAD</span>
+            </div>
+
+            <img src="{{ url_for('static', filename=result.boxplot_chart) }}"
+                 class="task-image"
+                 alt="Feature Boxplots Normal vs Anomaly">
+        </div>
+
+        <div class="card">
+            <div class="card-head">
+                <h3>Top 10 Most Severe Anomalous Records</h3>
+                <span class="chart-number">EXTREME OUTLIERS</span>
+            </div>
+
+            <div class="table-wrapper">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Rank</th>
+                            <th>Record #</th>
+                            <th>Fruit</th>
+                            <th>Temp</th>
+                            <th>Humid (%)</th>
+                            <th>Light (Fux)</th>
+                            <th>CO2 (pmm)</th>
+                            <th>Quality Class</th>
+                            <th>Isolation Score</th>
+                            <th>Model Votes</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for row in result.top_anomalies %}
+                        <tr>
+                            <td><strong>#{{ row.rank }}</strong></td>
+                            <td>{{ row.row_id }}</td>
+                            <td>{{ row.fruit }}</td>
+                            <td>{{ row.temp }}</td>
+                            <td>{{ row.humid }}</td>
+                            <td>{{ row.light }}</td>
+                            <td>{{ row.co2 }}</td>
+                            <td>
+                                <span class="family-pill {{ 'Regression' if row.quality_class == 'BAD' else 'Tree' }}">
+                                    {{ row.quality_class }}
+                                </span>
+                            </td>
+                            <td class="delta-down"><strong>{{ row.score }}</strong></td>
+                            <td>{{ row.votes }} / 4</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- ============ CODE ============ -->
+{% set snippets = code_snippets.get(active, []) %}
+{% if snippets %}
+<section class="content-section">
+    <div class="section-heading">
+        <div>
+            <div class="eyebrow">CODE</div>
+            <h2>Anomaly Detection Code</h2>
+        </div>
+    </div>
+    <div class="stack">
+        {% for snippet in snippets %}
+            {{ code_card(snippet) }}
+        {% endfor %}
+    </div>
+</section>
+{% endif %}
+
+{% endif %}
+
+{% endblock %}
