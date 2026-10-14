@@ -1,162 +1,202 @@
-{# Shared sidebar - the ONLY place the navigation lives.
-   Every page includes it, so the menu can never drift again. #}
+{# Shared navigation: include once per page. SVG icons require no external library. #}
+{% macro icon(name) -%}
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+{% if name == 'leaf' %}<path d="M20 4c-8-2-16 2-16 9a7 7 0 0 0 7 7c7 0 11-8 9-16Z"/><path d="m4 20 11-11"/>
+{% elif name == 'chevron' %}<path d="m6 9 6 6 6-6"/>
+{% elif name == 'home' %}<path d="m3 10 9-7 9 7v10H3Z"/><path d="M9 20v-7h6v7"/>
+{% elif name == 'data' %}<ellipse cx="12" cy="5" rx="8" ry="3"/><path d="M4 5v14c0 4 16 4 16 0V5M4 12c0 4 16 4 16 0"/>
+{% elif name == 'chart' %}<path d="M4 3v17h17M8 15l4-5 4 2 5-7"/>
+{% elif name == 'settings' %}<path d="m9 3-1 3-3 1 1 3-2 2 2 2-1 3 3 1 1 3h6l1-3 3-1-1-3 2-2-2-2 1-3-3-1-1-3Z"/><circle cx="12" cy="12" r="3"/>
+{% elif name == 'arrow' %}<path d="M5 19 19 5M5 5h14v14"/>
+{% elif name == 'target' %}<circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1"/>
+{% elif name == 'lambda' %}<path d="M5 3h5l8 18M11 6 4 21M18 21h3"/>
+{% elif name == 'tree' %}<path d="M12 8v5M5 16v-3h14v3"/><rect x="9" y="2" width="6" height="6" rx="1"/><rect x="2" y="16" width="6" height="6" rx="1"/><rect x="16" y="16" width="6" height="6" rx="1"/>
+{% elif name == 'scissors' %}<circle cx="5" cy="6" r="3"/><circle cx="5" cy="18" r="3"/><path d="m8 8 13 12M8 16 21 4"/>
+{% elif name == 'complexity' %}<path d="M4 20h16M6 16V9M12 16V4M18 16v-5"/>
+{% elif name == 'bag' %}<rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/>
+{% elif name == 'bolt' %}<path d="m13 2-9 12h7l-1 8 10-13h-7Z"/>
+{% elif name == 'spark' %}<path d="m12 3 2 7 7 2-7 2-2 7-2-7-7-2 7-2Z"/>
+{% elif name == 'sun' %}<circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M2 12h2M20 12h2M5 5l1 1M18 18l1 1M5 19l1-1M18 6l1-1"/>
+{% elif name == 'cluster' %}<circle cx="6" cy="7" r="3"/><circle cx="18" cy="7" r="3"/><circle cx="12" cy="18" r="3"/><path d="m8 9 3 6m5-6-3 6M9 7h6"/>
+{% elif name == 'circle' %}<circle cx="12" cy="12" r="7"/>
+{% elif name == 'layers' %}<path d="m12 3 10 6-10 6L2 9ZM2 13l10 6 10-6M2 17l10 6 10-6"/>
+{% elif name == 'alert' %}<path d="m12 3 10 18H2Z"/><path d="M12 9v5M12 17h.01"/>
+{% elif name == 'split' %}<path d="M12 21V10M12 10 5 3M12 10l7-7M3 3h4v4M17 3h4v4"/>
+{% elif name == 'refresh' %}<path d="M20 7a9 9 0 0 0-15-2L2 8M2 3v5h5M4 17a9 9 0 0 0 15 2l3-3M22 21v-5h-5"/>
+{% elif name == 'pie' %}<path d="M12 3v9h9A9 9 0 1 1 12 3ZM15 2v7h7a9 9 0 0 0-7-7Z"/>
+{% elif name == 'sliders' %}<path d="M4 5h5M13 5h7M4 12h9M17 12h3M4 19h2M10 19h10"/><circle cx="11" cy="5" r="2"/><circle cx="15" cy="12" r="2"/><circle cx="8" cy="19" r="2"/>
+{% elif name == 'scale' %}<path d="M12 3v18M7 21h10M4 7h16M6 7l-4 8h8ZM18 7l-4 8h8Z"/>
+{% endif %}</svg>
+{%- endmacro %}
 
-<aside class="sidebar">
+<aside class="sidebar" aria-label="FruitSense navigation">
 
     <!-- BRAND -->
     <div class="brand">
-        <div class="brand-icon">🍃</div>
+        <div class="brand-icon">{{ icon('leaf') }}</div>
         <div>
             <h2>FruitSense</h2>
             <p>Quality Analytics</p>
         </div>
     </div>
 
-    <div class="sidebar-section-title">ANALYTICS</div>
 
-    <!-- DASHBOARD -->
-    <a href="{{ url_for('index') }}"
-       class="nav-item{% if active == 'dashboard' %} active{% endif %}">
-        <span class="nav-icon">⌂</span>
-        <span>Dashboard</span>
-    </a>
+    <!-- ============================================================
+         GROUP 1 · SUPERVISED-LEARNING MODELS
+         ============================================================ -->
+    <details class="nav-group g-purple"
+        {% if active in ['dashboard', 'data-loading', 'eda', 'preprocessing',
+                         'linear-regression', 'logistic-regression', 'regularisation',
+                         'decision-tree', 'pruning', 'cost-complexity', 'random-forest',
+                         'ada-boost', 'gradient-boost', 'xg-boost', 'lightgbm'] %}open{% endif %}>
 
-    <!-- DATA SET -->
-    <a href="{{ url_for('data_loading') }}"
-       class="nav-item{% if active == 'data-loading' %} active{% endif %}">
-        <span class="nav-icon">▣</span>
-        <span>Data Set</span>
-    </a>
-
-    <!-- EXPLORATORY ANALYSIS -->
-    <a href="{{ url_for('eda') }}"
-       class="nav-item{% if active == 'eda' %} active{% endif %}">
-        <span class="nav-icon">◒</span>
-        <span>Exploratory Analysis</span>
-    </a>
-
-    <!-- PREPROCESSING -->
-    <a href="{{ url_for('preprocessing') }}"
-       class="nav-item{% if active == 'preprocessing' %} active{% endif %}">
-        <span class="nav-icon">⚙</span>
-        <span>Preprocessing</span>
-    </a>
-
-    <!-- REGRESSION -->
-    <details class="nav-dropdown"
-        {% if active in ['linear-regression', 'logistic-regression', 'regularisation'] %}open{% endif %}>
-
-        <summary class="dropdown-toggle">
-            <span class="dropdown-left">
-                <span class="nav-icon">📈</span>
-                <span>Regression</span>
+        <summary class="group-toggle">
+            <span class="group-left">
+                <span class="group-icon">{{ icon('layers') }}</span>
+                <span class="group-title">Supervised-Learning Models</span>
             </span>
-            <span class="dropdown-arrow">▾</span>
+            <span class="group-arrow">{{ icon('chevron') }}</span>
         </summary>
 
-        <div class="dropdown-content">
+        <div class="group-content">
 
-            <a href="{{ url_for('linear_regression') }}"
-               class="nav-subitem{% if active == 'linear-regression' %} active{% endif %}">
-                <span class="sub-icon">📈</span>
-                <span>Linear Regression</span>
+            <a href="{{ url_for('index') }}"
+               class="nav-item{% if active == 'dashboard' %} active{% endif %}">
+                <span class="nav-icon">{{ icon('home') }}</span>
+                <span>Dashboard</span>
             </a>
 
-            <a href="{{ url_for('logistic_regression') }}"
-               class="nav-subitem{% if active == 'logistic-regression' %} active{% endif %}">
-                <span class="sub-icon">🎯</span>
-                <span>Logistic Regression</span>
+            <a href="{{ url_for('data_loading') }}"
+               class="nav-item{% if active == 'data-loading' %} active{% endif %}">
+                <span class="nav-icon">{{ icon('data') }}</span>
+                <span>Data Set</span>
             </a>
 
-            <a href="{{ url_for('regularisation') }}"
-               class="nav-subitem{% if active == 'regularisation' %} active{% endif %}">
-                <span class="sub-icon">λ</span>
-                <span>Regularisation</span>
+            <a href="{{ url_for('eda') }}"
+               class="nav-item{% if active == 'eda' %} active{% endif %}">
+                <span class="nav-icon">{{ icon('pie') }}</span>
+                <span>Exploratory Analysis</span>
             </a>
 
-        </div>
-    </details>
-
-    <!-- TREES & ENSEMBLE -->
-    <details class="nav-dropdown"
-        {% if active in ['decision-tree', 'random-forest', 'ada-boost', 'gradient-boost',
-                         'xg-boost', 'lightgbm', 'pruning', 'cost-complexity'] %}open{% endif %}>
-
-        <summary class="dropdown-toggle">
-            <span class="dropdown-left">
-                <span class="nav-icon">🌳</span>
-                <span>Trees &amp; Ensemble</span>
-            </span>
-            <span class="dropdown-arrow">▾</span>
-        </summary>
-
-        <div class="dropdown-content">
-
-            <a href="{{ url_for('decision_tree') }}"
-               class="nav-subitem{% if active == 'decision-tree' %} active{% endif %}">
-                <span class="sub-icon">🌳</span>
-                <span>Decision Tree</span>
+            <a href="{{ url_for('preprocessing') }}"
+               class="nav-item{% if active == 'preprocessing' %} active{% endif %}">
+                <span class="nav-icon">{{ icon('settings') }}</span>
+                <span>Preprocessing</span>
             </a>
 
-            <a href="{{ url_for('random_forest') }}"
-               class="nav-subitem{% if active == 'random-forest' %} active{% endif %}">
-                <span class="sub-icon">🌲</span>
-                <span>Random Forest</span>
-            </a>
-
-            <a href="{{ url_for('ada_boost') }}"
-               class="nav-subitem{% if active == 'ada-boost' %} active{% endif %}">
-                <span class="sub-icon">⚡</span>
-                <span>AdaBoost</span>
-            </a>
-
-            <a href="{{ url_for('gradient_boost') }}"
-               class="nav-subitem{% if active == 'gradient-boost' %} active{% endif %}">
-                <span class="sub-icon">↗</span>
-                <span>Gradient Boost</span>
-            </a>
-
-            <a href="{{ url_for('xg_boost') }}"
-               class="nav-subitem{% if active == 'xg-boost' %} active{% endif %}">
-                <span class="sub-icon">🚀</span>
-                <span>XGBoost</span>
-            </a>
-
-            <a href="{{ url_for('lightgbm') }}"
-               class="nav-subitem{% if active == 'lightgbm' %} active{% endif %}">
-                <span class="sub-icon">💡</span>
-                <span>LightGBM</span>
-            </a>
-
-            <!-- PRUNING -->
+            <!-- REGRESSION -->
             <details class="nav-dropdown"
-                {% if active in ['pruning', 'cost-complexity'] %}open{% endif %}>
+                {% if active in ['linear-regression', 'logistic-regression', 'regularisation'] %}open{% endif %}>
 
                 <summary class="dropdown-toggle">
                     <span class="dropdown-left">
-                        <span class="sub-icon">✂</span>
-                        <span>Pruning</span>
+                        <span class="nav-icon">{{ icon('arrow') }}</span>
+                        <span>Regression</span>
                     </span>
-                    <span class="dropdown-arrow">▾</span>
+                    <span class="dropdown-arrow">{{ icon('chevron') }}</span>
                 </summary>
 
                 <div class="dropdown-content">
 
-                    <a href="{{ url_for('pruning') }}#fully-grown" class="nav-subitem">
-                        <span>Fully Grown</span>
+                    <a href="{{ url_for('linear_regression') }}"
+                       class="nav-subitem{% if active == 'linear-regression' %} active{% endif %}">
+                        <span class="sub-icon">{{ icon('arrow') }}</span>
+                        <span>Linear Regression</span>
                     </a>
 
-                    <a href="{{ url_for('pruning') }}#pre-pruning" class="nav-subitem">
-                        <span>Pre-Pruning</span>
+                    <a href="{{ url_for('logistic_regression') }}"
+                       class="nav-subitem{% if active == 'logistic-regression' %} active{% endif %}">
+                        <span class="sub-icon">{{ icon('target') }}</span>
+                        <span>Logistic Regression</span>
                     </a>
 
-                    <a href="{{ url_for('pruning') }}#post-pruning" class="nav-subitem">
-                        <span>Post-Pruning</span>
+                    <a href="{{ url_for('regularisation') }}"
+                       class="nav-subitem{% if active == 'regularisation' %} active{% endif %}">
+                        <span class="sub-icon">{{ icon('lambda') }}</span>
+                        <span>Regularisation</span>
+                    </a>
+
+                </div>
+            </details>
+
+            <!-- DECISION TREE (+ pruning) -->
+            <details class="nav-dropdown"
+                {% if active in ['decision-tree', 'pruning', 'cost-complexity'] %}open{% endif %}>
+
+                <summary class="dropdown-toggle">
+                    <span class="dropdown-left">
+                        <span class="nav-icon">{{ icon('tree') }}</span>
+                        <span>Decision Tree</span>
+                    </span>
+                    <span class="dropdown-arrow">{{ icon('chevron') }}</span>
+                </summary>
+
+                <div class="dropdown-content">
+
+                    <a href="{{ url_for('decision_tree') }}"
+                       class="nav-subitem{% if active == 'decision-tree' %} active{% endif %}">
+                        <span class="sub-icon">{{ icon('tree') }}</span>
+                        <span>Decision Tree</span>
+                    </a>
+
+                    <a href="{{ url_for('pruning') }}#fully-grown"
+                       class="nav-subitem{% if active == 'pruning' %} active{% endif %}">
+                        <span class="sub-icon">{{ icon('scissors') }}</span>
+                        <span>Pruning</span>
                     </a>
 
                     <a href="{{ url_for('cost_complexity') }}"
                        class="nav-subitem{% if active == 'cost-complexity' %} active{% endif %}">
+                        <span class="sub-icon">{{ icon('complexity') }}</span>
                         <span>Cost-Complexity</span>
+                    </a>
+
+                </div>
+            </details>
+
+            <!-- BAGGING -->
+            <a href="{{ url_for('random_forest') }}"
+               class="nav-item{% if active == 'random-forest' %} active{% endif %}">
+                <span class="nav-icon">{{ icon('bag') }}</span>
+                <span>Bagging</span>
+            </a>
+
+            <!-- BOOSTING -->
+            <details class="nav-dropdown"
+                {% if active in ['ada-boost', 'gradient-boost', 'xg-boost', 'lightgbm'] %}open{% endif %}>
+
+                <summary class="dropdown-toggle">
+                    <span class="dropdown-left">
+                        <span class="nav-icon">{{ icon('bolt') }}</span>
+                        <span>Boosting</span>
+                    </span>
+                    <span class="dropdown-arrow">{{ icon('chevron') }}</span>
+                </summary>
+
+                <div class="dropdown-content">
+
+                    <a href="{{ url_for('ada_boost') }}"
+                       class="nav-subitem{% if active == 'ada-boost' %} active{% endif %}">
+                        <span class="sub-icon">{{ icon('bolt') }}</span>
+                        <span>AdaBoost</span>
+                    </a>
+
+                    <a href="{{ url_for('gradient_boost') }}"
+                       class="nav-subitem{% if active == 'gradient-boost' %} active{% endif %}">
+                        <span class="sub-icon">{{ icon('arrow') }}</span>
+                        <span>Gradient Boost</span>
+                    </a>
+
+                    <a href="{{ url_for('xg_boost') }}"
+                       class="nav-subitem{% if active == 'xg-boost' %} active{% endif %}">
+                        <span class="sub-icon">{{ icon('spark') }}</span>
+                        <span>XGBoost</span>
+                    </a>
+
+                    <a href="{{ url_for('lightgbm') }}"
+                       class="nav-subitem{% if active == 'lightgbm' %} active{% endif %}">
+                        <span class="sub-icon">{{ icon('sun') }}</span>
+                        <span>LightGBM</span>
                     </a>
 
                 </div>
@@ -165,157 +205,169 @@
         </div>
     </details>
 
-    <!-- CLUSTERING -->
-    <details class="nav-dropdown"
-        {% if active in ['kmeans', 'hierarchical', 'dbscan'] %}open{% endif %}>
 
-        <summary class="dropdown-toggle">
-            <span class="dropdown-left">
-                <span class="nav-icon">●</span>
-                <span>Clustering</span>
+    <!-- ============================================================
+         GROUP 2 · UNSUPERVISED LEARNING
+         ============================================================ -->
+    <details class="nav-group g-pink"
+        {% if active in ['kmeans', 'hierarchical', 'dbscan', 'anomaly-detection',
+                         'pca', 'tsne', 'umap'] %}open{% endif %}>
+
+        <summary class="group-toggle">
+            <span class="group-left">
+                <span class="group-icon">{{ icon('spark') }}</span>
+                <span class="group-title">Unsupervised Learning</span>
             </span>
-            <span class="dropdown-arrow">▾</span>
+            <span class="group-arrow">{{ icon('chevron') }}</span>
         </summary>
 
-        <div class="dropdown-content">
+        <div class="group-content">
 
-            <a href="{{ url_for('kmeans') }}"
-               class="nav-subitem{% if active == 'kmeans' %} active{% endif %}">
-                <span class="sub-icon">●</span>
-                <span>K-Means</span>
-            </a>
+            <!-- CLUSTERING -->
+            <details class="nav-dropdown"
+                {% if active in ['kmeans', 'hierarchical', 'dbscan'] %}open{% endif %}>
 
-            <a href="{{ url_for('hierarchical') }}"
-               class="nav-subitem{% if active == 'hierarchical' %} active{% endif %}">
-                <span class="sub-icon">↗</span>
-                <span>Hierarchical</span>
-            </a>
+                <summary class="dropdown-toggle">
+                    <span class="dropdown-left">
+                        <span class="nav-icon">{{ icon('cluster') }}</span>
+                        <span>Clustering</span>
+                    </span>
+                    <span class="dropdown-arrow">{{ icon('chevron') }}</span>
+                </summary>
 
-            <a href="{{ url_for('dbscan') }}"
-               class="nav-subitem{% if active == 'dbscan' %} active{% endif %}">
-                <span class="sub-icon">◉</span>
-                <span>DBSCAN</span>
+                <div class="dropdown-content">
+
+                    <a href="{{ url_for('kmeans') }}"
+                       class="nav-subitem{% if active == 'kmeans' %} active{% endif %}">
+                        <span class="sub-icon">{{ icon('circle') }}</span>
+                        <span>K-Means</span>
+                    </a>
+
+                    <a href="{{ url_for('hierarchical') }}"
+                       class="nav-subitem{% if active == 'hierarchical' %} active{% endif %}">
+                        <span class="sub-icon">{{ icon('arrow') }}</span>
+                        <span>Hierarchical</span>
+                    </a>
+
+                    <a href="{{ url_for('dbscan') }}"
+                       class="nav-subitem{% if active == 'dbscan' %} active{% endif %}">
+                        <span class="sub-icon">{{ icon('cluster') }}</span>
+                        <span>DBSCAN</span>
+                    </a>
+
+                </div>
+            </details>
+
+            <!-- DIMENSIONALITY REDUCTION -->
+            <details class="nav-dropdown"
+                {% if active in ['pca', 'tsne', 'umap'] %}open{% endif %}>
+
+                <summary class="dropdown-toggle">
+                    <span class="dropdown-left">
+                        <span class="nav-icon">{{ icon('layers') }}</span>
+                        <span>Dimensionality Reduction</span>
+                    </span>
+                    <span class="dropdown-arrow">{{ icon('chevron') }}</span>
+                </summary>
+
+                <div class="dropdown-content">
+
+                    <a href="{{ url_for('pca') }}"
+                       class="nav-subitem{% if active == 'pca' %} active{% endif %}">
+                        <span class="sub-icon">{{ icon('layers') }}</span>
+                        <span>PCA</span>
+                    </a>
+
+                    <a href="{{ url_for('tsne') }}"
+                       class="nav-subitem{% if active == 'tsne' %} active{% endif %}">
+                        <span class="sub-icon">{{ icon('spark') }}</span>
+                        <span>t-SNE</span>
+                    </a>
+
+                    <a href="{{ url_for('umap') }}"
+                       class="nav-subitem{% if active == 'umap' %} active{% endif %}">
+                        <span class="sub-icon">{{ icon('layers') }}</span>
+                        <span>UMAP</span>
+                    </a>
+
+                </div>
+            </details>
+
+            <!-- ANOMALY DETECTION (same row style as every other top-level item) -->
+            <a href="{{ url_for('anomaly_detection') }}"
+               class="nav-item{% if active == 'anomaly-detection' %} active{% endif %}">
+                <span class="nav-icon">{{ icon('alert') }}</span>
+                <span>Anomaly Detection</span>
             </a>
 
         </div>
     </details>
 
-    <!-- ANOMALY DETECTION -->
-    <a href="{{ url_for('anomaly_detection') }}"
-       class="nav-item{% if active == 'anomaly-detection' %} active{% endif %}">
-        <span class="nav-icon">⚠</span>
-        <span>Anomaly Detection</span>
-    </a>
 
-    <!-- DIMENSIONALITY REDUCTION -->
-    <details class="nav-dropdown"
-        {% if active in ['pca', 'tsne', 'umap'] %}open{% endif %}>
-
-        <summary class="dropdown-toggle">
-            <span class="dropdown-left">
-                <span class="nav-icon">◈</span>
-                <span>Dim. Reduction</span>
-            </span>
-            <span class="dropdown-arrow">▾</span>
-        </summary>
-
-        <div class="dropdown-content">
-
-            <a href="{{ url_for('pca') }}"
-               class="nav-subitem{% if active == 'pca' %} active{% endif %}">
-                <span class="sub-icon">◈</span>
-                <span>PCA</span>
-            </a>
-
-            <a href="{{ url_for('tsne') }}"
-               class="nav-subitem{% if active == 'tsne' %} active{% endif %}">
-                <span class="sub-icon">✦</span>
-                <span>t-SNE</span>
-            </a>
-
-            <a href="{{ url_for('umap') }}"
-               class="nav-subitem{% if active == 'umap' %} active{% endif %}">
-                <span class="sub-icon">❖</span>
-                <span>UMAP</span>
-            </a>
-
-        </div>
-    </details>
-
-    <!-- MODEL EVALUATION, SELECTION & CALIBRATION -->
-    <details class="nav-dropdown"
+    <!-- ============================================================
+         GROUP 3 · MODEL EVALUATION
+         ============================================================ -->
+    <details class="nav-group g-green"
         {% if active == 'model-evaluation' %}open{% endif %}>
 
-        <summary class="dropdown-toggle">
-            <span class="dropdown-left">
-                <span class="nav-icon">⚖</span>
-                <span>Evaluation &amp; CV</span>
+        <summary class="group-toggle">
+            <span class="group-left">
+                <span class="group-icon">{{ icon('data') }}</span>
+                <span class="group-title">Model Evaluation</span>
             </span>
-            <span class="dropdown-arrow">▾</span>
+            <span class="group-arrow">{{ icon('chevron') }}</span>
         </summary>
 
-        <div class="dropdown-content">
+        <div class="group-content eval-links">
 
-            <a href="{{ url_for('model_evaluation') }}"
-               class="nav-subitem{% if active == 'model-evaluation' %} active{% endif %}">
-                <span class="sub-icon">📊</span>
-                <span>Evaluation Suite</span>
+            <a href="{{ url_for('model_evaluation') }}#split-discipline" class="nav-item">
+                <span class="nav-icon">{{ icon('split') }}</span>
+                <span>Train / Val / Test Split</span>
             </a>
 
-            <a href="{{ url_for('model_evaluation') }}#split-discipline"
-               class="nav-subitem">
-                <span class="sub-icon">⚖</span>
-                <span>Split Discipline</span>
+            <a href="{{ url_for('model_evaluation') }}#cross-validation" class="nav-item">
+                <span class="nav-icon">{{ icon('refresh') }}</span>
+                <span>Cross-Validation &amp; Nested CV</span>
             </a>
 
-            <a href="{{ url_for('model_evaluation') }}#cross-validation"
-               class="nav-subitem">
-                <span class="sub-icon">🔄</span>
-                <span>CV &amp; Nested CV</span>
+            <a href="{{ url_for('model_evaluation') }}#classification-metrics" class="nav-item">
+                <span class="nav-icon">{{ icon('target') }}</span>
+                <span>Classification Metrics</span>
             </a>
 
-            <a href="{{ url_for('model_evaluation') }}#classification-metrics"
-               class="nav-subitem">
-                <span class="sub-icon">🎯</span>
-                <span>Classification &amp; Imbalance</span>
+            <a href="{{ url_for('model_evaluation') }}#regression-metrics" class="nav-item">
+                <span class="nav-icon">{{ icon('arrow') }}</span>
+                <span>Regression Metrics</span>
             </a>
 
-            <a href="{{ url_for('model_evaluation') }}#regression-metrics"
-               class="nav-subitem">
-                <span class="sub-icon">📈</span>
-                <span>Regression &amp; Outliers</span>
+            <a href="{{ url_for('model_evaluation') }}#probability-calibration" class="nav-item">
+                <span class="nav-icon">{{ icon('pie') }}</span>
+                <span>Probability Calibration</span>
             </a>
 
-            <a href="{{ url_for('model_evaluation') }}#probability-calibration"
-               class="nav-subitem">
-                <span class="sub-icon">🎲</span>
-                <span>Prob. Calibration</span>
+            <a href="{{ url_for('model_evaluation') }}#hyperparameter-search" class="nav-item">
+                <span class="nav-icon">{{ icon('sliders') }}</span>
+                <span>Hyperparameter Search</span>
             </a>
 
-            <a href="{{ url_for('model_evaluation') }}#hyperparameter-search"
-               class="nav-subitem">
-                <span class="sub-icon">🔍</span>
-                <span>Search Strategies</span>
+            <a href="{{ url_for('model_evaluation') }}#learning-curves" class="nav-item">
+                <span class="nav-icon">{{ icon('chart') }}</span>
+                <span>Learning &amp; Validation Curves</span>
             </a>
 
-            <a href="{{ url_for('model_evaluation') }}#learning-curves"
-               class="nav-subitem">
-                <span class="sub-icon">📉</span>
-                <span>Learning Curves</span>
-            </a>
-
-            <a href="{{ url_for('model_evaluation') }}#significance-testing"
-               class="nav-subitem">
-                <span class="sub-icon">🔬</span>
-                <span>Significance Tests</span>
+            <a href="{{ url_for('model_evaluation') }}#significance-testing" class="nav-item">
+                <span class="nav-icon">{{ icon('scale') }}</span>
+                <span>Statistical Significance</span>
             </a>
 
         </div>
     </details>
+
+
 
     <!-- STATUS -->
     <div class="sidebar-status">
-        <div class="status-dot"></div>
+        <div class="status-dot" aria-hidden="true"></div>
         <div>
             <strong>Project Status</strong>
             <small>Analytics active</small>
@@ -323,3 +375,56 @@
     </div>
 
 </aside>
+
+{# Section highlighting is scoped to this sidebar and its actual destination. #}
+<script>
+(function () {
+    var sidebar = document.currentScript.previousElementSibling;
+    if (!sidebar || !sidebar.matches('.sidebar')) return;
+    sidebar.querySelectorAll('a.active').forEach(function (link) {
+        link.setAttribute('aria-current', 'page');
+    });
+    var links = Array.from(sidebar.querySelectorAll('.eval-links a.nav-item'));
+    links = links.filter(function (link) { return link.pathname === location.pathname; });
+    if (!links.length) return;
+
+    function mark(hash) {
+        links.forEach(function (link) {
+            var selected = Boolean(hash) && link.hash === hash;
+            link.classList.toggle('active', selected);
+            if (selected) link.setAttribute('aria-current', 'location');
+            else link.removeAttribute('aria-current');
+        });
+    }
+    var sections = links.map(function (link) {
+        return document.getElementById(decodeURIComponent(link.hash.slice(1)));
+    }).filter(Boolean);
+    function update() {
+        if (!sections.length) return;
+        var threshold = window.innerHeight * 0.3;
+        var current = sections[0];
+        sections.forEach(function (section) {
+            if (section.getBoundingClientRect().top <= threshold) current = section;
+        });
+        mark('#' + current.id);
+    }
+    mark(location.hash);
+    window.addEventListener('hashchange', function () { mark(location.hash); });
+    var pending = false;
+    window.addEventListener('scroll', function () {
+        if (pending) return;
+        pending = true;
+        window.requestAnimationFrame(function () { update(); pending = false; });
+    }, { passive: true });
+    window.addEventListener('resize', update);
+    function initialize() {
+        sections = links.map(function (link) {
+            return document.getElementById(decodeURIComponent(link.hash.slice(1)));
+        }).filter(Boolean);
+        if (!location.hash) update();
+    }
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initialize, { once: true });
+    } else initialize();
+})();
+</script>
