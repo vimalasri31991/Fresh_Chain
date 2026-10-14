@@ -33,6 +33,8 @@ from ml.kmeansperformance import evaluate_kmeans
 from ml.hierarchical_clustering import get_hierarchical_clustering
 from ml.dbscan_clustering import get_dbscan_clustering
 
+from ml.model_evaluation import get_model_evaluation
+
 from ml.model_comparison import (
     get_result,
     build_comparison,
@@ -83,6 +85,11 @@ def _warm_up():
             get_result(page)
         except Exception:
             pass
+
+    try:
+        get_model_evaluation()
+    except Exception:
+        pass
 
 
 # ============================================================
@@ -739,6 +746,35 @@ def umap():
         return render_template(
             "umap.html",
             active="umap",
+            result=None,
+            error=str(e)
+        )
+
+
+# ============================================================
+# MODEL EVALUATION, SELECTION & CALIBRATION
+# ============================================================
+
+@app.route("/model-evaluation")
+@app.route("/model_evaluation")
+def model_evaluation():
+
+    try:
+
+        result = get_model_evaluation()
+
+        return render_template(
+            "model_evaluation.html",
+            active="model-evaluation",
+            result=result,
+            error=None
+        )
+
+    except Exception as e:
+
+        return render_template(
+            "model_evaluation.html",
+            active="model-evaluation",
             result=None,
             error=str(e)
         )

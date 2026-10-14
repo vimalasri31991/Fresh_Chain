@@ -353,4 +353,113 @@ reducer = umap.UMAP(
 X_umap = reducer.fit_transform(X_scaled)
 trust_score = trustworthiness(X_scaled, X_umap, n_neighbors=10)"""),
     ],
+
+    # ---------------- MODEL EVALUATION, SELECTION & CALIBRATION ----------------
+    "model-evaluation": [
+        _model("1. Three-Way Split & Lockbox Discipline", "Split Discipline", """
+from sklearn.model_selection import train_test_split
+
+# 70% Train, 15% Validation (for hyperparameter tuning & threshold choice), 15% Test (LOCKED)
+X_train, X_temp, y_train, y_temp = train_test_split(
+    X, y, test_size=0.30, random_state=42, stratify=y
+)
+X_val, X_test, y_val, y_test = train_test_split(
+    X_temp, y_temp, test_size=0.50, random_state=42, stratify=y_temp
+)
+# Tune models strictly using X_val. Evaluate chosen model once on X_test!"""),
+
+        _model("2. Stratified K-Fold & Nested Cross-Validation", "Nested CV", """
+from sklearn.model_selection import StratifiedKFold, GridSearchCV
+
+# Outer loop evaluates unbiased risk; Inner loop tunes hyperparameters
+outer_cv = StratifiedKFold(n_splits=5, shuffle=True, random_state=42)
+inner_cv = StratifiedKFold(n_splits=3, shuffle=True, random_state=42)
+
+nested_scores = []
+for train_idx, test_idx in outer_cv.split(X, y):
+    X_tr, X_te = X[train_idx], X[test_idx]
+    y_tr, y_te = y[train_idx], y[test_idx]
+    
+    grid = GridSearchCV(estimator, param_grid, cv=inner_cv, scoring="accuracy")
+    grid.fit(X_tr, y_tr)
+    nested_scores.append(grid.score(X_te, y_te))"""),
+
+        _model("3. Classification Metrics & Class Imbalance", "Classification", """
+from sklearn.metrics import confusion_matrix, precision_recall_fscore_support, roc_auc_score, average_precision_score
+
+cm = confusion_matrix(y_true, y_pred)
+prec, rec, f1, _ = precision_recall_fscore_support(y_true, y_pred, average="binary")
+roc_auc = roc_auc_score(y_true, y_prob)
+pr_auc = average_precision_score(y_true, y_prob)
+# Under heavy class imbalance, Accuracy lies and ROC-AUC is overoptimistic.
+# PR-AUC directly reveals false alarm degradation!"""),
+
+        _model("4. Regression Metrics & Outlier Sensitivity (L1 vs L2)", "Regression", """
+from sklearn.metrics import mean_squared_error, mean_absolute_error, mean_absolute_percentage_error, r2_score
+import numpy as np
+
+rmse = np.sqrt(mean_squared_error(y_true, y_pred))  # L2 quadratic penalty: heavily penalizes outliers
+mae = mean_absolute_error(y_true, y_pred)           # L1 linear penalty: robust against sensor spikes
+mape = mean_absolute_percentage_error(y_true, y_pred) * 100
+r2 = r2_score(y_true, y_pred)"""),
+
+        _model("5. Probability Calibration (Platt Scaling & Isotonic)", "Calibration", """
+from sklearn.calibration import CalibratedClassifierCV, calibration_curve
+from sklearn.metrics import brier_score_loss
+
+# Platt scaling (logistic sigmoid) or Isotonic regression (non-parametric monotonic step)
+platt_model = CalibratedClassifierCV(base_estimator, method="sigmoid", cv=3)
+platt_model.fit(X_train, y_train)
+
+iso_model = CalibratedClassifierCV(base_estimator, method="isotonic", cv=3)
+iso_model.fit(X_train, y_train)
+
+# Measure calibration accuracy with Brier Score Loss & Reliability Diagram
+brier = brier_score_loss(y_test, platt_model.predict_proba(X_test)[:, 1])
+fraction_of_positives, mean_predicted_value = calibration_curve(y_test, probs, n_bins=10)"""),
+
+        _model("6. Hyperparameter Search (Grid vs Random vs Bayes GP)", "Search Strategies", """
+from sklearn.model_selection import GridSearchCV, RandomizedSearchCV
+from sklearn.gaussian_process import GaussianProcessRegressor
+from sklearn.gaussian_process.kernels import Matern
+
+# Random search tests more distinct values per dominant dimension (Bergstra & Bengio)
+random_search = RandomizedSearchCV(estimator, param_distributions, n_iter=20, cv=3)
+
+# Bayesian Optimisation: GP surrogate model balances Exploration vs Exploitation
+gp = GaussianProcessRegressor(kernel=Matern(nu=2.5))
+gp.fit(X_sampled, y_sampled)
+mu, sigma = gp.predict(X_candidates, return_std=True)
+ucb_acquisition = mu + 2.0 * sigma  # Pick argmax(ucb) as next query point"""),
+
+        _model("7. Learning Curves & Validation Curves", "Model Diagnostics", """
+from sklearn.model_selection import learning_curve, validation_curve
+
+# Learning curve across sample size N (diagnoses high bias vs high variance vs data scarcity)
+train_sizes, train_scores, val_scores = learning_curve(
+    estimator, X, y, train_sizes=[0.1, 0.3, 0.5, 0.8, 1.0], cv=5
+)
+
+# Validation curve across a single hyperparameter (pinpoints under/over-fitting sweet spot)
+vc_train, vc_val = validation_curve(
+    estimator, X, y, param_name="max_depth", param_range=range(1, 20), cv=5
+)"""),
+
+        _model("8. Significance Testing (McNemar & Paired Bootstrap)", "Statistical Tests", """
+import numpy as np
+import scipy.stats as stats
+
+# McNemar's test for paired classification:
+# b: Model A right & Model B wrong; c: Model A wrong & Model B right
+chi2 = ((abs(b - c) - 1) ** 2) / (b + c)
+p_value = 1.0 - stats.chi2.cdf(chi2, df=1)
+
+# Paired Bootstrap for regression models:
+boot_diffs = []
+for _ in range(1000):
+    idx = np.random.choice(len(y_test), size=len(y_test), replace=True)
+    mae_diff = np.mean(np.abs(y_test[idx] - pred_a[idx])) - np.mean(np.abs(y_test[idx] - pred_b[idx]))
+    boot_diffs.append(mae_diff)
+ci_lower, ci_upper = np.percentile(boot_diffs, [2.5, 97.5])"""),
+    ],
 }

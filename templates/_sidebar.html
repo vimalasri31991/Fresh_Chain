@@ -242,6 +242,77 @@
         </div>
     </details>
 
+    <!-- MODEL EVALUATION, SELECTION & CALIBRATION -->
+    <details class="nav-dropdown"
+        {% if active == 'model-evaluation' %}open{% endif %}>
+
+        <summary class="dropdown-toggle">
+            <span class="dropdown-left">
+                <span class="nav-icon">⚖</span>
+                <span>Evaluation &amp; CV</span>
+            </span>
+            <span class="dropdown-arrow">▾</span>
+        </summary>
+
+        <div class="dropdown-content">
+
+            <a href="{{ url_for('model_evaluation') }}"
+               class="nav-subitem{% if active == 'model-evaluation' %} active{% endif %}">
+                <span class="sub-icon">📊</span>
+                <span>Evaluation Suite</span>
+            </a>
+
+            <a href="{{ url_for('model_evaluation') }}#split-discipline"
+               class="nav-subitem">
+                <span class="sub-icon">⚖</span>
+                <span>Split Discipline</span>
+            </a>
+
+            <a href="{{ url_for('model_evaluation') }}#cross-validation"
+               class="nav-subitem">
+                <span class="sub-icon">🔄</span>
+                <span>CV &amp; Nested CV</span>
+            </a>
+
+            <a href="{{ url_for('model_evaluation') }}#classification-metrics"
+               class="nav-subitem">
+                <span class="sub-icon">🎯</span>
+                <span>Classification &amp; Imbalance</span>
+            </a>
+
+            <a href="{{ url_for('model_evaluation') }}#regression-metrics"
+               class="nav-subitem">
+                <span class="sub-icon">📈</span>
+                <span>Regression &amp; Outliers</span>
+            </a>
+
+            <a href="{{ url_for('model_evaluation') }}#probability-calibration"
+               class="nav-subitem">
+                <span class="sub-icon">🎲</span>
+                <span>Prob. Calibration</span>
+            </a>
+
+            <a href="{{ url_for('model_evaluation') }}#hyperparameter-search"
+               class="nav-subitem">
+                <span class="sub-icon">🔍</span>
+                <span>Search Strategies</span>
+            </a>
+
+            <a href="{{ url_for('model_evaluation') }}#learning-curves"
+               class="nav-subitem">
+                <span class="sub-icon">📉</span>
+                <span>Learning Curves</span>
+            </a>
+
+            <a href="{{ url_for('model_evaluation') }}#significance-testing"
+               class="nav-subitem">
+                <span class="sub-icon">🔬</span>
+                <span>Significance Tests</span>
+            </a>
+
+        </div>
+    </details>
+
     <!-- STATUS -->
     <div class="sidebar-status">
         <div class="status-dot"></div>
